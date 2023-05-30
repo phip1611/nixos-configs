@@ -1,0 +1,105 @@
+{
+  "nodes": {
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1698882062,
+        "narHash": "sha256-HkhafUayIqxXyHH1X8d9RDl1M2CkFgZLjKD3MzabiEo=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "8c9fa2545007b49a5db5f650ae91f227672c3877",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1700814205,
+        "narHash": "sha256-lWqDPKHRbQfi+zNIivf031BUeyciVOtwCwTjyrhDB5g=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "aeb2232d7a32530d3448318790534d196bf9427a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "ref": "release-23.11",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1701058557,
+        "narHash": "sha256-fux7HlrnoNs93MN0kET4AfiYwg/expoasndRCFeDRyk=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "070b5cf9f70bc7ef2dfd739a1f7d6c563fe64bd1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-23.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-unstable": {
+      "locked": {
+        "lastModified": 1701040486,
+        "narHash": "sha256-vawYwoHA5CwvjfqaT3A5CT9V36Eq43gxdwpux32Qkjw=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "45827faa2132b8eade424f6bdd48d8828754341a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "phip1611-common": {
+      "locked": {
+        "dir": "NixOS",
+        "lastModified": 1701160751,
+        "narHash": "sha256-m5RciCFvsnYG8hbKNAvSj72IIpb7b4trH35M95a/Xgo=",
+        "owner": "phip1611",
+        "repo": "dotfiles",
+        "rev": "456a6a42c1350d5b0aeaab8b361e09354caca764",
+        "type": "github"
+      },
+      "original": {
+        "dir": "NixOS",
+        "owner": "phip1611",
+        "repo": "dotfiles",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "home-manager": "home-manager",
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "phip1611-common": "phip1611-common"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
