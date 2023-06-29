@@ -26,8 +26,8 @@
 
 
 
-  # TPLink T3U WiFi USB Dongle  
-  # Unfortunately, this is buggy and most be deactivated probably :/
+  # TPLink T3U WiFi USB Dongle
+  # Unfortunately, this is buggy and only works sometimes. Reboots help.
   boot.kernelModules = [
     "88x2bu"
   ];
@@ -36,7 +36,7 @@
   ];
 
   # The required external driver (no upstream driver) does not (always)
-  # compile for the latest kernel. 
+  # compile for the latest kernel.
   # phip1611.common.system.latest-linux.enable = lib.mkForce false;
 
 }
