@@ -1,21 +1,11 @@
-{ config, pkgs, lib, phip1611-common, home-manager, ... }:
-
-
+{ config, pkgs, lib, hostName, ... }:
 
 {
-  imports = [
-    # Enables the "home-manager" configuration property
-    home-manager.nixosModules.home-manager
-    # Needs flake inputs "nixpkgs" and "nixpkgs-unstable".
-    phip1611-common.nixosModules.phip1611-common
-  ];
-
-  networking.hostName = "homepc";
+  networking.hostName = hostName;
 
   # phip1611 dotfiles common NixOS module configuration
   phip1611 = {
     username = "phip1611";
-    stateVersion = "23.05";
     common = {
       enable = true;
       user.env.git.username = "Philipp Schuster";
@@ -23,8 +13,6 @@
     };
     util-overlay.enable = true;
   };
-
-
 
   # TPLink T3U WiFi USB Dongle
   # Unfortunately, this is buggy and only works sometimes. Reboots help.
