@@ -1,0 +1,9 @@
+version: 2
+updates:
+  # TODO add flake update
+  # https://github.com/dependabot/dependabot-core/issues/7340
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
