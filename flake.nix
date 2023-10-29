@@ -48,7 +48,7 @@
           # one `configuration.nix` and this file then imports all other files
           # of the configuration. This way, the NixOS system and the flake
           # definitions can be better separated and the NixOS configurations
-          # are less dependend on flakes.
+          # are less dependent on flakes.
         , nixosModules ? [ ]
         }:
         (
