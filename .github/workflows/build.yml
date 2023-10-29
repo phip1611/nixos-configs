@@ -19,4 +19,4 @@ jobs:
         run: nix develop --command bash -c "nixos-rebuild dry-build --flake .#linkin-park"
       #- name: "NixOS: build #linkin-park"
       #  run: nix develop --command bash -c "nixos-rebuild build --flake .#linkin-park"
-      - run: rm result
+      - run: rm -f result
