@@ -43,7 +43,7 @@ in
     util-overlay.enable = true;
   };
 
-  fonts.fonts = [
+  fonts.packages = [
     pkgs.dancing-script
   ];
 

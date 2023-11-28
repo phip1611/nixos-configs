@@ -2,12 +2,12 @@
   description = "System Configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     # Use nixpkgs-unstable instead of master so that packages are more likely
     # to be cached already while still being as fresh as possible.
     # See https://discourse.nixos.org/t/differences-between-nix-channels/13998
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    home-manager.url = "github:nix-community/home-manager/release-23.05";
+    home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -43,12 +43,13 @@
       # necessary flake inputs.
       buildNixosSystem =
         { hostName # string
-        , system ? "x86_64-linux" # One of the definitions of `pkgs.lib.systems.flakeExposed`
+          # One of the definitions of `pkgs.lib.systems.flakeExposed`:
           # NixOS modules defining the system. The idea here is to only provide
           # one `configuration.nix` and this file then imports all other files
           # of the configuration. This way, the NixOS system and the flake
           # definitions can be better separated and the NixOS configurations
           # are less dependent on flakes.
+        , system ? "x86_64-linux"
         , nixosModules ? [ ]
         }:
         (
