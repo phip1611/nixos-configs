@@ -124,7 +124,7 @@
                 packages = with pkgs; [
                   nixos-rebuild
                   nixpkgs-fmt
-                ];
+                ] ++ builtins.attrValues libutil.customPkgs;
               };
             };
 
