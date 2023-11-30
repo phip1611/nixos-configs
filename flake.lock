@@ -73,30 +73,12 @@
         "type": "github"
       }
     },
-    "phip1611-common": {
-      "locked": {
-        "dir": "NixOS",
-        "lastModified": 1701160751,
-        "narHash": "sha256-m5RciCFvsnYG8hbKNAvSj72IIpb7b4trH35M95a/Xgo=",
-        "owner": "phip1611",
-        "repo": "dotfiles",
-        "rev": "456a6a42c1350d5b0aeaab8b361e09354caca764",
-        "type": "github"
-      },
-      "original": {
-        "dir": "NixOS",
-        "owner": "phip1611",
-        "repo": "dotfiles",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-unstable": "nixpkgs-unstable",
-        "phip1611-common": "phip1611-common"
+        "nixpkgs-unstable": "nixpkgs-unstable"
       }
     }
   },

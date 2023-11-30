@@ -12,15 +12,6 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-
-    phip1611-common = {
-      type = "github";
-      owner = "phip1611";
-      repo = "dotfiles";
-      dir = "NixOS";
-      # ref = "zsh-history";
-    };
-
   };
 
   outputs =
@@ -28,16 +19,20 @@
     , nixpkgs
     , nixpkgs-unstable
     , home-manager
-    , phip1611-common
     , flake-parts
     , ...
     }@inputs:
     let
+      libutilSrc = common/libutil;
+      libutilTestsSrc = common/libutil/_tests;
+      phip1611-commonModuleSrc = common/module;
+      phip1611-commonModule = import phip1611-commonModuleSrc;
+
       # Common modules that are added to each NixOS system. Here, I primarily add
       # modules that come from a flake.
       commonNixosModules = [
         home-manager.nixosModules.home-manager
-        phip1611-common.nixosModules.phip1611-common
+        phip1611-commonModule
       ];
       # Helper function to build a NixOS system from a configuration and the
       # necessary flake inputs.
@@ -80,6 +75,11 @@
     flake-parts.lib.mkFlake { inherit inputs; }
       {
         flake = {
+          nixosModules = {
+            default = phip1611-commonModule;
+            phip1611-common = phip1611-commonModule;
+          };
+
           nixosConfigurations =
             {
               # My personal PC at home where I've also have my Windows installed
@@ -88,7 +88,7 @@
                 hostName = "phips-homepc";
                 system = "x86_64-linux";
                 nixosModules = [
-                  ./hosts/homepc/configuration.nix
+                  ./nixos-configs/homepc/configuration.nix
                 ];
               };
 
@@ -97,7 +97,7 @@
                 hostName = "linkin-park";
                 system = "x86_64-linux";
                 nixosModules = [
-                  ./hosts/linkin-park/configuration.nix
+                  ./nixos-configs/linkin-park/configuration.nix
                 ];
               };
             };
@@ -108,17 +108,47 @@
           "x86_64-linux"
         ];
 
-        perSystem = { config, pkgs, ... }: {
-          devShells = {
-            default = pkgs.mkShell {
-              packages = with pkgs; [
-                nixos-rebuild
-                nixpkgs-fmt
-              ];
+        perSystem = { config, pkgs, ... }:
+
+          let
+            libutil = import libutilSrc { inherit pkgs; };
+          in
+          {
+            # $ nix build .\#checks.x86_64-linux.<attribute-name>
+            checks = {
+              runLibutilTests = import libutilTestsSrc { inherit pkgs; };
+            };
+
+            devShells = {
+              default = pkgs.mkShell {
+                packages = with pkgs; [
+                  nixos-rebuild
+                  nixpkgs-fmt
+                ];
+              };
+            };
+
+            formatter = pkgs.nixpkgs-fmt;
+
+            # $ nix build .\#checks.x86_64-linux.<attribute-name>
+            packages = {
+              # Lists the NixOS options of my NixOS common module.
+              listNixosOptions =
+                let
+                  minimalNixOSModule = pkgs.writeText "minimal-nixos-module" ''
+                    {
+                      imports = [
+                        (import ${home-manager}/nixos)
+                        (import ${phip1611-commonModuleSrc})
+                      ];
+                    }
+                  '';
+                in
+                pkgs.writeShellScript "list-phip1611-common-module-nixos-options" ''
+                  export PATH="${pkgs.lib.makeBinPath [pkgs.nixos-option]}:$PATH"
+                  NIXOS_CONFIG=${minimalNixOSModule} nixos-option phip1611 -r
+                '';
             };
           };
-
-          formatter = pkgs.nixpkgs-fmt;
-        };
       };
 }
