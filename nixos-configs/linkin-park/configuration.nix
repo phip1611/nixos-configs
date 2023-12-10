@@ -40,7 +40,7 @@ in
       ];
     };
     services.meshcommander.enable = true;
-    util-overlay.enable = true;
+    libutil-overlay.enable = true;
   };
 
   fonts.packages = [
