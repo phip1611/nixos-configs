@@ -14,6 +14,17 @@ The whole repository is based on the referenced version of nixpkgs in
 `flake.nix`. Thus, the versions of Nix and NixOS are tied to that. Usually, this
 repository always follows the latest stable NixOS release.
 
+## Building (And Switching To) a NixOS Configuration
+
+Either clone this repository any consume the local flake or run
+
+```shell
+$ sudo nixos-rebuild switch --flake git+https://github.com/phip1611/nixos-configs#linkin-park
+```
+
+Depending on the freshness of your current system, you might need to reboot to
+have all the goodness in your system.
+
 ## (Automated) Testing
 
 In this repository, I test two aspects (in CI):
