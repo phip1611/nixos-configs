@@ -30,7 +30,7 @@ have all the goodness in your system.
 In this repository, I test two aspects (in CI):
 
 - the unit tests of [`libutil`](/common/libutil/README.md) report success
-- the NixOS configurations build successfully
+- the NixOS configurations evaluate successfully
 
 The [common module](./common/module/README.md) is transitively tested via the
 NixOS configurations that are build.
@@ -46,6 +46,10 @@ checks that the NixOS system configuration
 [evaluate](https://github.com/NixOS/nix/blob/3c200da242d8f0ccda447866028bb757e0b0bbd9/src/nix/flake.cc#L488)
 to a derivation. If a NixOS system configuration evaluates, it will also build.
 (Please correct me if I'm wrong!).
+
+You can run `./build-all-configs.sh` to build all NixOS configs locally.
+However, this should never be needed for testing, as evaluation should be good
+enough.
 
 ### Build (Run) Specific Tests
 
