@@ -11,6 +11,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    nixpkgs.overlays = [ (import ../libutil/overlay.nix) ];
+    nixpkgs.overlays = [ (import ./overlay.nix) ];
   };
 }

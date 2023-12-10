@@ -1,5 +1,5 @@
 {
-  description = "System Configuration";
+  description = "phip1611's common libraries, modules, and configurations for Nix and NixOS";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
@@ -23,9 +23,10 @@
     , ...
     }@inputs:
     let
-      libutilSrc = common/libutil;
-      libutilTestsSrc = common/libutil/_tests;
-      phip1611-commonModuleSrc = common/module;
+      libutilSrc = ./common/libutil;
+      libutilTestsSrc = ./common/libutil/_test;
+      phip1611-commonSrc = ./common;
+      phip1611-commonModuleSrc = ./common/module;
       phip1611-commonModule = import phip1611-commonModuleSrc;
 
       # Common modules that are added to each NixOS system. Here, I primarily add
@@ -34,8 +35,9 @@
         home-manager.nixosModules.home-manager
         phip1611-commonModule
       ];
-      # Helper function to build a NixOS system from a configuration and the
-      # necessary flake inputs.
+
+      # Helper function to build a NixOS system with my common modules and
+      # relevant special args.
       buildNixosSystem =
         { hostName # string
           # One of the definitions of `pkgs.lib.systems.flakeExposed`:
@@ -75,33 +77,42 @@
     flake-parts.lib.mkFlake { inherit inputs; }
       {
         flake = {
+          # Here I simply re-export the library files without initializing
+          # it with the nixpkgs input, i.e., this is no "per system" attribute.
+          lib = rec {
+            # You need to pass pkgs to this export.
+            default = libutil;
+            libutil = libutilSrc;
+          };
+
+          nixosConfigurations = {
+            # My personal PC at home where I've also have my Windows installed
+            # (on a dedicated disk).
+            homepc = buildNixosSystem {
+              hostName = "phips-homepc";
+              system = "x86_64-linux";
+              nixosModules = [
+                ./nixos-configs/homepc/configuration.nix
+              ];
+            };
+
+            # My main laptop.
+            linkin-park = buildNixosSystem {
+              hostName = "linkin-park";
+              system = "x86_64-linux";
+              nixosModules = [
+                ./nixos-configs/linkin-park/configuration.nix
+              ];
+            };
+          };
+
           nixosModules = {
             default = phip1611-commonModule;
             phip1611-common = phip1611-commonModule;
           };
 
-          nixosConfigurations =
-            {
-              # My personal PC at home where I've also have my Windows installed
-              # (on a dedicated disk).
-              homepc = buildNixosSystem {
-                hostName = "phips-homepc";
-                system = "x86_64-linux";
-                nixosModules = [
-                  ./nixos-configs/homepc/configuration.nix
-                ];
-              };
-
-              # My main laptop.
-              linkin-park = buildNixosSystem {
-                hostName = "linkin-park";
-                system = "x86_64-linux";
-                nixosModules = [
-                  ./nixos-configs/linkin-park/configuration.nix
-                ];
-              };
-            };
         };
+
         # Systems definition for dev shells and exported packages,
         # independent of the NixOS configurations.
         systems = [
@@ -109,13 +120,18 @@
         ];
 
         perSystem = { config, pkgs, ... }:
-
           let
             libutil = import libutilSrc { inherit pkgs; };
           in
           {
             # $ nix build .\#checks.x86_64-linux.<attribute-name>
-            checks = {
+            checks = rec {
+              default = pkgs.symlinkJoin {
+                name = "all-checks";
+                paths = [
+                  runLibutilTests
+                ];
+              };
               runLibutilTests = import libutilTestsSrc { inherit pkgs; };
             };
 
@@ -130,25 +146,18 @@
 
             formatter = pkgs.nixpkgs-fmt;
 
-            # $ nix build .\#checks.x86_64-linux.<attribute-name>
+            # Everything under packages can also be run. So I don't quite get
+            # the difference. So, I do not provide the `apps` key for now.
+            #
+            # $ nix build .\#packages.x86_64-linux.<attribute-name>
+            # $ nix run .\#<attribute-name>
             packages = {
-              # Lists the NixOS options of my NixOS common module.
-              listNixosOptions =
-                let
-                  minimalNixOSModule = pkgs.writeText "minimal-nixos-module" ''
-                    {
-                      imports = [
-                        (import ${home-manager}/nixos)
-                        (import ${phip1611-commonModuleSrc})
-                      ];
-                    }
-                  '';
-                in
-                pkgs.writeShellScript "list-phip1611-common-module-nixos-options" ''
-                  export PATH="${pkgs.lib.makeBinPath [pkgs.nixos-option]}:$PATH"
-                  NIXOS_CONFIG=${minimalNixOSModule} nixos-option phip1611 -r
-                '';
-            };
+              # TODO not sure why I can't put this under apps.
+              listNixosOptions = import ./test/pkgs/list-nixos-options.nix {
+                inherit (pkgs) lib nixos-option writeShellScriptBin writeText;
+                inherit home-manager phip1611-commonSrc;
+              };
+            } // libutil.customPkgs;
           };
       };
 }

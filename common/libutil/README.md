@@ -1,12 +1,11 @@
 # libutil
 
 Collection of utility functions for `nix`, `nixpkgs`, and `NixOS` that I
-regularly, need, or find beneficial for other reasons. Some of these functions
-are independent of the scope of a NixOS and can be used separately.
+regularly, need, or find beneficial for other reasons.
 
-## Prototyping
+## Prototyping in a REPL
 
-For quick prototyping, you can just do `$ nix repl --file repl.nix`.
+For quick prototyping, you can just open `$ nix repl --file repl.nix`.
 
 ## Documentation
 
@@ -20,6 +19,7 @@ This optional module adds a few utils as overlay to `pkgs`, such as
 
 ## Overlay and NixOS Module
 
-The overlay provided in `overlay.nix` is strictly additive and all functionality
-is behind the `phip1611-util` attribute. Additionally, you can add the overlay
-easily to your NixOS configuration by importing the `overlay-module.nix` file.
+The overlay provided in `overlay.nix` is strictly additive and does not replace
+anything. All functionality is added as `pkgs.phip1611-util` attribute.
+Additionally, you can add the overlay easily to your NixOS configuration by
+importing the `overlay-module.nix` file.
