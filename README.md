@@ -31,7 +31,10 @@ derivation that builds successfully.
 ### Test Everything
 
 Just type `$ nix flake check`. This runs unit tests (`checks` attribute) and
-builds the NixOS system configurations.
+checks that the NixOS system configuration
+[evaluate](https://github.com/NixOS/nix/blob/3c200da242d8f0ccda447866028bb757e0b0bbd9/src/nix/flake.cc#L488)
+to a derivation. If a NixOS system configuration evaluates, it will also build.
+(Please correct me if I'm wrong!).
 
 ### Build (Run) Specific Tests
 
