@@ -110,7 +110,6 @@
             default = phip1611-commonModule;
             phip1611-common = phip1611-commonModule;
           };
-
         };
 
         # Systems definition for dev shells and exported packages,
@@ -141,6 +140,13 @@
                   nixos-rebuild
                   nixpkgs-fmt
                 ] ++ builtins.attrValues libutil.customPkgs;
+
+                shellHook = ''
+                  # I still like the convenience of nix paths for quick
+                  # prototyping. This is also what my common NixOS module
+                  # sets globally.
+                  export NIX_PATH="nixpkgs=${nixpkgs}:nixpkgs-unstable=${nixpkgs-unstable}:$NIX_PATH"
+                '';
               };
             };
 
