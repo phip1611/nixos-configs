@@ -20,12 +20,13 @@ let
     set -euo pipefail
 
     set +e
-    if [ ${bashCond} ]; then
+    if [[ ${bashCond} ]]; then
       mkdir $out
       exit 0
     fi
+    set -e
 
-    echo -e "$(ansi bold)$(ansi red)Condition '${bashCond}' not met!$(ansi reset)"
+    echo -e "$(ansi bold)$(ansi red)Condition '${bashCond}' for test '${testName}' not met!$(ansi reset)"
     exit 1
   '';
 
@@ -39,7 +40,7 @@ let
       drv = flattened;
       artifactPath = "bin/hello";
     };
-    testFlattened = bashCondToDrv "testFlattened" "-L ${flattened}";
+    testFlattened = bashCondToDrv "testFlattened" "-L ${flattened} || -f ${flattened}";
     testUnflattened = bashCondToDrv "testUnflattened" "-d ${unflattened}";
   };
   # Throughout test suite that combines a lot of my utility functions.
