@@ -1,5 +1,6 @@
 # Lists the NixOS options of my NixOS common module.
 { home-manager
+, nixpkgs
 , phip1611-commonSrc
 , lib
 , nixos-option
@@ -19,5 +20,7 @@ let
 in
 writeShellScriptBin "list-phip1611-common-module-nixos-options" ''
   export PATH="${lib.makeBinPath [nixos-option]}:$PATH"
-  NIXOS_CONFIG=${minimalNixOSModule} nixos-option phip1611 -r
+  export NIX_PATH="nixpkgs=${nixpkgs}"
+  export NIXOS_CONFIG=${minimalNixOSModule}
+  nixos-option phip1611 -r
 ''

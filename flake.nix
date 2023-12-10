@@ -155,7 +155,7 @@
               # TODO not sure why I can't put this under apps.
               listNixosOptions = import ./test/pkgs/list-nixos-options.nix {
                 inherit (pkgs) lib nixos-option writeShellScriptBin writeText;
-                inherit home-manager phip1611-commonSrc;
+                inherit home-manager nixpkgs phip1611-commonSrc;
               };
             } // libutil.customPkgs;
           };
