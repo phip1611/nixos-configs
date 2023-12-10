@@ -76,7 +76,7 @@ in
     ]);
 
     # Additionally to adding traceroute to the path, this enables a few cases
-    # where route priviledges are requrired.
+    # where route privileges are required.
     programs.traceroute.enable = true;
     programs.yazi.enable = true;
   };

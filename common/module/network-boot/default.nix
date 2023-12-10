@@ -99,7 +99,7 @@ in
       in
       builtins.concatStringsSep "\n" entries;
 
-    # Network setup per interface: assign IP and deactivete DHCP
+    # Network setup per interface: assign IP and deactivate DHCP
     networking.interfaces =
       let
         # Function -> attribute set

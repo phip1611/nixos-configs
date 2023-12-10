@@ -31,7 +31,7 @@ in
       # vscode
       xournalpp
     ]) ++
-    # pkgs whose updates do not immediatelly land in stable.
+    # pkgs whose updates do not immediately land in stable.
     (with pkgsUnstable; [
       alacritty
       jetbrains.clion

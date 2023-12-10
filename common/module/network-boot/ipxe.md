@@ -5,4 +5,4 @@ If not present, it will create the files:
 - ipxe.efi
 - ipxe.kpxe
 - ipxe.md
-- ipxe-defaukt.cfg
+- ipxe-default.cfg

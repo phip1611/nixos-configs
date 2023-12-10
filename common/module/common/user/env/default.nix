@@ -1,5 +1,5 @@
 # This module enables typical environment settings (like default shell, prompt)
-# and home-manager for the given user. This is intented as a big "all-in-one"
+# and home-manager for the given user. This is intended as a big "all-in-one"
 # module with no further sub-enable-options.
 
 { pkgs, lib, config, options, ... }:
@@ -50,7 +50,7 @@ in
       # (This is a bug, I guess?). Hence, I add these definitions in
       # home-manager, so they are actually sourced.
       #
-      # I never came accross a case where these variables are needed, however,
+      # I never came across a case where these variables are needed, however,
       # better be safe so that I can always use micro in my CLI utilities.
       home.sessionVariables = {
         EDITOR = "${pkgs.micro}/bin/micro";
