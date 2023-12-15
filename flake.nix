@@ -112,6 +112,11 @@
             default = phip1611-common;
             phip1611-common = commonSrc.module;
           };
+
+          overlays = {
+            libutil = import "${commonSrc.libutil}/overlay.nix";
+            pkgs = import "${commonSrc.pkgs}/overlay.nix";
+          };
         };
 
         # Systems definition for dev shells and exported packages,
