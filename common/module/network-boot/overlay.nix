@@ -1,9 +1,9 @@
 # This overlay adds additional utility functions to `pkgs`.
 
-_self: super:
+final: prev:
 
 let
-  pkgs = super.pkgs;
+  pkgs = prev;
   ipxeNetworkBoot = pkgs.callPackage ./ipxe.nix { };
 in
 {
