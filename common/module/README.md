@@ -2,10 +2,10 @@
 
 This directory contains my common NixOS module (`./default.nix`). It consists of
 further submodules that provide various configuration options that can be
-activated or deactivated on a fine-grained level. It is intended to use include
-the top-level module.
+activated or deactivated on a fine-grained level. It is intended to include
+the top-level module only. For fine-tuning, you can use the provided options.
 
-Hence, each `default.nix` in this repository is a NixOS module.
+In this directory, each `default.nix` usually is a NixOS module.
 
 There are the following major submodules available:
 - [common](common/README.md): typical environment setup of a system and user-specific things,
@@ -24,7 +24,11 @@ $ nix run .\#listNixosOptions
 
 The module needs the flake inputs `nixpkgs` and `nixpkgs-unstable` as
 `specialArgs` (see `nixpkgs.lib.nixosSystem `) to set the `NIX_PATH` and the
-`nix registry` properly.
+`nix registry` properly. Furthermore,
+[Home manager](https://github.com/nix-community/home-manager) must be globally
+available for the `common.user.env` module. This module doesn't import
+home-manager itself as this doesn't work conditionally with Nix via a NixOS
+configuration option.
 
 ## Additional Notes
 

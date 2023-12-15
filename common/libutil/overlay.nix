@@ -1,11 +1,11 @@
-# This overlay adds libutil to nixpkgs.
-# The overlay is strictly additive and all functionality is behind the
-# `phip1611-util` attribute.
+# This overlay adds my libutil to nixpkgs under the "phip1611" key.
 
 final: prev:
 
 {
-  phip1611-util = import ./default.nix {
-    pkgs = final;
+  phip1611 = (prev.phip1611 or { }) // {
+    libutil = import ./default.nix {
+      pkgs = final;
+    };
   };
 }

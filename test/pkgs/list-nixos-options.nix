@@ -1,7 +1,7 @@
 # Lists the NixOS options of my NixOS common module.
 { home-manager
 , nixpkgs
-, phip1611-commonSrc
+, commonSrc
 , lib
 , nixos-option
 , writeShellScriptBin
@@ -13,7 +13,7 @@ let
     {
       imports = [
         (import ${home-manager}/nixos)
-        (import "${phip1611-commonSrc}/module/default.nix")
+        (import "${commonSrc.module}")
       ];
     }
   '';

@@ -23,17 +23,20 @@
     , ...
     }@inputs:
     let
-      libutilSrc = ./common/libutil;
-      libutilTestsSrc = ./common/libutil/_test;
-      phip1611-commonSrc = ./common;
-      phip1611-commonModuleSrc = ./common/module;
-      phip1611-commonModule = import phip1611-commonModuleSrc;
+      commonSrc = rec {
+        base = ./common;
+        libutil = "${base}/libutil";
+        libutilTests = "${libutil}/_test";
+        module = "${base}/module";
+        pkgs = "${base}/pkgs";
+        pkgsTests = "${pkgs}/_test";
+      };
 
       # Common modules that are added to each NixOS system. Here, I primarily add
       # modules that come from a flake.
       commonNixosModules = [
         home-manager.nixosModules.home-manager
-        phip1611-commonModule
+        commonSrc.module
       ];
 
       # Helper function to build a NixOS system with my common modules and
@@ -80,9 +83,8 @@
           # Here I simply re-export the library files without initializing
           # it with the nixpkgs input, i.e., this is no "per system" attribute.
           lib = rec {
-            # You need to pass pkgs to this export.
             default = libutil;
-            libutil = libutilSrc;
+            libutil = commonSrc.libutil;
           };
 
           nixosConfigurations = {
@@ -106,9 +108,14 @@
             };
           };
 
-          nixosModules = {
-            default = phip1611-commonModule;
-            phip1611-common = phip1611-commonModule;
+          nixosModules = rec {
+            default = phip1611-common;
+            phip1611-common = commonSrc.module;
+          };
+
+          overlays = {
+            libutil = import "${commonSrc.libutil}/overlay.nix";
+            pkgs = import "${commonSrc.pkgs}/overlay.nix";
           };
         };
 
@@ -120,18 +127,28 @@
 
         perSystem = { config, pkgs, ... }:
           let
-            libutil = import libutilSrc { inherit pkgs; };
+            common = {
+              libutil = import commonSrc.libutil { inherit pkgs; };
+              libutilTests = import commonSrc.libutilTests { inherit pkgs; };
+              pkgs = import commonSrc.pkgs { inherit pkgs; };
+              pkgsTests = import commonSrc.pkgsTests { inherit pkgs; };
+            };
           in
           {
-            # $ nix build .\#checks.x86_64-linux.<attribute-name>
+            # $ nix build .\#checks.x86_64-linux.<attribute-name> or
+            # `nix flake check` to run them all.
             checks = rec {
-              default = pkgs.symlinkJoin {
-                name = "all-checks";
+              # I have this here additionally, as `nix flake check` starts
+              # with the NixOS modules and sometimes I want to have quicker
+              # feedback.
+              allUnitTests = pkgs.symlinkJoin {
+                name = "all-unit-tests";
                 paths = [
-                  runLibutilTests
+                  libutilTests
+                  pkgsTests
                 ];
               };
-              runLibutilTests = import libutilTestsSrc { inherit pkgs; };
+              inherit (common) libutilTests pkgsTests;
             };
 
             devShells = {
@@ -139,7 +156,7 @@
                 packages = with pkgs; [
                   nixos-rebuild
                   nixpkgs-fmt
-                ] ++ builtins.attrValues libutil.customPkgs;
+                ] ++ builtins.attrValues common.pkgs;
 
                 shellHook = ''
                   # I still like the convenience of nix paths for quick
@@ -161,9 +178,9 @@
               # TODO not sure why I can't put this under apps.
               listNixosOptions = import ./test/pkgs/list-nixos-options.nix {
                 inherit (pkgs) lib nixos-option writeShellScriptBin writeText;
-                inherit home-manager nixpkgs phip1611-commonSrc;
+                inherit home-manager nixpkgs commonSrc;
               };
-            } // libutil.customPkgs;
+            } // common.pkgs;
           };
       };
 }

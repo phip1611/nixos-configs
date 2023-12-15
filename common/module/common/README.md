@@ -14,7 +14,4 @@ limited environments small.
 
 ## Prerequisites
 [Home manager](https://github.com/nix-community/home-manager) must be globally
-available for the `common.user.env` module. This module doesn't import
-home-manager itself. Instead, the configurations provided by this module are
-just an extension. An example how to set that up can be found in
-[README](../README.md).
+available for the `common.user.env` module.

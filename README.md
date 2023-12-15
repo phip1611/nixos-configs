@@ -79,6 +79,7 @@ flake conventions](https://nixos.wiki/wiki/Flakes)):
   - additional util packages for this repository
 - `nixosConfigurations`: the configurations for my NixOS systems
 - `nixosModules`: my common NixOS module
+- `overlays`: overlays for my common Nix pkgs and utility libraries
 - `packages`:
   - all custom pkgs from `libutil`
   - additional util packages for this repository
