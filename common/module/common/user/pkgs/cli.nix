@@ -73,7 +73,11 @@ in
     (with pkgsUnstable; [
       # typos has frequent releases and they are not yet merged to the stable channel
       typos
-    ]);
+    ])
+    # My common packages consumed from the overlay.
+    ++ (builtins.attrValues pkgs.phip1611.pkgs)
+    ;
+
 
     # Additionally to adding traceroute to the path, this enables a few cases
     # where route privileges are required.
