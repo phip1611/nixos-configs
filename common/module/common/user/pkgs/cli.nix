@@ -76,6 +76,49 @@ in
     ])
     # My common packages consumed from the overlay.
     ++ (builtins.attrValues pkgs.phip1611.pkgs)
+    # Inspired by:
+    # https://github.com/blitz/nix-configs/blob/659f097beca1a63bba384442606bae9205edfc43/modules/gnome3.nix#L101
+    ++ [
+      (pkgs.buildFHSUserEnv {
+        name = "legacy-env";
+        targetPkgs = pkgs: with pkgs; [
+          gcc
+          binutils
+          gnumake
+          coreutils
+          patch
+          zlib
+          zlib.dev
+          curl
+          git
+          m4
+          bison
+          flex
+          acpica-tools
+          ncurses.dev
+          elfutils.dev
+          openssl
+          openssl.dev
+          cpio
+          pahole
+          gawk
+          perl
+          bc
+          nettools
+          rsync
+          gmp
+          gmp.dev
+          libmpc
+          mpfr
+          mpfr.dev
+          zstd
+          python3Minimal
+          file
+          unzip
+          global
+        ];
+      })
+    ]
     ;
 
 
