@@ -63,6 +63,7 @@
               };
             };
             additionalNixosModuleArguments = {
+              inherit hostName;
               inherit pkgsUnstable;
             };
           in
@@ -71,7 +72,7 @@
             # specialArgs:
             #   Additional arguments that are passed to a NixOS module
             #   function.
-            specialArgs = inputs // additionalNixosModuleArguments // { inherit hostName; };
+            specialArgs = inputs // additionalNixosModuleArguments;
             modules = commonNixosModules ++ nixosModules;
           }
         );
