@@ -143,18 +143,49 @@
                   pkgsTests
                 ];
               };
-              deadnix = pkgs.runCommand "deadnix-check" {
-                src = ./.;
-                nativeBuildInputs = [pkgs.deadnix];
-              } ''
+              deadnix = pkgs.runCommand "deadnix-check"
+                {
+                  src = ./.;
+                  nativeBuildInputs = [ pkgs.deadnix ];
+                } ''
                 set -euo pipefail
 
-                echo deadnix $src
-                deadnix -f $src
+                deadnix -f -L $src
 
                 touch $out
               '';
               inherit (common) libutilTests pkgsTests;
+              /* runVm = pkgs.testers.nixosTest {
+                name = "my-test";
+                nodes = {
+                  machine1 = { lib, pkgs, nodes, ... }: {
+                    imports = [
+                      home-manager.nixosModules.home-manager
+                      commonSrc.module
+                    ];
+                    config = {
+                      # nixpkgs.config.allowUnfree = true;
+
+                      users.users."tester".isNormalUser = true;
+                      phip1611 = {
+                        username = "tester";
+                        common = {
+                          enable = true;
+                          user.pkgs.cli.enable = false;
+                          user.pkgs.gui.enable = false;
+                        };
+                      };
+                    };
+
+                  };
+                  # machine2 = ...;
+                };
+                testScript = ''
+                  start_all()
+                  machine1.wait_for_unit("foo.service")
+                  machine1.succeed("hello | foo-send")
+                '';
+              }; */
             };
 
             devShells = {
