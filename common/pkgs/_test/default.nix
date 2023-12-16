@@ -11,7 +11,7 @@ let
   };
 in
 pkgs.symlinkJoin {
-  name = "libutil-tests";
+  name = "pkgs-tests";
 
   # Actual tests:
   paths = [
