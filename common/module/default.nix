@@ -22,4 +22,12 @@
       default = "phip1611";
     };
   };
+
+  config = {
+    phip1611 = {
+      # By default, the overlays are activated.
+      libutil-overlay.enable = true;
+      pkgs-overlay.enable = true;
+    };
+  };
 }

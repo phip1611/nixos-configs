@@ -30,6 +30,11 @@ available for the `common.user.env` module. This module doesn't import
 home-manager itself as this doesn't work conditionally with Nix via a NixOS
 configuration option.
 
+## Overlays
+
+The module automatically adds the relevant overlays from this repository to
+`config.nixpkgs.overlays`.
+
 ## Additional Notes
 
 Some NixOS options require a restart of the system to have a fully applied NixOS

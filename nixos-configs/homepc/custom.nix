@@ -11,7 +11,6 @@
       user.env.git.username = "Philipp Schuster";
       user.env.git.email = "phip1611@gmail.com";
     };
-    libutil-overlay.enable = true;
   };
 
   # TPLink T3U WiFi USB Dongle
