@@ -1,8 +1,14 @@
 # Shell-related utilities.
 
-{ pkgs, pkgsUnstable, lib, config, options, ... }:
+{ pkgs, lib, config, options, nixpkgs-unstable, ... }:
 
 let
+  pkgsUnstable = import nixpkgs-unstable {
+    system = pkgs.system;
+    config = {
+      allowUnfree = true;
+    };
+  };
   cfg = config.phip1611.common.user.pkgs.cli;
   username = config.phip1611.username;
 in
@@ -120,7 +126,6 @@ in
       })
     ]
     ;
-
 
     # Additionally to adding traceroute to the path, this enables a few cases
     # where route privileges are required.

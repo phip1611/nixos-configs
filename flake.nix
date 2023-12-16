@@ -52,30 +52,15 @@
         , nixosModules ? [ ]
         }:
         (
-          let
-            # create a `pkgsUnstable` attribute that is similar usable as
-            # `pkgs` in a NixOS module.
-            pkgsUnstable = import nixpkgs-unstable {
-              inherit system;
-              config = {
-                allowUnfree = true;
-              };
-            };
-            additionalNixosModuleArguments = {
-              inherit pkgsUnstable;
-            };
-          in
           nixpkgs.lib.nixosSystem {
             inherit system;
-            # specialArgs:
-            #   Additional arguments that are passed to a NixOS module
-            #   function.
-            specialArgs = inputs // additionalNixosModuleArguments;
+            # specialArgs are additional arguments passed to a NixOS module
+            # function. This should only include the flake inputs itself.
+            # Apart from that, it's an anti-pattern (according to Jacek (@tfc)).
+            specialArgs = inputs;
             modules = commonFlakeNixosModules ++ nixosModules ++
-              # Configuration modules that bind outer properties to the nixpkgs
-              # configuration. This way, I don't need to pass them as
-              # `specialArgs` which is an antipattern (according to Jacek
-              # (@tfc)).
+              # Configuration modules that bind outer properties to the NixOS
+              # configuration. This way, we can keep specialArgs small.
               [
                 (
                   {
@@ -158,6 +143,17 @@
                   pkgsTests
                 ];
               };
+              deadnix = pkgs.runCommand "deadnix-check" {
+                src = ./.;
+                nativeBuildInputs = [pkgs.deadnix];
+              } ''
+                set -euo pipefail
+
+                echo deadnix $src
+                deadnix -f $src
+
+                touch $out
+              '';
               inherit (common) libutilTests pkgsTests;
             };
 
