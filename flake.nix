@@ -32,9 +32,8 @@
         pkgsTests = "${pkgs}/_test";
       };
 
-      # Common modules that are added to each NixOS system. Here, I primarily add
-      # modules that come from a flake.
-      commonNixosModules = [
+      # Common modules originating from a flake.
+      commonFlakeNixosModules = [
         home-manager.nixosModules.home-manager
         commonSrc.module
       ];
@@ -63,7 +62,6 @@
               };
             };
             additionalNixosModuleArguments = {
-              inherit hostName;
               inherit pkgsUnstable;
             };
           in
@@ -73,7 +71,18 @@
             #   Additional arguments that are passed to a NixOS module
             #   function.
             specialArgs = inputs // additionalNixosModuleArguments;
-            modules = commonNixosModules ++ nixosModules;
+            modules = commonFlakeNixosModules ++ nixosModules ++
+              # Configuration modules that bind outer properties to the nixpkgs
+              # configuration. This way, I don't need to pass them as
+              # `specialArgs` which is an antipattern (according to Jacek
+              # (@tfc)).
+              [
+                (
+                  {
+                    networking.hostName = hostName;
+                  }
+                )
+              ];
           }
         );
 

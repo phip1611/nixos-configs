@@ -1,8 +1,6 @@
 { config, pkgs, lib, hostName, ... }:
 
 {
-  networking.hostName = hostName;
-
   # phip1611 dotfiles common NixOS module configuration
   phip1611 = {
     username = "phip1611";
