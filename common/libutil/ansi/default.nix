@@ -23,8 +23,8 @@ let
     white = 7;
   };
   color = {
-    fg = builtins.mapAttrs (name: value: "${esc}[3${toString value}m") colorCode;
-    bg = builtins.mapAttrs (name: value: "${esc}[4${toString value}m") colorCode;
+    fg = builtins.mapAttrs (_name: value: "${esc}[3${toString value}m") colorCode;
+    bg = builtins.mapAttrs (_name: value: "${esc}[4${toString value}m") colorCode;
   };
 
   /* Stylizes a string with ANSI escape sequences.

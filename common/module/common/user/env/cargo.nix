@@ -2,7 +2,7 @@
 # This includes that `cargo install|uninstall <package>` works
 # within the typical `~/.cargo/bin` directory.
 
-{ pkgs, lib, config, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   username = config.phip1611.username;

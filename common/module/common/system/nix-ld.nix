@@ -8,7 +8,7 @@
 # of Jetbrains IDE. Without it, CLion tells warnings that say
 # "could not learn about target-specific information from rustc".
 
-{ lib, config, options, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.phip1611.common.system.nix-ld;

@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   username = config.phip1611.username;

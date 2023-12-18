@@ -1,4 +1,4 @@
-{ lib, config, options, nixpkgs, nixpkgs-unstable, ... }:
+{ config, lib, pkgs, nixpkgs, nixpkgs-unstable, ... }:
 
 let
   cfg = config.phip1611.common.system.nix-path-from-flake;

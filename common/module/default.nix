@@ -2,7 +2,7 @@
 # include this. All depending functionality can be activated or deactivated,
 # depending on the defaults of the `*.enable` attributes.
 
-{ lib, options, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   imports = [

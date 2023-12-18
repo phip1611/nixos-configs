@@ -1,6 +1,6 @@
 # Shell-related utilities.
 
-{ pkgs, lib, config, options, nixpkgs-unstable, ... }:
+{ config, lib, pkgs, nixpkgs-unstable, ... }:
 
 let
   pkgsUnstable = import nixpkgs-unstable {

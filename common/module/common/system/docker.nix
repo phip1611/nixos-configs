@@ -1,6 +1,6 @@
 # Sets up docker.
 
-{ lib, config, options, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.phip1611.common.system.docker;

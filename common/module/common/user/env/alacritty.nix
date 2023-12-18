@@ -1,6 +1,6 @@
 # Sets the configuration for allacritty.
 
-{ pkgs, lib, config, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   username = config.phip1611.username;

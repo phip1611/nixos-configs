@@ -1,4 +1,4 @@
-{ config, pkgs, lib, hostName, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   # phip1611 dotfiles common NixOS module configuration

@@ -1,6 +1,6 @@
 # This overlay adds additional utility functions to `pkgs`.
 
-final: prev:
+_final: prev:
 
 let
   pkgs = prev;

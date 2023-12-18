@@ -1,4 +1,4 @@
-{ pkgs, lib, config, options, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.phip1611.common.user.pkgs.media;
