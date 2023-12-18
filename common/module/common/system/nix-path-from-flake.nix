@@ -1,3 +1,7 @@
+# Ensures that the used nixpkgs and nixpkgs-unstable version are available
+# from the NIX_PATH as well as the Nix flake registry.
+
+# nixpkgs and nixpkgs-unstable refers to flake inputs.
 { config, lib, pkgs, nixpkgs, nixpkgs-unstable, ... }:
 
 let
@@ -10,8 +14,9 @@ in
 
   config = lib.mkIf cfg.enable {
     nix = {
-      # Set the nix channel to the one that comes from my NixOS configurations's
-      # flake. I still sometimes use Nix channels for quick prototyping.
+      # By default, no on a flake-based Nix system, no Nix channels are
+      # configured. As having a NIX_PATH simplifies easy prototyping in a Nix
+      # repl or a Nix shell, I like to use them.
       #
       # This is also relevant so that `$ nix-shell -p foo` works.
       nixPath = [
@@ -19,8 +24,8 @@ in
         "nixpkgs-unstable=${nixpkgs-unstable}"
       ];
 
-      # In a nix repl, one can do ":lf nixpkgs" or ":lf nixpkgs-unstable"
-      # as replacement for the Nix channel approach with "import <nixpkgs> {}"
+      # In a Nix repl, one can do ":lf nixpkgs" or ":lf nixpkgs-unstable" with
+      # the properly pinned versions. This is an alternative to the NIX_PATH.
       registry.nixpkgs.flake = nixpkgs;
       registry.nixpkgs-unstable.flake = nixpkgs-unstable;
     };
