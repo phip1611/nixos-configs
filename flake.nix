@@ -32,9 +32,8 @@
         pkgsTests = "${pkgs}/_test";
       };
 
-      # Common modules that are added to each NixOS system. Here, I primarily add
-      # modules that come from a flake.
-      commonNixosModules = [
+      # Common modules originating from a flake.
+      commonFlakeNixosModules = [
         home-manager.nixosModules.home-manager
         commonSrc.module
       ];
@@ -53,27 +52,22 @@
         , nixosModules ? [ ]
         }:
         (
-          let
-            # create a `pkgsUnstable` attribute that is similar usable as
-            # `pkgs` in a NixOS module.
-            pkgsUnstable = import nixpkgs-unstable {
-              inherit system;
-              config = {
-                allowUnfree = true;
-              };
-            };
-            additionalNixosModuleArguments = {
-              inherit hostName;
-              inherit pkgsUnstable;
-            };
-          in
           nixpkgs.lib.nixosSystem {
             inherit system;
-            # specialArgs:
-            #   Additional arguments that are passed to a NixOS module
-            #   function.
-            specialArgs = inputs // additionalNixosModuleArguments;
-            modules = commonNixosModules ++ nixosModules;
+            # specialArgs are additional arguments passed to a NixOS module
+            # function. This should only include the flake inputs itself.
+            # Apart from that, it's an anti-pattern (according to Jacek (@tfc)).
+            specialArgs = inputs;
+            modules = commonFlakeNixosModules ++ nixosModules ++
+              # Configuration modules that bind outer properties to the NixOS
+              # configuration. This way, we can keep specialArgs small.
+              [
+                (
+                  {
+                    networking.hostName = hostName;
+                  }
+                )
+              ];
           }
         );
 
@@ -149,7 +143,49 @@
                   pkgsTests
                 ];
               };
+              deadnix = pkgs.runCommand "deadnix-check"
+                {
+                  src = ./.;
+                  nativeBuildInputs = [ pkgs.deadnix ];
+                } ''
+                set -euo pipefail
+
+                deadnix -f -L $src
+
+                touch $out
+              '';
               inherit (common) libutilTests pkgsTests;
+              /* runVm = pkgs.testers.nixosTest {
+                name = "my-test";
+                nodes = {
+                  machine1 = { lib, pkgs, nodes, ... }: {
+                    imports = [
+                      home-manager.nixosModules.home-manager
+                      commonSrc.module
+                    ];
+                    config = {
+                      # nixpkgs.config.allowUnfree = true;
+
+                      users.users."tester".isNormalUser = true;
+                      phip1611 = {
+                        username = "tester";
+                        common = {
+                          enable = true;
+                          user.pkgs.cli.enable = false;
+                          user.pkgs.gui.enable = false;
+                        };
+                      };
+                    };
+
+                  };
+                  # machine2 = ...;
+                };
+                testScript = ''
+                  start_all()
+                  machine1.wait_for_unit("foo.service")
+                  machine1.succeed("hello | foo-send")
+                '';
+              }; */
             };
 
             devShells = {

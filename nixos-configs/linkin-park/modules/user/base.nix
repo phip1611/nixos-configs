@@ -1,4 +1,4 @@
-{ config, pkgs, user, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   users.users.phip1611 = {

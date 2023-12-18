@@ -9,7 +9,7 @@
 # as this doesn't work with Nix:
 # https://nixos.wiki/wiki/FAQ/I_installed_a_library_but_my_compiler_is_not_finding_it._Why%3F
 
-{ pkgs, lib, config, options, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.phip1611.common.user.pkgs;

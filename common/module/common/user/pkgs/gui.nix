@@ -1,8 +1,14 @@
 # GUI/Desktop Apps
 
-{ pkgs, pkgsUnstable, lib, config, options, ... }:
+{ config, lib, pkgs, nixpkgs-unstable, ... }:
 
 let
+  pkgsUnstable = import nixpkgs-unstable {
+    system = pkgs.system;
+    config = {
+      allowUnfree = true;
+    };
+  };
   cfg = config.phip1611.common.user.pkgs.gui;
   username = config.phip1611.username;
 in

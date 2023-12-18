@@ -1,11 +1,6 @@
 # Entry point into the configuration.
 
-{ config
-, pkgs
-, pkgsUnstable
-, lib
-, ...
-}:
+{ config, lib, pkgs, ... }:
 
 let
   # This is the version that I used to initially install my system. As

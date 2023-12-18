@@ -1,5 +1,4 @@
 { pkgs ? import <nixpkgs> { }
-, callPackage ? pkgs.callPackage
 }:
 
 import ./build.nix {

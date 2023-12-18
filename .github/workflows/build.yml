@@ -25,6 +25,8 @@ jobs:
           # if git files have been changed.
           git diff --quiet
 
+  # A big gun that runs all checks.
+  # This gets better once https://github.com/NixOS/nix/issues/9629 is solved.
   checks:
     name: nix flake check
     runs-on: ubuntu-latest
@@ -35,8 +37,8 @@ jobs:
       # Performs some basic checks of the NixOS system configurations and runs
       # all checks.
       - run: nix flake check
-      # No perform dry-builds in CI. Dry-builds are not only sufficient but also
-      # do not need gigabytes of data to be downloaded. This is especially
+      # Now perform dry-builds in CI. Dry-builds are not only sufficient but
+      # also do not need gigabytes of data to be downloaded. This is especially
       # important to prevent "no space left" in GitHub CI.
       - name: "NixOS: dry-build #homepc"
         run: nix develop --command bash -c "nixos-rebuild dry-build --flake .#homepc"

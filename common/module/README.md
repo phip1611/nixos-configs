@@ -25,10 +25,9 @@ $ nix run .\#listNixosOptions
 The module needs the flake inputs `nixpkgs` and `nixpkgs-unstable` as
 `specialArgs` (see `nixpkgs.lib.nixosSystem `) to set the `NIX_PATH` and the
 `nix registry` properly. Furthermore,
-[Home manager](https://github.com/nix-community/home-manager) must be globally
-available for the `common.user.env` module. This module doesn't import
-home-manager itself as this doesn't work conditionally with Nix via a NixOS
-configuration option.
+[Home manager](https://github.com/nix-community/home-manager) must be globally available for the `common.user.env` module,
+if you enable that module. The common module doesn't import home-manager itself
+as this can't be done conditionally with Nix via a NixOS configuration option.
 
 ## Overlays
 

@@ -1,6 +1,6 @@
 # Python3 toolchain.
 
-{ pkgs, lib, config, options, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.phip1611.common.user.pkgs.python3;

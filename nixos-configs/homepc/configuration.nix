@@ -1,11 +1,6 @@
 # Almost identical to the initial configuration.nix when I installed NixOS on this machine with GNOME.
 
-{ config
-, pkgs
-, pkgsUnstable
-, lib
-, ...
-}:
+{ config, lib, pkgs, ... }:
 
 {
   imports =

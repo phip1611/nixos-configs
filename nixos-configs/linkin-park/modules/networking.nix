@@ -1,7 +1,5 @@
-{ config, pkgs, hostName, ... }:
+{ config, lib, pkgs, ... }:
 
 {
-  networking.hostName = hostName;
-
   networking.networkmanager.enable = true;
 }
