@@ -1,5 +1,6 @@
 # GUI/Desktop Apps
 
+# nixpkgs-unstable refers to a flake input.
 { config, lib, pkgs, nixpkgs-unstable, ... }:
 
 let

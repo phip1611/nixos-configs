@@ -1,5 +1,6 @@
 # Shell-related utilities.
 
+# nixpkgs-unstable refers to a flake input.
 { config, lib, pkgs, nixpkgs-unstable, ... }:
 
 let
