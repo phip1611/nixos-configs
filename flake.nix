@@ -83,6 +83,12 @@
           };
 
           nixosConfigurations = {
+            # My Netcup Root Server.
+            asking-alexandria = buildNixosSystem {
+              hostName = "asking-alexandria";
+              system = "x86_64-linux";
+            };
+
             # My personal PC at home where I've also have my Windows installed
             # (on a dedicated disk).
             homepc = buildNixosSystem {

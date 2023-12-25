@@ -7,6 +7,7 @@
 set -euo pipefail
 
 SYSTEMS=(
+	asking-alexandria
 	homepc
 	linkin-park
 )
