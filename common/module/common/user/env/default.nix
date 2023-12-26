@@ -1,6 +1,6 @@
-# This module enables typical environment settings (like default shell, prompt)
-# and home-manager for the given user. This is intended as a big "all-in-one"
-# module with no further sub-enable-options.
+# This module enables typical environment settings (like default shell, prompt,
+# dotfiles) and corresponding home-manager settings for the given user. This is
+# intended as a big "all-in-one" module with no further enable sub-options.
 
 { config, lib, pkgs, ... }:
 
@@ -22,10 +22,10 @@ in
 
   options = {
     phip1611.common.user.env = {
-      enable = lib.mkEnableOption "Enable all user-environmental options (shell, homemanager, dotfiles, ...)";
+      enable = lib.mkEnableOption "Enable all user-environmental options (shell, git, dotfiles, tmux, ...)";
       # Useful as those options are not needed in CLI-only environments. Most/
       # all of those settings will bring them into the path and occupy storage.
-      excludeGui = lib.mkEnableOption "Disable configurations for GUI-based utilities (alacritty, vs code, ...)";
+      excludeGui = lib.mkEnableOption "Disable configurations for GUI-based utilities (Alacritty, VS Code, ...)";
     };
   };
 
@@ -51,7 +51,8 @@ in
       # home-manager, so they are actually sourced.
       #
       # I never came across a case where these variables are needed, however,
-      # better be safe so that I can always use micro in my CLI utilities.
+      # better be safe so that I can always use my favorite terminal editor in
+      # my CLI utilities.
       home.sessionVariables = {
         EDITOR = "${pkgs.micro}/bin/micro";
         VISUAL = "${pkgs.micro}/bin/micro";

@@ -28,7 +28,7 @@ in
       serviceConfig = {
         Type = "simple";
         ExecStart = "${pkgs.nodejs}/bin/node ${pkgs.nodePackages.meshcommander}/bin/meshcommander --port ${toString cfg.port}";
-        ExecStop = "${pkgs.killall}/bin/killall meshcommander";
+        ExecStop = "${pkgs.coreutils}/bin/kill $MAINPID";
         Restart = "always";
       };
     };
