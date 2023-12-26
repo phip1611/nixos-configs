@@ -9,7 +9,9 @@ let
 in
 {
   options = {
-    phip1611.common.system.nix-path-from-flake.enable = lib.mkEnableOption "Enable to set NIX_PATH and Nix registry to the active nixpkgs flake";
+    phip1611.common.system.nix-path-from-flake = {
+      enable = lib.mkEnableOption "Enable to set NIX_PATH and Nix registry to the active nixpkgs flake";
+    };
   };
 
   config = lib.mkIf cfg.enable {

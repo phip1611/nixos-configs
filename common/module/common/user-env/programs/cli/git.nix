@@ -2,11 +2,11 @@
 
 let
   username = config.phip1611.username;
-  cfg = config.phip1611.common.user.env;
+  cfg = config.phip1611.common.user-env;
 in
 {
-  options = {
-    phip1611.common.user.env.git = {
+  options.phip1611.common.user-env = {
+    git = {
       email = lib.mkOption {
         type = lib.types.str;
         description = "Default user email for git commits";
@@ -19,7 +19,6 @@ in
       };
     };
   };
-
   config = lib.mkIf cfg.enable {
     home-manager.users."${username}" = {
       programs.git = {

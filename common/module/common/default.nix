@@ -1,4 +1,5 @@
-# Common Configurations for my NixOS systems.
+# Common configurations for my NixOS systems for system-wide and user-specific
+# settings.
 
 { config, lib, pkgs, ... }:
 
@@ -8,7 +9,7 @@ in
 {
   imports = [
     ./system
-    ./user
+    ./user-env
   ];
 
   options.phip1611.common = {
@@ -16,8 +17,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    phip1611.common.user.enable = true;
     phip1611.common.system.enable = true;
+    phip1611.common.user-env.enable = true;
   };
 
 }

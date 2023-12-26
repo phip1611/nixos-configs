@@ -6,8 +6,8 @@
     username = "phip1611";
     common = {
       enable = true;
-      user.env.git.username = "Philipp Schuster";
-      user.env.git.email = "phip1611@gmail.com";
+      user-env.git.username = "Philipp Schuster";
+      user-env.git.email = "phip1611@gmail.com";
     };
   };
 

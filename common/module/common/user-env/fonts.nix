@@ -3,18 +3,16 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.phip1611.common.user.pkgs.fonts;
+  cfg = config.phip1611.common.user-env;
 in
 {
-  options = {
-    phip1611.common.user.pkgs.fonts.enable = lib.mkEnableOption "Enable my typical fonts (source code pro, ,...)";
-  };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && cfg.withGui) {
     # https://nixos.wiki/wiki/Fonts
     fonts = {
       packages = with pkgs; [
-        # Used/Prefered by many applications, such as "yazi".
+        # Used/Prefered by many applications, such as "yazi". Comes with
+        # powerline symbols.
         nerdfonts
         open-sans
         roboto

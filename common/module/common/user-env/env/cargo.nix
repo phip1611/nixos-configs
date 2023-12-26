@@ -9,7 +9,7 @@
 
 let
   username = config.phip1611.username;
-  cfg = config.phip1611.common.user.env;
+  cfg = config.phip1611.common.user-env;
 
   # List of binaries to create a symlink to in `~/.cargo/bin`.
   # From my testing, adding "cargo" and "rustc" should be enough, but better
@@ -39,7 +39,7 @@ let
   '';
 in
 {
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && cfg.withDevCAndRust) {
 
     home-manager.users."${username}" =
       {

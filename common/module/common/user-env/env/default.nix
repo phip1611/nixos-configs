@@ -7,30 +7,21 @@
 let
   username = config.phip1611.username;
   stateVersion = config.system.stateVersion;
-  cfg = config.phip1611.common.user.env;
+  cfg = config.phip1611.common.user-env;
 in
 {
   imports = [
-    ./alacritty.nix
     ./cargo.nix
     ./direnv.nix
-    ./git.nix
-    ./tmux.nix
-    ./vscode.nix
-    ./zsh.nix
   ];
-
-  options = {
-    phip1611.common.user.env = {
-      enable = lib.mkEnableOption "Enable all user-environmental options (shell, git, dotfiles, tmux, ...)";
-      # Useful as those options are not needed in CLI-only environments. Most/
-      # all of those settings will bring them into the path and occupy storage.
-      excludeGui = lib.mkEnableOption "Disable configurations for GUI-based utilities (Alacritty, VS Code, ...)";
-    };
-  };
 
   # Set some aliases and environment variables, plus other misc stuff.
   config = lib.mkIf cfg.enable {
+    # ZSH as default shell for my user.
+    users.users."${username}" = {
+      shell = pkgs.zsh;
+    };
+
     # https://nix-community.github.io/home-manager/nixos-options.html
     home-manager.useGlobalPkgs = true;
     # If this is true, GUI apps that are added by the programs.*.enable options
@@ -42,6 +33,7 @@ in
       home.stateVersion = stateVersion;
       home.shellAliases = {
         eza = "eza -lFagh --time-style=long-iso";
+        # eza used to be exa.
         exa = "eza -lFagh --time-style=long-iso";
       };
 

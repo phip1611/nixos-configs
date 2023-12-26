@@ -5,7 +5,9 @@ let
 in
 {
   options = {
-    phip1611.common.system.latest-linux.enable = lib.mkEnableOption "Use the latest stable Linux kernel";
+    phip1611.common.system.latest-linux = {
+      enable = lib.mkEnableOption "Use the latest stable Linux kernel";
+    };
   };
 
   config = lib.mkIf cfg.enable {

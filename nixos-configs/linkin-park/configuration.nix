@@ -27,8 +27,8 @@ in
     common = {
       # Enable all default options.
       enable = true;
-      user.env.git.username = "Philipp Schuster";
-      user.env.git.email = "philipp.schuster@cyberus-technology.de";
+      user-env.git.username = "Philipp Schuster";
+      user-env.git.email = "philipp.schuster@cyberus-technology.de";
     };
     services.meshcommander.enable = true;
   };

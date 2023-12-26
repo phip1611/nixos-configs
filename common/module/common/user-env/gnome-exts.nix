@@ -5,13 +5,15 @@
 let
   cfg = config.phip1611.common.user.pkgs.gnome-exts;
   username = config.phip1611.username;
+  gnomeEnabled = config.services.xserver.displayManager.gdm.enable &&
+    config.services.xserver.desktopManager.gnome.enable;
 in
 {
   options = {
     phip1611.common.user.pkgs.gnome-exts.enable = lib.mkEnableOption "Enable GNOME extensions";
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && gnomeEnabled) {
     users.users."${username}".packages = with pkgs; [
       gnome.dconf-editor
       gnome.gnome-tweaks

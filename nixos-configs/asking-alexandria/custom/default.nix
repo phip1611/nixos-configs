@@ -14,14 +14,16 @@
       username = "phip1611";
       common = {
         enable = true;
-        user.env.excludeGui = true;
-        user.env.git.username = "Philipp Schuster";
-        user.env.git.email = "phip1611@gmail.com";
-        user.pkgs.dev.enable = false;
-        user.pkgs.fonts.enable = false;
-        user.pkgs.gui.enable = false;
-        user.pkgs.media.enable = false;
-        user.pkgs.gnome-exts.enable = false;
+        user-env.withDevCAndRust = false;
+        user-env.withDevJava = false;
+        user-env.withDevJavascript = false;
+        user-env.withDevNix = false;
+        user-env.withGui = false;
+        user-env.withMedia = false;
+        user-env.withPkgsJ4F = false;
+        user-env.git.username = "Philipp Schuster";
+        user-env.git.email = "phip1611@gmail.com";
+
         system.docker.rootless.enable = false;
       };
     };
