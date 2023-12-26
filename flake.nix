@@ -5,12 +5,13 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
-    home-manager.url = "github:nix-community/home-manager/release-23.11";
+    home-manager.url = "github:nix-community/home-manager/release-24.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    # TODO use branch "nixos-24.05" after June 1st.
+    nixpkgs.url = "github:NixOS/nixpkgs/release-24.05";
     # Use nixpkgs-unstable instead of master so that packages are more likely
     # to be cached already while still being as fresh as possible.
     # See https://discourse.nixos.org/t/differences-between-nix-channels/13998
@@ -18,13 +19,13 @@
 
     # Web Projects
 
+    img-to-webp-service.url = "github:phip1611/img-to-webp-spring-service/main";
+    img-to-webp-service.inputs.nixpkgs.follows = "nixpkgs";
+    img-to-webp-service.inputs.flake-parts.follows = "flake-parts";
+
     wambo-web.url = "github:phip1611/wambo-web";
     wambo-web.inputs.nixpkgs.follows = "nixpkgs";
     wambo-web.inputs.flake-parts.follows = "flake-parts";
-
-    img-to-webp-service.url = "github:phip1611/img-to-webp-spring-service";
-    img-to-webp-service.inputs.nixpkgs.follows = "nixpkgs";
-    img-to-webp-service.inputs.flake-parts.follows = "flake-parts";
   };
 
   outputs =
