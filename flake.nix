@@ -12,6 +12,11 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+
+    # Web Projects
+    wambo-web.url = "github:phip1611/wambo-web";
+    wambo-web.inputs.nixpkgs.follows = "nixpkgs";
+    wambo-web.inputs.flake-parts.follows = "flake-parts";
   };
 
   outputs =

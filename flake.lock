@@ -20,6 +20,27 @@
         "type": "github"
       }
     },
+    "gitignore": {
+      "inputs": {
+        "nixpkgs": [
+          "wambo-web",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1694102001,
+        "narHash": "sha256-vky6VPK1n1od6vXbqzOXnekrQpTL4hbPAwUhT5J9c9E=",
+        "owner": "hercules-ci",
+        "repo": "gitignore.nix",
+        "rev": "9e21c80adf67ebcb077d75bd5e7d724d21eeafd6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "gitignore.nix",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -78,7 +99,32 @@
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "wambo-web": "wambo-web"
+      }
+    },
+    "wambo-web": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "gitignore": "gitignore",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1703545938,
+        "narHash": "sha256-aUZ6qIsQKu1L+9JOKwNrR4t/ruSGVFnBhjVOvEz0+C8=",
+        "owner": "phip1611",
+        "repo": "wambo-web",
+        "rev": "be47958cc6a70d2f73618448e14b53690cff4e5c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "phip1611",
+        "repo": "wambo-web",
+        "type": "github"
       }
     }
   },

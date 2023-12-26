@@ -3,6 +3,9 @@
 {
   imports = [
     ./nginx.nix
+
+    # Hosted web projects
+    ./wambo-web.nix
   ];
 
   config = {
