@@ -7,6 +7,7 @@
     # to be cached already while still being as fresh as possible.
     # See https://discourse.nixos.org/t/differences-between-nix-channels/13998
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
     home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -14,6 +15,7 @@
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
     # Web Projects
+
     wambo-web.url = "github:phip1611/wambo-web";
     wambo-web.inputs.nixpkgs.follows = "nixpkgs";
     wambo-web.inputs.flake-parts.follows = "flake-parts";
