@@ -5,6 +5,7 @@
     ./nginx.nix
 
     # Hosted web projects
+    ./img-to-webp-service.nix
     ./wambo-web.nix
   ];
 

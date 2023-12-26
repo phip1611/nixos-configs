@@ -17,6 +17,10 @@
     wambo-web.url = "github:phip1611/wambo-web";
     wambo-web.inputs.nixpkgs.follows = "nixpkgs";
     wambo-web.inputs.flake-parts.follows = "flake-parts";
+
+    img-to-webp-service.url = "github:phip1611/img-to-webp-spring-service";
+    img-to-webp-service.inputs.nixpkgs.follows = "nixpkgs";
+    img-to-webp-service.inputs.flake-parts.follows = "flake-parts";
   };
 
   outputs =

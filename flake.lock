@@ -62,6 +62,29 @@
         "type": "github"
       }
     },
+    "img-to-webp-service": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1703591769,
+        "narHash": "sha256-XWxVFTx1v64Uf6PcZzC6WbQ7vCpqF4K6vdp1OIb8brA=",
+        "owner": "phip1611",
+        "repo": "img-to-webp-spring-service",
+        "rev": "509879b1ff59d433d7dbffe16965ac988f2a2a4d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "phip1611",
+        "repo": "img-to-webp-spring-service",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1703068421,
@@ -98,6 +121,7 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
+        "img-to-webp-service": "img-to-webp-service",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "wambo-web": "wambo-web"
