@@ -1,5 +1,5 @@
 # This module enables typical environment settings (like default shell, prompt,
-# dotfiles) and correspondig home-manager settings for the given user. This is
+# dotfiles) and corresponding home-manager settings for the given user. This is
 # intended as a big "all-in-one" module with no further enable sub-options.
 
 { config, lib, pkgs, ... }:
