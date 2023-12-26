@@ -49,7 +49,6 @@
           # definitions can be better separated and the NixOS configurations
           # are less dependent on flakes.
         , system ? "x86_64-linux"
-        , nixosModules ? [ ]
         }:
         (
           nixpkgs.lib.nixosSystem {
@@ -58,7 +57,8 @@
             # function. This should only include the flake inputs itself.
             # Apart from that, it's an anti-pattern (according to Jacek (@tfc)).
             specialArgs = inputs;
-            modules = commonFlakeNixosModules ++ nixosModules ++
+            modules = commonFlakeNixosModules ++
+              [ ./nixos-configs/${hostName}/configuration.nix ] ++
               # Configuration modules that bind outer properties to the NixOS
               # configuration. This way, we can keep specialArgs small.
               [
@@ -86,20 +86,14 @@
             # My personal PC at home where I've also have my Windows installed
             # (on a dedicated disk).
             homepc = buildNixosSystem {
-              hostName = "phips-homepc";
+              hostName = "homepc";
               system = "x86_64-linux";
-              nixosModules = [
-                ./nixos-configs/homepc/configuration.nix
-              ];
             };
 
             # My main laptop.
             linkin-park = buildNixosSystem {
               hostName = "linkin-park";
               system = "x86_64-linux";
-              nixosModules = [
-                ./nixos-configs/linkin-park/configuration.nix
-              ];
             };
           };
 
