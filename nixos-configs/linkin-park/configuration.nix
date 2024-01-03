@@ -29,10 +29,6 @@ in
       enable = true;
       user.env.git.username = "Philipp Schuster";
       user.env.git.email = "philipp.schuster@cyberus-technology.de";
-      user.pkgs.python3.additionalPython3Pkgs = [
-        ## SVP-C Dependencies
-        pkgs.python3Packages.pwntools
-      ];
     };
     services.meshcommander.enable = true;
   };
