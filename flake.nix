@@ -128,7 +128,13 @@
         };
 
         nixosConfigurations = {
-          # My Netcup Root Server.
+          # My Raspberry Pi 4 in my home.
+            antiheld = buildNixosSystem {
+              hostName = "antiheld";
+              system = "aarch64-linux";
+            };
+
+            # My Netcup Root Server.
           asking-alexandria = buildNixosSystem {
             hostName = "asking-alexandria";
             system = "x86_64-linux";
