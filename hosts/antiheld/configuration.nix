@@ -1,16 +1,19 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   user = "phip1611";
-  hostname = "antiheld";
 in
 {
+  imports = [
+    ../../profiles/server.nix
+  ];
+
   boot = {
-    # Todo why is mkForce necessary?!
     kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_rpi4;
     initrd.availableKernelModules = [
       "xhci_pci"
@@ -23,6 +26,48 @@ in
     };
   };
 
+  phip1611 = {
+    common.user-env = {
+      username = "phip1611";
+      git.username = "Philipp Schuster";
+      git.email = "phip1611@gmail.com";
+    };
+
+    services.ddns-update.enable = true;
+    # This file should only be root-readable!
+    services.ddns-update.configPath = "/home/phip1611/ddns-config.json";
+  };
+
+  # Set your time zone.
+  time.timeZone = "Europe/Berlin";
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "de_DE.UTF-8";
+    LC_IDENTIFICATION = "de_DE.UTF-8";
+    LC_MEASUREMENT = "de_DE.UTF-8";
+    LC_MONETARY = "de_DE.UTF-8";
+    LC_NAME = "de_DE.UTF-8";
+    LC_NUMERIC = "de_DE.UTF-8";
+    LC_PAPER = "de_DE.UTF-8";
+    LC_TELEPHONE = "de_DE.UTF-8";
+    LC_TIME = "de_DE.UTF-8";
+  };
+
+  networking.firewall.allowedTCPPorts = [
+    80 # http
+    443 # https
+    5201 # iperf3
+  ];
+  networking.firewall.allowedUDPPorts = [
+    443 # http 3 / QUIC
+  ];
+
+  # https://github.com/NixOS/nixpkgs/issues/344963
+  boot.initrd.systemd.tpm2.enable = false;
+
   fileSystems = {
     "/" = {
       device = "/dev/disk/by-label/NIXOS_SD";
@@ -31,47 +76,44 @@ in
     };
   };
 
-  networking = {
-    hostName = hostname;
-    wireless = {
-      enable = true;
-    };
-  };
+  environment.systemPackages = with pkgs; [
+    libraspberrypi
+    raspberrypi-eeprom
 
-  environment.systemPackages = with pkgs;
-    [
-      libraspberrypi
-      raspberrypi-eeprom
-
-      micro
-    ];
+    micro
+  ];
 
   services.openssh.enable = true;
+  services.openssh.ports = lib.mkForce [ 7331 ];
 
   users = {
     users."${user}" = {
       isNormalUser = true;
-      extraGroups = [ "wheel" "gpio" ];
+      extraGroups = [
+        "wheel"
+        "gpio"
+      ];
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGZ1CsDfB8Bsg8H82oIgVjv8bu5KEh4UX5iqEfC+4hzF pschuster@xps13-pschuster"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIByFlysjuSdICGBaDUYOq5wPSPQgPWOenBwal2PhBtd pschuster@phips-framework13"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGNxAVKUnHxu8yL1MNUeIJkeuPyJqg89++A+rOydyZJi phip1611@homepc"
+      ];
     };
   };
 
   console.keyMap = "de";
 
-
   hardware.enableRedistributableFirmware = true;
-
-
 
   #  imports =
   #   [ # Include the results of the hardware scan.
   #     ./hardware-configuration.nix
   #   ];
 
- # # Use the extlinux boot loader. (NixOS wants to enable GRUB by default)
+  # # Use the extlinux boot loader. (NixOS wants to enable GRUB by default)
   #boot.loader.grub.enable = false;
   # Enables the generation of /boot/extlinux/extlinux.conf
-#  boot.loader.generic-extlinux-compatible.enable = true;
-
+  #  boot.loader.generic-extlinux-compatible.enable = true;
 
   # networking.hostName = "nixos"; # Define your hostname.
   # Pick only one of the below networking options.
@@ -95,9 +137,6 @@ in
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
-
-
-
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -173,4 +212,3 @@ in
   system.stateVersion = "23.11"; # Did you read the comment?
 
 }
-
