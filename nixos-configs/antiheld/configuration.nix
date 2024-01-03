@@ -8,6 +8,10 @@ let
   user = "phip1611";
 in
 {
+  imports = [
+    ./custom
+  ];
+
   boot = {
     kernelPackages = pkgs.linuxKernel.packages.linux_rpi4;
     initrd.availableKernelModules = [
