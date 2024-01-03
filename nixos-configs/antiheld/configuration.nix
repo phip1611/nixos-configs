@@ -1,17 +1,15 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
+# This configuration file is (almost) the one with that I set up the raspberry
+# pi. It is based on this guide:
+# https://nix.dev/tutorials/nixos/installing-nixos-on-a-raspberry-pi.html
 
 { config, lib, pkgs, ... }:
 
 let
   user = "phip1611";
-  hostname = "antiheld";
 in
 {
   boot = {
-    # Todo why is mkForce necessary?!
-    kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_rpi4;
+    kernelPackages = pkgs.linuxKernel.packages.linux_rpi4;
     initrd.availableKernelModules = [
       "xhci_pci"
       "usbhid"
@@ -28,13 +26,6 @@ in
       device = "/dev/disk/by-label/NIXOS_SD";
       fsType = "ext4";
       options = [ "noatime" ];
-    };
-  };
-
-  networking = {
-    hostName = hostname;
-    wireless = {
-      enable = true;
     };
   };
 
@@ -67,10 +58,10 @@ in
   #     ./hardware-configuration.nix
   #   ];
 
- # # Use the extlinux boot loader. (NixOS wants to enable GRUB by default)
+  # # Use the extlinux boot loader. (NixOS wants to enable GRUB by default)
   #boot.loader.grub.enable = false;
   # Enables the generation of /boot/extlinux/extlinux.conf
-#  boot.loader.generic-extlinux-compatible.enable = true;
+  #  boot.loader.generic-extlinux-compatible.enable = true;
 
 
   # networking.hostName = "nixos"; # Define your hostname.
