@@ -49,17 +49,12 @@
         commonSrc.module
       ];
 
-      # Helper function to build a NixOS system with my common modules and
-      # relevant special args.
+      # Helper function to build a NixOS system with my common modules,
+      # relevant special args, and the host-specific configuration.
       buildNixosSystem =
         { hostName # string
           # One of the definitions of `pkgs.lib.systems.flakeExposed`:
-          # NixOS modules defining the system. The idea here is to only provide
-          # one `configuration.nix` and this file then imports all other files
-          # of the configuration. This way, the NixOS system and the flake
-          # definitions can be better separated and the NixOS configurations
-          # are less dependent on flakes.
-        , system ? "x86_64-linux"
+        , system
         }:
         (
           nixpkgs.lib.nixosSystem {
@@ -68,6 +63,11 @@
             # function. This should only include the flake inputs itself.
             # Apart from that, it's an anti-pattern (according to Jacek (@tfc)).
             specialArgs = inputs;
+            # The idea here is to only provide one `configuration.nix` per host
+            # as entry. This file then imports all other files of the
+            # configuration. This way, the NixOS system and the flake
+            # definitions can be better separated and the NixOS configurations
+            # are less dependent on flake.nix.
             modules = commonFlakeNixosModules ++
               [ ./nixos-configs/${hostName}/configuration.nix ] ++
               # Configuration modules that bind outer properties to the NixOS
@@ -126,10 +126,11 @@
         };
 
         # Systems definition for dev shells and exported packages,
-        # independent of the NixOS configurations.
-        systems = [
-          "x86_64-linux"
-        ];
+        # independent of the NixOS configurations and modules defined here. We
+        # just use "every system" here to not restrict any user. However, it
+        # likely happens that certain packages don't build for/under certain
+        # systems.
+        systems = nixpkgs.lib.systems.flakeExposed;
 
         perSystem = { config, pkgs, ... }:
           let
@@ -225,7 +226,7 @@
             packages = {
               # TODO not sure why I can't put this under apps.
               listNixosOptions = import ./test/pkgs/list-nixos-options.nix {
-                inherit (pkgs) lib nixos-option writeShellScriptBin writeText;
+                inherit (pkgs) ansi lib nixos-option writeShellScriptBin writeText;
                 inherit home-manager nixpkgs commonSrc;
               };
             } // common.pkgs;

@@ -25,9 +25,15 @@ $ nix run .\#listNixosOptions
 The module needs the flake inputs `nixpkgs` and `nixpkgs-unstable` as
 `specialArgs` (see `nixpkgs.lib.nixosSystem `) to set the `NIX_PATH` and the
 `nix registry` properly. Furthermore,
-[Home manager](https://github.com/nix-community/home-manager) must be globally available for the `common.user.env` module,
-if you enable that module. The common module doesn't import home-manager itself
-as this can't be done conditionally with Nix via a NixOS configuration option.
+The NixOS options of [Home manager](https://github.com/nix-community/home-manager) must be available; you need to add the
+module manually. The common module doesn't import home-manager itself because
+the module is standalone.
+
+<!-- TODO I think I can switch that behavior. There is no real use case where
+     one wants to use my module without home-manager. Furthermore, home-manager
+     module itself just add options but should not also do something to the
+     NixOS configuration.
+-->
 
 ## Overlays
 

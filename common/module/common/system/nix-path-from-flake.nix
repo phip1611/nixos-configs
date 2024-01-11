@@ -18,7 +18,10 @@ in
       # configured. As having a NIX_PATH simplifies easy prototyping in a Nix
       # repl or a Nix shell, I like to use them.
       #
-      # This is also relevant so that `$ nix-shell -p foo` works.
+      # This is also required so that `$ nix-shell -p foo` works.
+      #
+      # Changes to these are only applied to the environment after a re-login
+      # of the user session.
       nixPath = [
         "nixpkgs=${nixpkgs}"
         "nixpkgs-unstable=${nixpkgs-unstable}"
