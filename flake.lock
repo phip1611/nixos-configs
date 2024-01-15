@@ -85,6 +85,21 @@
         "type": "github"
       }
     },
+    "nixos-hardware": {
+      "locked": {
+        "lastModified": 1705312285,
+        "narHash": "sha256-rd+dY+v61Y8w3u9bukO/hB55Xl4wXv4/yC8rCGVnK5U=",
+        "owner": "NixOS",
+        "repo": "nixos-hardware",
+        "rev": "bee2202bec57e521e3bd8acd526884b9767d7fa0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixos-hardware",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1705183652,
@@ -122,6 +137,7 @@
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "img-to-webp-service": "img-to-webp-service",
+        "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "wambo-web": "wambo-web"
