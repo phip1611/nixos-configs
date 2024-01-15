@@ -7,7 +7,9 @@ let
 in
 {
   options = {
-    phip1611.common.system.docker.rootless.enable = lib.mkEnableOption "Enable Docker in rootless mode";
+    phip1611.common.system.docker.rootless = {
+      enable = lib.mkEnableOption "Enable Docker in rootless mode";
+    };
   };
 
   config = lib.mkIf cfg.rootless.enable {

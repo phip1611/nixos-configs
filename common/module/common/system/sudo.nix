@@ -5,7 +5,9 @@ let
 in
 {
   options = {
-    phip1611.common.system.sudo.enable = lib.mkEnableOption "Enable extra sudo config: set timeout to 30min";
+    phip1611.common.system.sudo = {
+      enable = lib.mkEnableOption "Enable extra sudo config: set timeout to 30min";
+    };
   };
 
   config = lib.mkIf cfg.enable {

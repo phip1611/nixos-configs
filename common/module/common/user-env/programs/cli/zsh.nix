@@ -2,17 +2,11 @@
 
 let
   username = config.phip1611.username;
-  cfg = config.phip1611.common.user.env;
+  cfg = config.phip1611.common.user-env;
 in
 {
   config = lib.mkIf cfg.enable {
-
-    # ZSH as default shell for my user.
-    users.users."${username}" = {
-      shell = pkgs.zsh;
-    };
-
-    # Adds zsh to /etc/shells
+    # Adds zsh to PATH and to /etc/shells
     programs.zsh.enable = true;
 
     home-manager.users."${username}" = {

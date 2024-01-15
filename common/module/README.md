@@ -20,21 +20,23 @@ with their default option by running:
 $ nix run .\#listNixosOptions
 ```
 
-## Inputs
+## Dependencies / Required Inputs
 
 The module needs the flake inputs `nixpkgs` and `nixpkgs-unstable` as
-`specialArgs` (see `nixpkgs.lib.nixosSystem `) to set the `NIX_PATH` and the
-`nix registry` properly. Furthermore,
-[Home manager](https://github.com/nix-community/home-manager) must be globally available for the `common.user.env` module,
-if you enable that module. The common module doesn't import home-manager itself
-as this can't be done conditionally with Nix via a NixOS configuration option.
+`specialArgs` (see `nixpkgs.lib.nixosSystem `). Furthermore, some NixOS options
+require the options from the
+[Home manager](https://github.com/nix-community/home-manager) module to be
+available. The common module doesn't import home-manager itself because
+the module is standalone and dependencies should be managed in a flake.
+
 
 ## Overlays
 
 The module automatically adds the relevant overlays from this repository to
 `config.nixpkgs.overlays`.
 
+
 ## Additional Notes
 
 Some NixOS options require a restart of the system to have a fully applied NixOS
-config, such as systemd user services.
+config, such as systemd user services or changes to environment variaböes.

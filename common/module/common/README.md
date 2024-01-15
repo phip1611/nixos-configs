@@ -8,10 +8,13 @@ possible independent of the underlying hardware and NixOS version. However, some
 assumptions are there, such as that a reasonable fresh version of Nixpkgs is
 required.
 
-All modules are as standalone as possible, and it is possible to only use
-non-GUI related configurations to keep the footprint on servers or otherwise
-limited environments small.
+## Configuration
+
+All modules are as standalone as possible, and it is possible to further
+configure the options. By default, you just should set
+`config.phip1611.common.enable = true`.
 
 ## Prerequisites
-[Home manager](https://github.com/nix-community/home-manager) must be globally
-available for the `common.user.env` module.
+
+The NixOS options of [Home manager](https://github.com/nix-community/home-manager) must be available; you need to add the
+module manually.

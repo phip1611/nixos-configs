@@ -16,7 +16,9 @@ in
   ];
 
   options = {
-    phip1611.common.system.enable = lib.mkEnableOption "Enable all system sub-modules at once";
+    phip1611.common.system = {
+      enable = lib.mkEnableOption "Enable all system sub-modules at once";
+    };
   };
 
   config = lib.mkIf cfg.enable {

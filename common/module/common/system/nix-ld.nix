@@ -15,7 +15,9 @@ let
 in
 {
   options = {
-    phip1611.common.system.nix-ld.enable = lib.mkEnableOption "Enable nix-ld to run unpatched dynamic binaries on NixOS";
+    phip1611.common.system.nix-ld = {
+      enable = lib.mkEnableOption "Enable nix-ld to run unpatched dynamic binaries on NixOS";
+    };
   };
 
   config = lib.mkIf cfg.enable {

@@ -1,4 +1,5 @@
-# Common Configurations for my NixOS systems.
+# Common configurations for my NixOS systems for system-wide and user-specific
+# settings.
 
 { config, lib, pkgs, ... }:
 
@@ -8,22 +9,16 @@ in
 {
   imports = [
     ./system
-    ./user
+    ./user-env
   ];
 
   options.phip1611.common = {
-    # I use mkOption in favor of mkEnableOption as I want this attribute
-    # to be default-true.
-    enable = lib.mkOption {
-      type = lib.types.bool;
-      description = "Enable all common sub-modules at once";
-      default = true;
-    };
+    enable = lib.mkEnableOption "Enable all common sub-modules at once";
   };
 
   config = lib.mkIf cfg.enable {
-    phip1611.common.user.enable = true;
     phip1611.common.system.enable = true;
+    phip1611.common.user-env.enable = true;
   };
 
 }
