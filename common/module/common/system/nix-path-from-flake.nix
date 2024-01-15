@@ -31,8 +31,10 @@ in
 
       # In a Nix repl, one can do ":lf nixpkgs" or ":lf nixpkgs-unstable" with
       # the properly pinned versions. This is an alternative to the NIX_PATH.
-      registry.nixpkgs.flake = nixpkgs;
-      registry.nixpkgs-unstable.flake = nixpkgs-unstable;
+      registry = {
+        nixpkgs.flake = nixpkgs;
+        nixpkgs-unstable.flake = nixpkgs-unstable;
+      };
     };
   };
 }
