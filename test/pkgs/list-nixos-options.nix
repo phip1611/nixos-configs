@@ -16,6 +16,11 @@ let
         (import ${home-manager}/nixos)
         (import "${commonSrc.module}")
       ];
+
+      phip1611.common.enable = true;
+      phip1611.common.user-env.git.email = "phip1611@gmail.com";
+      phip1611.common.user-env.git.username = "Philipp Schuster";
+      phip1611.network-boot.interfaces = []; # remove used but not defined error
     }
   '';
 in
