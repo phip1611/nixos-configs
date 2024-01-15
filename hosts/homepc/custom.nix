@@ -22,6 +22,6 @@
 
   # The required external driver (no upstream driver) does not (always)
   # compile for the latest kernel.
-  # phip1611.common.system.latest-linux.enable = lib.mkForce false;
+  phip1611.common.system.latest-linux.enable = lib.mkForce false;
 
 }
