@@ -23,7 +23,7 @@ in
       programs.alacritty = {
         enable = true;
         package = pkgsUnstable.alacritty;
-        settings = builtins.fromJSON (builtins.readFile ./alacritty.json);
+        settings = builtins.fromTOML (builtins.readFile ./alacritty.toml);
       };
     };
   };
