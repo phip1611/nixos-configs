@@ -42,19 +42,11 @@ jobs:
     name: NixOS systems build
     runs-on: ubuntu-latest
     steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@v10
-        with:
-          root-reserve-mb: 512
-          swap-size-mb: 1024
-          remove-android: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-          remove-dotnet: 'true'
-          remove-haskell: 'true'
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v25
       - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Free Disk Space
+        uses: ShubhamTatvamasi/free-disk-space-action@master
       - name: "NixOS: build #homepc"
         run: nix develop --command bash -c "nixos-rebuild build --flake .#homepc"
       - name: "NixOS: build #linkin-park"
