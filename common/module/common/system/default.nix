@@ -5,6 +5,7 @@ let
 in
 {
   imports = [
+    ./auto-upgrade.nix
     ./docker.nix
     ./documentation.nix
     ./firmware.nix
@@ -22,6 +23,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Only server-environments should enable that.
+    phip1611.common.system.auto-upgrade.enable = lib.mkDefault false;
     phip1611.common.system.docker.rootless.enable = lib.mkDefault true;
     phip1611.common.system.documentation.enable = lib.mkDefault true;
     phip1611.common.system.firmware.enable = lib.mkDefault true;

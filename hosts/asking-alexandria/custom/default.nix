@@ -24,7 +24,10 @@
         user-env.git.username = "Philipp Schuster";
         user-env.git.email = "phip1611@gmail.com";
 
-        system.docker.rootless.enable = false;
+        system = {
+          auto-upgrade.enable = true;
+          docker.rootless.enable = false;
+        };
       };
     };
   };
