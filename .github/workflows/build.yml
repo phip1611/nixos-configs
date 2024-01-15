@@ -40,6 +40,8 @@ jobs:
       # Now perform dry-builds in CI. Dry-builds are not only sufficient but
       # also do not need gigabytes of data to be downloaded. This is especially
       # important to prevent "no space left" in GitHub CI.
+      - name: "NixOS: dry-build #asking-alexandria"
+        run: nix develop --command bash -c "nixos-rebuild dry-build --flake .#asking-alexandria"
       - name: "NixOS: dry-build #homepc"
         run: nix develop --command bash -c "nixos-rebuild dry-build --flake .#homepc"
       - name: "NixOS: dry-build #linkin-park"
