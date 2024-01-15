@@ -69,7 +69,7 @@
             # definitions can be better separated and the NixOS configurations
             # are less dependent on flake.nix.
             modules = commonFlakeNixosModules ++
-              [ ./nixos-configs/${hostName}/configuration.nix ] ++
+              [ ./hosts/${hostName}/configuration.nix ] ++
               # Configuration modules that bind outer properties to the NixOS
               # configuration. This way, we can keep specialArgs small.
               [
