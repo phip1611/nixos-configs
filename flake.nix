@@ -2,17 +2,19 @@
   description = "phip1611's common libraries, modules, and configurations for Nix and NixOS";
 
   inputs = {
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+
+    home-manager.url = "github:nix-community/home-manager/release-23.11";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
+
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     # Use nixpkgs-unstable instead of master so that packages are more likely
     # to be cached already while still being as fresh as possible.
     # See https://discourse.nixos.org/t/differences-between-nix-channels/13998
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-
-    home-manager.url = "github:nix-community/home-manager/release-23.11";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
-
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
     # Web Projects
 
@@ -27,10 +29,11 @@
 
   outputs =
     { self
+    , flake-parts
+    , home-manager
+    , nixos-hardware
     , nixpkgs
     , nixpkgs-unstable
-    , home-manager
-    , flake-parts
     , ...
     }@inputs:
     let
@@ -55,6 +58,9 @@
         { hostName # string
           # One of the definitions of `pkgs.lib.systems.flakeExposed`:
         , system
+          # Additional modules. This should only include modules that are
+          # coming from a flake for consistency.
+        , additionalModules ? [ ]
         }:
         (
           nixpkgs.lib.nixosSystem {
@@ -70,6 +76,7 @@
             # are less dependent on flake.nix.
             modules = commonFlakeNixosModules ++
               [ ./hosts/${hostName}/configuration.nix ] ++
+              additionalModules ++
               # Configuration modules that bind outer properties to the NixOS
               # configuration. This way, we can keep specialArgs small.
               [
@@ -97,6 +104,10 @@
             asking-alexandria = buildNixosSystem {
               hostName = "asking-alexandria";
               system = "x86_64-linux";
+              additionalModules = [
+                (nixos-hardware.nixosModules.common-cpu-amd)
+                (nixos-hardware.nixosModules.common-pc-ssd)
+              ];
             };
 
             # My personal PC at home where I've also have my Windows installed
@@ -104,12 +115,21 @@
             homepc = buildNixosSystem {
               hostName = "homepc";
               system = "x86_64-linux";
+              additionalModules = [
+                (nixos-hardware.nixosModules.common-cpu-intel)
+                (nixos-hardware.nixosModules.common-pc-ssd)
+              ];
             };
 
             # My main laptop.
             linkin-park = buildNixosSystem {
               hostName = "linkin-park";
               system = "x86_64-linux";
+              additionalModules = [
+                # Transitively comes with common-intel, common-ssd, and other
+                # modules. Actually I have a 9305, but it's not available.
+                (nixos-hardware.nixosModules.dell-xps-13-9310)
+              ];
             };
           };
 
