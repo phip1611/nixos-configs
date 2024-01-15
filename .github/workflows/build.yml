@@ -25,8 +25,7 @@ jobs:
           # if git files have been changed.
           git diff --quiet
 
-  # A big gun that runs all checks.
-  # This gets better once https://github.com/NixOS/nix/issues/9629 is solved.
+  # Runs the checks of the Nix flake.
   checks:
     name: nix flake check
     runs-on: ubuntu-latest
@@ -37,13 +36,29 @@ jobs:
       # Performs some basic checks of the NixOS system configurations and runs
       # all checks.
       - run: nix flake check
-      # dry-build: everything that needs GUI and dev tools
-      #            --> causes "no space left on device" in GitHub CI
-      # build    : lightweight server environments
-      - name: "NixOS: dry-build #homepc"
-        run: nix develop --command bash -c "nixos-rebuild dry-build --flake .#homepc"
-      - name: "NixOS: dry-build #linkin-park"
-        run: nix develop --command bash -c "nixos-rebuild dry-build --flake .#linkin-park"
+
+  # Builds the NixOS systems.
+  nixos-systems-build:
+    name: NixOS systems build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-android: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v25
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: "NixOS: build #homepc"
+        run: nix develop --command bash -c "nixos-rebuild build --flake .#homepc"
+      - name: "NixOS: build #linkin-park"
+        run: nix develop --command bash -c "nixos-rebuild build --flake .#linkin-park"
       - name: "NixOS: build #asking-alexandria"
         run: nix develop --command bash -c "nixos-rebuild build --flake .#asking-alexandria"
 

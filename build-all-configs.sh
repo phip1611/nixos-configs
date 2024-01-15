@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 # Script to locally test that all NixOS configs build successfully.
-# This is not used in GitHub CI as all the GUI apps result in "no space left"
-# errors in CI.
 
 set -euo pipefail
 
