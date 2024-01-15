@@ -11,6 +11,7 @@ in
     # https://nixos.wiki/wiki/Fonts
     fonts = {
       packages = with pkgs; [
+        dancing-script
         # Used/Prefered by many applications, such as "yazi". Comes with
         # powerline symbols.
         nerdfonts
