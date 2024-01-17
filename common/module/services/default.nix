@@ -6,6 +6,7 @@
 
 {
   imports = [
+    ./ddns-update.nix
     ./meshcommander.nix
   ];
 }

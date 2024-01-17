@@ -1,0 +1,7 @@
+{
+    "scheme": "https",
+    "host": "dyndns.kasserver.com",
+    "username": "userfoo",
+    "password": "passwordbar",
+    "expect-message": "good"
+}

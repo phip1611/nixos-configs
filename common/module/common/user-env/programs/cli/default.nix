@@ -20,6 +20,7 @@ in
   config = lib.mkIf cfg.enable (lib.mkMerge [
     (
       {
+        programs.htop.enable = true;
         # Additionally to adding traceroute to the path, this enables a few cases
         # where route privileges are required.
         programs.traceroute.enable = true;
@@ -33,8 +34,7 @@ in
               bat
               bottom
               calc
-              # already there automatically; here only for completeness
-              coreutils
+              coreutils #default package; here only for completeness
               curl
               dig # dig and nslookup
               du-dust
@@ -42,12 +42,11 @@ in
               fd # better find
               file
               git
-              grub2 # for grub-file etc.
+              grub2 # for grub-file
               hexyl # hex viewer
               iftop # network usage per interface
               iperf3
               jq # pretty-print JSON
-              htop
               httpie
               killall
               less
@@ -61,6 +60,7 @@ in
               ouch # cool convenient (de)compression tool
               paging-calculator
               pciutils # lspci
+              config.boot.kernelPackages.perf
               # Experience shows that this is not working in all cases as intended.
               # Instead, projects should open a nix-shell like this:
               # `$ nix-shell -p openssl pkg-config`
@@ -89,7 +89,6 @@ in
               zip
               zsh
               zx
-              config.boot.kernelPackages.perf
             ]
           );
       }
