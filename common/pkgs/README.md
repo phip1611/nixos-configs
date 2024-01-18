@@ -11,6 +11,7 @@ For quick prototyping, you can just open `$ nix repl --file repl.nix`.
 
 This directory bundles some utility packages, such as
 
+- `ddns-update`
 - `nix-shell-init`
 - `qemu-uefi`
 - `run-efi`

@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  users.users.phip1611 = {
+  users.users.pschuster = {
     isNormalUser = true;
     description = "Philipp Schuster";
     extraGroups = [

@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  users.users.phip1611 = {
+  users.users.pschuster = {
     packages = with pkgs; [
       element-desktop
 

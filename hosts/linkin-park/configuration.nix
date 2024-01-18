@@ -23,7 +23,7 @@ in
 
   # phip1611 dotfiles common NixOS module configuration
   phip1611 = {
-    username = "phip1611";
+    username = "pschuster";
     common = {
       # Enable all default options.
       enable = true;
