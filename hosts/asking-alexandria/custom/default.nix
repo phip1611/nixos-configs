@@ -25,8 +25,8 @@
         user-env.git.email = "phip1611@gmail.com";
 
         system = {
-          auto-upgrade.enable = true;
-          docker.rootless.enable = false;
+          withAutoUpgrade = true;
+          withDocker = false;
         };
       };
     };

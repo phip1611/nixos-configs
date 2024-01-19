@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.phip1611.common.system.nix-cfg;
+  cfg = config.phip1611.common.system;
   username = config.phip1611.username;
 
   # Additional trusted binary caches. The one from
@@ -15,12 +15,6 @@ let
   ];
 in
 {
-  options = {
-    phip1611.common.system.nix-cfg = {
-      enable = lib.mkEnableOption "Enable Nix-related configurations";
-    };
-  };
-
   config = lib.mkIf cfg.enable {
     nix = {
       settings = {
@@ -28,8 +22,8 @@ in
         # https://jackson.dev/post/nix-reasonable-defaults/
         connect-timeout = 5;
         log-lines = 25;
-        min-free = 128000000;
-        max-free = 1000000000;
+        min-free = 268435456; # 256 MiB
+        max-free = 1073741824; # 1 GiB
         experimental-features = "nix-command flakes";
         fallback = true;
         warn-dirty = false;
@@ -43,7 +37,7 @@ in
         keep-outputs = true;
         keep-derivations = true;
 
-        trusted-users = [ username ];
+        trusted-users = [ "@wheel" username ];
 
         substituters = map ({ url, ... }: url) trustedBinaryCaches;
         trusted-public-keys = map ({ key, ... }: key) trustedBinaryCaches;
