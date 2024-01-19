@@ -1,15 +1,9 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.phip1611.common.system.documentation;
+  cfg = config.phip1611.common.system;
 in
 {
-  options = {
-    phip1611.common.system.documentation = {
-      enable = lib.mkEnableOption "Enable documentation resources (man pages)";
-    };
-  };
-
   config = lib.mkIf cfg.enable {
     documentation.enable = true;
     documentation.dev.enable = true;
