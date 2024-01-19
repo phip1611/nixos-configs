@@ -14,7 +14,7 @@ in
       # Ideally, this file is only readable as root for maximum security.
       description = "Absolute path to the config file";
       default = null;
-      example = "/home/user/ddns-update.toml";
+      example = "/home/user/ddns-update.json";
     };
     intervalMinutes = lib.mkOption {
       type = lib.types.int;
