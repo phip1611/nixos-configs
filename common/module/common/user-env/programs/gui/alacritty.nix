@@ -11,6 +11,7 @@ let
       allowUnfree = true;
     };
   };
+  alacritty = pkgsUnstable.alacritty;
 in
 {
   config = lib.mkIf (cfg.enable && cfg.withGui) {
@@ -22,9 +23,15 @@ in
     home-manager.users."${username}" = {
       programs.alacritty = {
         enable = true;
-        package = pkgsUnstable.alacritty;
+        package = alacritty;
         settings = builtins.fromTOML (builtins.readFile ./alacritty.toml);
       };
     };
+
+    # Not sure why, but if home-manager alone puts this package into PATH,
+    # this package doesn't properly appear in the GNOME dock.
+    users.users.${username}.packages = [
+      alacritty
+    ];
   };
 }

@@ -11,6 +11,7 @@ let
       allowUnfree = true;
     };
   };
+  vscode = pkgsUnstable.vscode;
 in
 {
   config = lib.mkIf (cfg.enable && cfg.withGui) {
@@ -22,7 +23,7 @@ in
     home-manager.users."${username}" = {
       programs.vscode = {
         enable = true;
-        package = pkgsUnstable.vscode;
+        package = vscode;
         extensions = with pkgs.vscode-extensions; [
           bbenoist.nix
           tamasfe.even-better-toml
@@ -32,5 +33,11 @@ in
         ];
       };
     };
+
+    # Not sure why, but if home-manager alone puts this package into PATH,
+    # this package doesn't properly appear in the GNOME dock.
+    users.users.${username}.packages = [
+      vscode
+    ];
   };
 }
