@@ -14,6 +14,7 @@ in
   imports = [
     ./alacritty.nix
     ./teamviewer.nix
+    ./vscode.nix
   ];
   config = lib.mkIf (cfg.enable && cfg.withGui) {
     # Teamviewer GUI doesn't work without the daemon.
