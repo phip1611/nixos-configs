@@ -1,7 +1,7 @@
 # Mostly the default configuration.nix from the install wizard. Everything else
 # is in ./custom.
 
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   imports =
@@ -81,7 +81,7 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-  services.openssh.ports = [ 7331 ];
+  services.openssh.ports = lib.mkForce [ 7331 ];
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

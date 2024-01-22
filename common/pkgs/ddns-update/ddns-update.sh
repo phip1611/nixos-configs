@@ -2,8 +2,8 @@
 
 # @describe
 # DDNS update script for `all-inkl.com` and similar DDNS services that updates
-# DDNS information via a HTTP request to the URL performing the request using
-# HTTP basic authentication.
+# DDNS information via a HTTP request. The IP is updated to the IP performing
+# the request.
 #
 # @option --config!            Path to JSON configuration.
 

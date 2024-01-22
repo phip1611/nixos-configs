@@ -30,5 +30,8 @@
         };
       };
     };
+
+    # Comes with a pre-configured configuration for ssh.
+    services.fail2ban.enable = true;
   };
 }

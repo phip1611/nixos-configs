@@ -35,6 +35,9 @@ in
     # Don't accumulate crap.
     boot.tmp.cleanOnBoot = true;
 
+    # I use german QWERTZ layout everywhere.
+    console.keyMap = "de";
+
     # When unpatched dynamically linked programs are executed, they fail with
     # file not found. Usually, the file "/lib64/ld-linux-x86-x64.so.2" is not
     # found. This NixOS package adds a compatibility layer for that case.
