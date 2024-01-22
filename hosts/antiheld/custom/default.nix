@@ -28,5 +28,8 @@
       # This file should only be root-readable!
       services.ddns-update.configPath = "/home/phip1611/ddns-config.json";
     };
+
+    # Comes with a pre-configured configuration for ssh.
+    services.fail2ban.enable = true;
   };
 }
