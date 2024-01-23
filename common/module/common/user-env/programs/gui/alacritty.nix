@@ -1,4 +1,4 @@
-# Sets the configuration for allacritty.
+# Sets the configuration for Alacritty.
 
 { config, lib, pkgs, nixpkgs-unstable, ... }:
 
@@ -27,11 +27,5 @@ in
         settings = builtins.fromTOML (builtins.readFile ./alacritty.toml);
       };
     };
-
-    # Not sure why, but if home-manager alone puts this package into PATH,
-    # this package doesn't properly appear in the GNOME dock.
-    users.users.${username}.packages = [
-      alacritty
-    ];
   };
 }
