@@ -16,6 +16,8 @@ for SYSTEM in "${SYSTEMS[@]}"
 do
   echo "Building nixos-config '$SYSTEM'"
   nixos-rebuild build --flake ".#$SYSTEM"
+  # Delete early, so that IDEs won't start indexing.
+  rm -rf ./result
 done
 
 rm -rf ./result

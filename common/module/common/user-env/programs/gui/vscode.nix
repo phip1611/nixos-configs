@@ -33,11 +33,5 @@ in
         ];
       };
     };
-
-    # Not sure why, but if home-manager alone puts this package into PATH,
-    # this package doesn't properly appear in the GNOME dock.
-    users.users.${username}.packages = [
-      vscode
-    ];
   };
 }
