@@ -10,11 +10,11 @@ in
 {
   config = lib.mkIf cfg.enable {
     nix = {
-      # By default, no on a flake-based Nix system, no Nix channels are
-      # configured. As having a NIX_PATH simplifies easy prototyping in a Nix
-      # repl or a Nix shell, I like to use them.
+      # On all my flake-based NixOS systems I remove all Nix channels. However,
+      # as having nixpkgs in NIX_PATH simplifies easy prototyping in a Nix
+      # repl or a Nix shell, I like to configure NIX_PATH accordingly.
       #
-      # This is also required so that `$ nix-shell -p foo` works.
+      # Having nixpkgs in NIX_PATH is also required for `$ nix-shell -p foo`.
       #
       # Changes to these are only applied to the environment after a re-login
       # of the user session.
@@ -23,6 +23,8 @@ in
         "nixpkgs-unstable=${nixpkgs-unstable}"
       ];
 
+      # Pinning the Nix flake registry to the versions the system is build with.
+      #
       # In a Nix repl, one can do ":lf nixpkgs" or ":lf nixpkgs-unstable" with
       # the properly pinned versions. This is an alternative to the NIX_PATH.
       registry = {
