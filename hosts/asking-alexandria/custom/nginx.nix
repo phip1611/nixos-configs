@@ -28,7 +28,7 @@
     defaults.email = "phip1611@gmail.com";
   };
 
-  appendHttpConfig = ''
+  services.nginx.appendHttpConfig = ''
     location ~* \.(js|css|jpg|jpeg|png|gif|js|css|ico|swf)$ {
       expires 1y;
       etag off;
