@@ -9,28 +9,6 @@
     # Upgrade HTTP to HTTPS
     forceSSL = true;
     root = "${wambo-web.packages.${pkgs.system}.default}/share/wambo-web";
-
-    location."~* \.(js|css|jpg|jpeg|png|gif|js|css|ico|swf)$" = {
-                    expires 1y;
-                    etag off;
-                    if_modified_since off;
-                    add_header Cache-Control "public, no-transform";
-                };
-
-    /* I think that this is also a default or at least not necessary. Not sure.
-       I added this once initially but also without it, restarts of the acme
-       service succeed. Just keep it for a while, just to be sure.
-
-      services.nginx.virtualHosts."acmechallenge.wambo-web.de" = {
-      # Catchall vhost, will redirect users to HTTPS for all vhosts
-      serverAliases = [ "*.wambo-web.de" ];
-      locations."/.well-known/acme-challenge" = {
-        root = "/var/lib/acme/.challenges";
-      };
-      locations."/" = {
-        return = "301 https://$host$request_uri";
-      };
-    }; */
   };
 
 }
