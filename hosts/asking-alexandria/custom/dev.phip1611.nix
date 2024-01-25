@@ -8,7 +8,7 @@
     quic = true; # also needed when http3 = true
     # Upgrade HTTP to HTTPS
     forceSSL = true;
-    locations."/" = "301 https://phip1611.de";
+    locations."/".return = "301 https://phip1611.de";
   };
 
 }
