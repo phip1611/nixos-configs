@@ -21,7 +21,7 @@ in
     '';
     # No hashed filename in this project.
     locations."~* \.(webmanifest)$".extraConfig = ''
-      etag off;
+      etag on;
       add_header Cache-Control "no-cache";
     '';
     locations."~* \.(html)$".extraConfig = ''
