@@ -19,6 +19,11 @@ in
       if_modified_since off;
       add_header Cache-Control "public, no-transform";
     '';
+    # No hashed filename in this project.
+    locations."~* \.(webmanifest)$".extraConfig = ''
+      etag off;
+      add_header Cache-Control "no-cache";
+    '';
     locations."~* \.(html)$".extraConfig = ''
       etag on;
       add_header Cache-Control "no-cache";
