@@ -39,12 +39,4 @@
           add_header Cache-Control "public, no-transform";
         }
   ''; */
-  cacheHeadersConfig = {
-    "~* \.(js|css|jpg|jpeg|png|gif|js|css|ico|swf)$" = ''
-      expires 1y;
-      etag off;
-      if_modified_since off;
-      add_header Cache-Control "public, no-transform";
-    '';
-  };
 }
