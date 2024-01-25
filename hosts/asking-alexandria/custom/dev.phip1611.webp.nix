@@ -1,5 +1,8 @@
 { config, lib, pkgs, img-to-webp-service, ... }:
 
+let
+  common = import ./common.nix;
+in
 {
   imports = [
     (img-to-webp-service.nixosModules.default)
@@ -11,13 +14,7 @@
       let
         port = toString config.services.img-to-webp-service.port;
       in
-      {
-        enableACME = true;
-        http2 = true;
-        http3 = true;
-        quic = true; # also needed when http3 = true
-        # Upgrade HTTP to HTTPS
-        forceSSL = true;
+      common.virtualHostConfig // {
         locations."/".proxyPass = "http://localhost:${port}";
       };
   };
