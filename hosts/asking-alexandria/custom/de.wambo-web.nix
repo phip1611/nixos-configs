@@ -11,8 +11,11 @@ in
     locations."~* \.(js|css|jpg|jpeg|png|gif|js|css|ico|swf)$".extraConfig = ''
       expires 1y;
       etag off;
-      if_modified_since off;
       add_header Cache-Control "public, no-transform";
+      # Doesn't make sense anyway when build with Nix, where it always shows
+      # 01.01.1970.
+      if_modified_since off;
+      add_header Last-Modified "";
     '';
     # No hashed filename in this project.
     locations."~* \.(webmanifest)$".extraConfig = ''
