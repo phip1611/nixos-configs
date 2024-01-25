@@ -5,8 +5,9 @@
     ./nginx.nix
 
     # Hosted web projects
-    ./img-to-webp-service.nix
-    ./wambo-web.nix
+    ./dev.phip1611.nix
+    ./dev.phip1611.webp.nix
+    ./de.wambo-web.nix
   ];
 
   config = {
