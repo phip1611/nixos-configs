@@ -14,7 +14,7 @@
     # Enable CSP
     # Recommended settings by angular:
     # https://angular.io/guide/security
-    add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'nonce-randomNonceGoesHere'; script-src 'self' 'nonce-randomNonceGoesHere'" always;
+    add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'" always;
 
     # Minimize information leaked to other domains
     add_header 'Referrer-Policy' 'origin-when-cross-origin';
