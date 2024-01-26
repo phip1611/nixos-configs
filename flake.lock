@@ -154,11 +154,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1706260175,
-        "narHash": "sha256-1Y+NR9w/7Ceua+TCAHuUUnMJlgLGeLhcDAhOXbGiuA8=",
+        "lastModified": 1706260711,
+        "narHash": "sha256-SAcE4cwcMYqpnRcjKQbEP9ocWu6UfD9Afi69aUxi4fI=",
         "owner": "phip1611",
         "repo": "wambo-web",
-        "rev": "eac20ebd507df23b37cb66d172e8be04c84ac6c3",
+        "rev": "fe06fcca030815c0a75c77a09d671300bd1e7f0c",
         "type": "github"
       },
       "original": {
