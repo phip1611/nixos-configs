@@ -11,8 +11,8 @@
     # Add HSTS header with preloading to HTTPS requests.
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
-    # Enable CSP for your services.
-    add_header Content-Security-Policy "script-src 'self'; object-src 'none'; base-uri 'none';" always;
+    # Enable CSP
+    add_header Content-Security-Policy "script-src 'self'; object-src 'self'; base-uri 'self';" always;
 
     # Minimize information leaked to other domains
     add_header 'Referrer-Policy' 'origin-when-cross-origin';
