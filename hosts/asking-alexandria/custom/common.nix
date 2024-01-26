@@ -12,7 +12,9 @@
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
     # Enable CSP
-    add_header Content-Security-Policy "script-src 'self'; object-src 'self'; base-uri 'self';" always;
+    # Recommended settings by angular:
+    # https://angular.io/guide/security
+    add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'nonce-randomNonceGoesHere'; script-src 'self' 'nonce-randomNonceGoesHere'" always;
 
     # Minimize information leaked to other domains
     add_header 'Referrer-Policy' 'origin-when-cross-origin';
