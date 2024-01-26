@@ -11,7 +11,7 @@ in
     #
     # Cache settings taken from:
     # https://webdock.io/en/docs/webdock-control-panel/optimizing-performance/setting-cache-control-headers-common-content-types-nginx-and-apache
-    locations."~* \.(js|css|jpg|jpeg|png|gif|js|css|ico|swf)$".extraConfig = ''
+    locations."~* \.(txt|js|css|jpg|jpeg|png|gif|js|css|ico|swf)$".extraConfig = ''
       ${common.securityHeadersConfig}
       etag off;
       add_header Cache-Control "public, no-transform";
