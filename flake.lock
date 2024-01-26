@@ -28,11 +28,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1694102001,
-        "narHash": "sha256-vky6VPK1n1od6vXbqzOXnekrQpTL4hbPAwUhT5J9c9E=",
+        "lastModified": 1703887061,
+        "narHash": "sha256-gGPa9qWNc6eCXT/+Z5/zMkyYOuRZqeFZBDbopNZQkuY=",
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
-        "rev": "9e21c80adf67ebcb077d75bd5e7d724d21eeafd6",
+        "rev": "43e1aa1308018f37118e34d3a9cb4f5e75dc11d5",
         "type": "github"
       },
       "original": {
@@ -154,11 +154,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1704357153,
-        "narHash": "sha256-iFbDHFaFhtCEialaFxEsimSRaQcI+x6dQUyLn0k79ak=",
+        "lastModified": 1706260175,
+        "narHash": "sha256-1Y+NR9w/7Ceua+TCAHuUUnMJlgLGeLhcDAhOXbGiuA8=",
         "owner": "phip1611",
         "repo": "wambo-web",
-        "rev": "3d081b3906982dc2594c261c7de6486d3d7153e0",
+        "rev": "eac20ebd507df23b37cb66d172e8be04c84ac6c3",
         "type": "github"
       },
       "original": {
