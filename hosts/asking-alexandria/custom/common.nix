@@ -11,10 +11,9 @@
     # Add HSTS header with preloading to HTTPS requests.
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
-    # Enable CSP
-    # Recommended settings by angular:
-    # https://angular.io/guide/security
-    add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'" always;
+    # We don't set a general CSP header here as this must be done per project.
+    # Otherwise, SPAs with lots of (inline) scripts and styles are hard to
+    # make work.
 
     # Minimize information leaked to other domains
     add_header 'Referrer-Policy' 'origin-when-cross-origin';
