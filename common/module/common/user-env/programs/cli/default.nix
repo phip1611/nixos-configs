@@ -20,6 +20,7 @@ in
   config = lib.mkIf cfg.enable (lib.mkMerge [
     (
       {
+        programs.iftop.enable = true;
         programs.htop.enable = true;
         # Additionally to adding traceroute to the path, this enables a few cases
         # where route privileges are required.
@@ -44,7 +45,6 @@ in
               git
               grub2 # for grub-file
               hexyl # hex viewer
-              iftop # network usage per interface
               iperf3
               jq # pretty-print JSON
               httpie
