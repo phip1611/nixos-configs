@@ -3,10 +3,10 @@
 ## About
 
 In this repository, you find my
-[common Nix libraries, common Nix packages, and common NixOS modules (in `/common`)](/common/README.md)
-and my public [NixOS system configurations (`/nixos-configs`)](/hosts/README.md).
+[common Nix libraries, common Nix packages, and common NixOS modules](/common/README.md)
+and my public [NixOS system configurations](/hosts/README.md).
 The top-level `flake.nix` is the entry point to all of them. The common
-components itself are standalone and can be used in out-of-tree projects.
+components itself are standalone and can be used by anyone in out-of-tree projects.
 
 
 ## Using the Common Components

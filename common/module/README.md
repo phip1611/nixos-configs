@@ -1,4 +1,4 @@
-# Common NixOS Module
+# Common NixOS Modules
 
 This directory contains my common NixOS module (`./default.nix`). It consists of
 further submodules that provide various configuration options that can be

@@ -19,8 +19,8 @@ in
       # Changes to these are only applied to the environment after a re-login
       # of the user session.
       nixPath = [
-        "nixpkgs=${nixpkgs}"
-        "nixpkgs-unstable=${nixpkgs-unstable}"
+        "nixpkgs=${inputs.nixpkgs}"
+        "nixpkgs-unstable=${inputs.nixpkgs-unstable}"
       ];
 
       # Pinning the Nix flake registry to the versions the system is build with.
