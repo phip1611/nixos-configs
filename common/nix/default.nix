@@ -35,4 +35,12 @@ in
       # TODO tests.combinedTests.kernelboot.testRunXenPVH
     ];
   };
+
+  # Useful for quick prototyping.
+  iso = libutil.images.x86.createHybridMultiboot2Iso {
+    kernel = libutil.builders.flattenDrv {
+      drv = bootitems.kernels.tinytoykernel;
+      artifactPath = "kernel.elf64";
+    };
+  };
 }

@@ -30,6 +30,8 @@ stdenv.mkDerivation {
     make -j $(nproc)
   '';
   installPhase = ''
+    mkdir -p $out/bin
     cp -R bin/. $out
+    ln -s $out/limine $out/bin/limine
   '';
 }
