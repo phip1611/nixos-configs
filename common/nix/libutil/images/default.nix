@@ -2,13 +2,124 @@
 , lib
 , grub2
 , grub2_efi
-, writeTextFile
+, limine
 , runCommand
 , writeShellScriptBin
+, writeTextFile
 , xorriso
 }:
 
 let
+  scriptCheckIsMultiboot =
+    writeShellScriptBin
+      "check-is-multiboot"
+      ''
+        set -euo pipefail
+
+        export PATH="${lib.makeBinPath [ansi grub2]}:$PATH"
+
+        KERNEL=$1
+        MB_VERSION=$2
+
+        if [[ "$MB_VERSION" -eq "1" ]]; then
+          grub-file --is-x86-multiboot $KERNEL
+        elif [[ "$MB_VERSION" -eq "2" ]]; then
+          grub-file --is-x86-multiboot2 $KERNEL
+        else
+          echo -en "$(ansi bold)$(ansi red)"
+          echo -n "Unsupported Multiboot version '$MB_VERSION'!"
+          echo -e "$(ansi reset)"
+          exit 1
+        fi
+      '';
+
+  # Creates a limine config for a Multiboot kernel.
+  # Reference: https://github.com/limine-bootloader/limine/blob/stable/CONFIG.md
+  createLimineMultibootCfg =
+    {
+      # Multiboot2-compliant kernel.
+      kernel
+      # Optional cmdline for the kernel. For example "--serial".
+    , kernelCmdline ? ""
+      # Additional multiboot boot modules.
+      # Format: [{file=<derivation or Nix path>; cmdline=<string>;}]
+    , bootModules ? [ ]
+      # Multiboot version. 1 or 2.
+    , multibootVersion ? 2
+    }:
+    let
+      moduleLines = map
+        (elem: "MODULE_PATH boot:///${builtins.baseNameOf elem.file}\nMODULE_STRING${elem.cmdline}")
+        bootModules;
+    in
+    (writeTextFile {
+      name = "${kernel.name}-limine.cfg";
+      text = ''
+        TIMEOUT=0
+        SERIAL=yes
+        VERBOSE=yes
+
+        INTERFACE_BRANDING=${kernel.name}
+
+        :${baseNameOf kernel}
+        PROTOCOL=multiboot${toString multibootVersion}
+        KERNEL_PATH=boot:///${baseNameOf kernel}
+        KERNEL_CMDLINE=${kernelCmdline}
+        ${builtins.concatStringsSep "\n" moduleLines}
+      '';
+    });
+
+  # Creates a bootable hybrid ISO using Limine to boot a Multiboot kernel.
+  # The image is bootable on legacy x86 BIOS and UEFI platforms.
+  createHybridMultibootIso =
+    {
+      # Multiboot-compliant kernel.
+      kernel
+      # Optional cmdline for the kernel. For example "--serial".
+    , kernelCmdline ? ""
+      # Additional multiboot boot modules.
+      # Format: [{file=<derivation or Nix path>; cmdline=<string>;}]
+    , bootModules ? [ ]
+      # Multiboot version. 1 or 2.
+    , multibootVersion ? 2
+    }@args:
+    let
+      limineCfg = createLimineMultibootCfg args;
+      bootItems = [ kernel ] ++ map (elem: elem.file) bootModules;
+      # -f: don't fail if the same file is added multiple times; for example
+      #     the kernel itself is passed as boot module. This is sometimes nice
+      #     for quick prototyping.
+      copyBootitemsLines = map (elem: "cp ${elem} -f filesystem/${builtins.baseNameOf elem}") bootItems;
+    in
+    runCommand "${kernel.name}-multiboot2-hybrid-iso"
+      {
+        nativeBuildInputs = [ limine xorriso scriptCheckIsMultiboot ];
+        passthru = { inherit bootItems limineCfg; };
+      } ''
+      check-is-multiboot ${kernel} ${toString multibootVersion}
+
+      mkdir -p filesystem/EFI/BOOT
+      install -m 0644 ${limine}/share/limine/limine-bios.sys filesystem
+      install -m 0644 ${limine}/share/limine/limine-bios-cd.bin filesystem
+      install -m 0644 ${limine}/share/limine/limine-uefi-cd.bin filesystem
+      install -m 0644 ${limine}/share/limine/BOOTIA32.EFI filesystem/EFI/BOOT
+      install -m 0644 ${limine}/share/limine/BOOTX64.EFI filesystem/EFI/BOOT
+
+      cp ${limineCfg} filesystem/limine.cfg
+      ${builtins.concatStringsSep "\n" copyBootitemsLines}
+
+      # The following paths are relative to the root of the baked in file system.
+      xorriso -as mkisofs -b limine-bios-cd.bin \
+              -no-emul-boot -boot-load-size 4 -boot-info-table \
+              --efi-boot limine-uefi-cd.bin \
+              -efi-boot-part --efi-boot-image --protective-msdos-label \
+              filesystem -o image.iso
+
+      limine bios-install image.iso
+
+      cp image.iso $out
+    '';
+
   # Creates a GRUB config that loads the provided kernel via Multiboot 1 or 2.
   # The kernel must be embedded into the memdisk of GRUB in the /boot directory
   # so that GRUB can load it.
@@ -36,7 +147,7 @@ let
         bootModules
       ;
     in
-    (writeTextFile {
+    writeTextFile {
       name = "${kernel.name}-grub.cfg-multiboot${toString multibootVersion}";
       text = ''
         set timeout=0
@@ -46,32 +157,7 @@ let
           boot
         }
       '';
-    }).overrideAttrs {
-      passthru = { inherit multibootVersion; };
     };
-
-  scriptCheckIsMultiboot =
-    writeShellScriptBin
-      "check-is-multiboot"
-      ''
-        set -euo pipefail
-
-        export PATH="${lib.makeBinPath [ansi grub2]}:$PATH"
-
-        KERNEL=$1
-        MB_VERSION=$2
-
-        if [[ "$MB_VERSION" -eq "1" ]]; then
-          grub-file --is-x86-multiboot $KERNEL
-        elif [[ "$MB_VERSION" -eq "2" ]]; then
-          grub-file --is-x86-multiboot2 $KERNEL
-        else
-          echo -en "$(ansi bold)$(ansi red)"
-          echo -n "Unsupported Multiboot version '$MB_VERSION'!"
-          echo -e "$(ansi reset)"
-          exit 1
-        fi
-      '';
 
   # Embeds an Multiboot (1 or 2) ELF binary in a legacy-bootable ISO image.
   # The image is based on GRUB.
@@ -172,6 +258,7 @@ in
 {
   # For x86 and x86_64.
   x86 = {
+    inherit createHybridMultibootIso;
     inherit createMultibootIso;
     inherit createMultibootEfi;
   };

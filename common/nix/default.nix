@@ -27,10 +27,22 @@ in
       # - run-efi works
       # - the generated ISO and EFI indeed boot the kernel via Multiboot
       tests.combinedTests.kernelboot.testRunQemuDirect
+      tests.combinedTests.kernelboot.testRunQemuEfiMb1
+      tests.combinedTests.kernelboot.testRunQemuEfiMb2
       tests.combinedTests.kernelboot.testRunQemuIso
+      tests.combinedTests.kernelboot.testRunQemuHybridIso
+      tests.combinedTests.kernelboot.testRunQemuHybridIsoUefi
       tests.combinedTests.kernelboot.testRunQemuEfiMb1
       tests.combinedTests.kernelboot.testRunQemuEfiMb2
       # TODO tests.combinedTests.kernelboot.testRunXenPVH
     ];
   };
+
+  /*# Useful for quick prototyping.
+  iso = libutil.images.x86.createHybridMultibootIso {
+    kernel = libutil.builders.flattenDrv {
+      drv = bootitems.tinytoykernel;
+      artifactPath = "kernel.elf64";
+    };
+  };*/
 }

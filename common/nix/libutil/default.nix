@@ -7,11 +7,22 @@ rec {
   builders = import ./builders { inherit pkgs; };
   images = import ./images {
     inherit (pkgs)
-      ansi lib grub2 grub2_efi writeTextFile runCommand writeShellScriptBin
-      xorriso;
+      ansi
+      lib
+      grub2
+      grub2_efi
+      limine
+      writeTextFile
+      runCommand
+      writeShellScriptBin
+      xorriso
+      ;
   };
   testing = (import ./testing {
-    inherit (pkgs) ansi runCommandLocal;
+    inherit (pkgs)
+      ansi
+      runCommandLocal
+      ;
   });
   trace = (import ./trace {
     inherit ansi;

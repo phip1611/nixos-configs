@@ -196,7 +196,7 @@
           in
           {
             # $ nix build .\#checks.x86_64-linux.<attribute-name> or
-            # `nix flake check` to run them all.
+            # `nix flake check` to run them all. But the latter also does more.
             checks = rec {
               inherit (commonNix) allTests;
 
