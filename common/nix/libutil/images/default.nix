@@ -3,7 +3,7 @@
 , grub2
 , grub2_efi
 , writeTextFile
-, runCommandNoCC
+, runCommand
 , writeShellScriptBin
 , xorriso
 }:
@@ -97,7 +97,7 @@ let
       #     for quick prototyping.
       copyBootitemsLines = map (elem: "cp ${elem} -f filesystem/boot/${builtins.baseNameOf elem}") bootItems;
     in
-    runCommandNoCC name
+    runCommand name
       {
         nativeBuildInputs = [ grub2 xorriso scriptCheckIsMultiboot ];
         passthru = { inherit bootItems grubCfg; };
@@ -142,7 +142,7 @@ let
         (elem: "\"/boot/${builtins.baseNameOf elem}=$(realpath ${elem})\"")
         bootItems;
     in
-    runCommandNoCC name
+    runCommand name
       {
         nativeBuildInputs = [ grub2_efi scriptCheckIsMultiboot ];
         passthru = { inherit bootItems grubCfg; };

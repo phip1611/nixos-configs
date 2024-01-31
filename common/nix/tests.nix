@@ -40,7 +40,7 @@ in
 
       # File where the output of the booted kernel is stored.
       bootOutputFile = "out.txt";
-      bootWithTimeout = classifier: expectedOut: runCmd: pkgs.runCommandNoCC "test-boot-${classifier}"
+      bootWithTimeout = classifier: expectedOut: runCmd: pkgs.runCommand "test-boot-${classifier}"
         {
           nativeBuildInputs = [
             pkgs.ansi

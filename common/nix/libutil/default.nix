@@ -7,7 +7,7 @@ rec {
   builders = import ./builders { inherit (pkgs) runCommandLocal; };
   images = import ./images {
     inherit (pkgs)
-      ansi lib grub2 grub2_efi writeTextFile runCommandNoCC writeShellScriptBin
+      ansi lib grub2 grub2_efi writeTextFile runCommand writeShellScriptBin
       xorriso;
   };
   testing = (import ./testing {
