@@ -24,7 +24,7 @@ in
         history =
           let
             # Default is 10000.
-            saveLines = 200000; # This results in rouglhy 1-6 MiB memory usage.
+            saveLines = 200000; # This results in roughly 1-6 MiB memory usage.
           in
           {
             # Save timestamp into the history file.

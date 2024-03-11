@@ -1,5 +1,3 @@
-# Sets the configuration for allacritty.
-
 { config, lib, pkgs, nixpkgs-unstable, ... }:
 
 let

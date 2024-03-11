@@ -9,8 +9,9 @@
     ./common
     ./network-boot
     ./services
-    ../libutil/overlay.module.nix
-    ../pkgs/overlay.module.nix
+    ../nix/bootitems/overlay.module.nix
+    ../nix/libutil/overlay.module.nix
+    ../nix/packages/overlay.module.nix
   ];
 
   options.phip1611 = {
@@ -25,9 +26,9 @@
 
   config = {
     phip1611 = {
-      # By default, the overlays are activated.
+      bootitems-overlay.enable = true;
       libutil-overlay.enable = true;
-      pkgs-overlay.enable = true;
+      packages-overlay.enable = true;
     };
   };
 }

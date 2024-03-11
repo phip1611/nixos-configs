@@ -39,12 +39,21 @@
     let
       commonSrc = rec {
         base = ./common;
-        libutil = "${base}/libutil";
-        libutilTests = "${libutil}/_test";
+        nix = {
+          all = "${base}/nix/default.nix";
+          bootitems = "${base}/nix/bootitems";
+          libutil = "${base}/nix/libutil";
+          packages = "${base}/nix/packages";
+        };
         module = "${base}/module";
-        pkgs = "${base}/pkgs";
-        pkgsTests = "${pkgs}/_test";
       };
+
+      # Initializes nixpkgs with the provided overlays.
+      initNixpkgs = nixpkgsSrc: system: overlays:
+        import nixpkgsSrc {
+          inherit overlays system;
+          config = { };
+        };
 
       # Common modules originating from a flake.
       commonFlakeNixosModules = [
@@ -94,9 +103,9 @@
         flake = {
           # Here I simply re-export the library files without initializing
           # it with the nixpkgs input, i.e., this is no "per system" attribute.
-          lib = rec {
-            default = libutil;
-            libutil = commonSrc.libutil;
+          lib = {
+            bootitems = commonSrc.nix.bootitems;
+            libutil = commonSrc.nix.libutil;
           };
 
           nixosConfigurations = {
@@ -139,8 +148,9 @@
           };
 
           overlays = {
-            libutil = import "${commonSrc.libutil}/overlay.nix";
-            pkgs = import "${commonSrc.pkgs}/overlay.nix";
+            bootitems = import "${commonSrc.nix.bootitems}/overlay.nix";
+            libutil = import "${commonSrc.nix.libutil}/overlay.nix";
+            packages = import "${commonSrc.nix.packages}/overlay.nix";
           };
         };
 
@@ -151,72 +161,36 @@
         # systems.
         systems = nixpkgs.lib.systems.flakeExposed;
 
-        perSystem = { config, pkgs, ... }:
+        perSystem = { config, system, ... }:
           let
-            common = {
-              libutil = import commonSrc.libutil { inherit pkgs; };
-              libutilTests = import commonSrc.libutilTests { inherit pkgs; };
-              pkgs = import commonSrc.pkgs { inherit pkgs; };
-              pkgsTests = import commonSrc.pkgsTests { inherit pkgs; };
+            # As long as flake-parts doesn't offer a convenient way to specify
+            # overlays, I drop the "pkgs" parameter of the perSystem function
+            # and initialize it manually.
+            pkgs = initNixpkgs inputs.nixpkgs system (builtins.attrValues self.overlays);
+
+            commonNix = {
+              # All unit and integration tests as combined derivation.
+              allTests = (import commonSrc.nix.all { inherit pkgs; }).allTests;
+              bootitems = import commonSrc.nix.bootitems { inherit pkgs; };
+              libutil = import commonSrc.nix.libutil { inherit pkgs; };
+              packages = import commonSrc.nix.packages { inherit pkgs; };
             };
           in
           {
             # $ nix build .\#checks.x86_64-linux.<attribute-name> or
             # `nix flake check` to run them all.
             checks = rec {
-              # I have this here additionally, as `nix flake check` starts
-              # with the NixOS modules and sometimes I want to have quicker
-              # feedback.
-              allUnitTests = pkgs.symlinkJoin {
-                name = "all-unit-tests";
-                paths = [
-                  libutilTests
-                  pkgsTests
-                ];
-              };
+              inherit (commonNix) allTests;
+
               deadnix = pkgs.runCommand "deadnix-check"
                 {
                   src = ./.;
                   nativeBuildInputs = [ pkgs.deadnix ];
                 } ''
                 set -euo pipefail
-
                 deadnix -f -L $src
-
                 touch $out
               '';
-              inherit (common) libutilTests pkgsTests;
-              /* runVm = pkgs.testers.nixosTest {
-                name = "my-test";
-                nodes = {
-                  machine1 = { lib, pkgs, nodes, ... }: {
-                    imports = [
-                      home-manager.nixosModules.home-manager
-                      commonSrc.module
-                    ];
-                    config = {
-                      # nixpkgs.config.allowUnfree = true;
-
-                      users.users."tester".isNormalUser = true;
-                      phip1611 = {
-                        username = "tester";
-                        common = {
-                          enable = true;
-                          user.pkgs.cli.enable = false;
-                          user.pkgs.gui.enable = false;
-                        };
-                      };
-                    };
-
-                  };
-                  # machine2 = ...;
-                };
-                testScript = ''
-                  start_all()
-                  machine1.wait_for_unit("foo.service")
-                  machine1.succeed("hello | foo-send")
-                '';
-              }; */
             };
 
             devShells = {
@@ -224,10 +198,10 @@
                 packages = with pkgs; [
                   nixos-rebuild
                   nixpkgs-fmt
-                ] ++ builtins.attrValues common.pkgs;
+                ] ++ builtins.attrValues commonNix.packages;
 
                 shellHook = ''
-                  # I still like the convenience of nix paths for quick
+                  # I still like the convenience of Nix paths for quick
                   # prototyping. This is also what my common NixOS module
                   # sets globally.
                   export NIX_PATH="nixpkgs=${nixpkgs}:nixpkgs-unstable=${nixpkgs-unstable}:$NIX_PATH"
@@ -242,13 +216,12 @@
             #
             # $ nix build .\#packages.x86_64-linux.<attribute-name>
             # $ nix run .\#<attribute-name>
-            packages = {
-              # TODO not sure why I can't put this under apps.
+            packages = commonNix.packages // {
               listNixosOptions = import ./test/pkgs/list-nixos-options.nix {
                 inherit (pkgs) ansi lib nixos-option writeShellScriptBin writeText;
                 inherit home-manager nixpkgs commonSrc;
               };
-            } // common.pkgs;
+            };
           };
       };
 }

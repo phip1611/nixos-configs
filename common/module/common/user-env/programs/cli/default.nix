@@ -1,3 +1,4 @@
+# Some inputs refers to flake inputs.
 { config, lib, pkgs, nixpkgs-unstable, ... }:
 
 let
@@ -29,7 +30,7 @@ in
 
         users.users."${username}".packages =
           # Apply my custom packages from the overlay.
-          (builtins.attrValues pkgs.phip1611.pkgs) ++ (
+          (builtins.attrValues pkgs.phip1611.packages) ++ (
             with pkgs; [
               ansi
               bat
