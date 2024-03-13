@@ -31,10 +31,10 @@ in
 
     home-manager.users."${username}" = {
       home.stateVersion = stateVersion;
-      home.shellAliases = {
-        eza = "eza -lFagh --time-style=long-iso";
+      home.shellAliases = rec {
+        eza = "eza -lagh -F --time-style=long-iso";
         # eza used to be exa.
-        exa = "eza -lFagh --time-style=long-iso";
+        exa = eza;
       };
 
       # With zsh, the location where the definitions of the global NixOS option
