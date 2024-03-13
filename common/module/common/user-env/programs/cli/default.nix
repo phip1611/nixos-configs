@@ -15,6 +15,7 @@ in
 {
   imports = [
     ./git.nix
+    ./micro.nix
     ./tmux.nix
     ./zsh.nix
   ];
