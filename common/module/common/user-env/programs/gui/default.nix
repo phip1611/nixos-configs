@@ -17,12 +17,13 @@ in
     ./vscode.nix
   ];
   config = lib.mkIf (cfg.enable && cfg.withGui) {
+    programs.firefox.enable = true;
+
     # Teamviewer GUI doesn't work without the daemon.
     services.teamviewer.enable = true;
 
     users.users."${username}".packages = (
       with pkgs; [
-        firefox
         gimp
         google-chrome
         gparted
