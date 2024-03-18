@@ -5,9 +5,15 @@
   phip1611 = {
     username = "phip1611";
     common = {
-      enable = true;
-      user-env.git.username = "Philipp Schuster";
-      user-env.git.email = "phip1611@gmail.com";
+      user-env = {
+        enable = true;
+        git.username = "Philipp Schuster";
+        git.email = "phip1611@gmail.com";
+      };
+
+      system = {
+        enable = true;
+      };
     };
   };
 

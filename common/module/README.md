@@ -8,10 +8,11 @@ the top-level module only. For fine-tuning, you can use the provided options.
 In this directory, each `default.nix` usually is a NixOS module.
 
 There are the following major submodules available:
-- [common](common/README.md): typical environment setup of a system and user-specific things,
-  such as the shell and CLI tools
 - [network-boot](network-boot/README.md): Configurations for a network boot setup
-- [services](services/README.md): systemd services
+- [user-env](user-env/README.md): typical user-environment specific things,
+  such as the shell and CLI tools
+- [services](services/README.md): common system services
+- [system](system/README.md): typical global environment setup
 
 All options are prefixed with `phip1611`. You can view a list of all oft those
 with their default option by running:
