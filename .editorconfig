@@ -14,11 +14,5 @@ max_line_length = 80
 [Makefile]
 indent_style = tab
 
-[*.md]
-indent_size = 2
-
-[*.nix]
-indent_size = 2
-
-[*.yml]
+[{*.md,*.nix,*.sh,*.yml}]
 indent_size = 2
