@@ -6,9 +6,10 @@
 
 {
   imports = [
-    ./common
     ./network-boot
+    ./user-env
     ./services
+    ./system
     ../nix/bootitems/overlay.module.nix
     ../nix/libutil/overlay.module.nix
     ../nix/packages/overlay.module.nix
