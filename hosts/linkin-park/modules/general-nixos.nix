@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 
 {
-
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
 
@@ -12,7 +11,7 @@
   };
   services.avahi = {
     enable = true;
-    nssmdns = true;
+    nssmdns4 = true;
   };
 
 }
