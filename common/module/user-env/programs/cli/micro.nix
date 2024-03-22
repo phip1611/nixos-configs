@@ -38,9 +38,7 @@ in
                     lib.escapeShellArg pluginName
                   }; then
                     (set -x
-                      # TODO in home-manager 24.05, this should be refactored:
-                      # https://github.com/nix-community/home-manager/blob/1c2acec99933f9835cc7ad47e35303de92d923a4/docs/release-notes/rl-2405.md?plain=1#L34
-                      $DRY_RUN_CMD ${pkgs.micro}/bin/micro -plugin install ${
+                      run ${pkgs.micro}/bin/micro -plugin install ${
                         lib.escapeShellArg pluginName
                       }
                     )
