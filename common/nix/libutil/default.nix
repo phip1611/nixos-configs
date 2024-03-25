@@ -9,6 +9,7 @@ rec {
     inherit (pkgs)
       ansi lib grub2 grub2_efi writeTextFile runCommand writeShellScriptBin
       xorriso;
+    limine = pkgs.phip1611.packages.limine;
   };
   testing = (import ./testing {
     inherit (pkgs) ansi runCommandLocal;
