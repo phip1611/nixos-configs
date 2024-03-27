@@ -74,6 +74,7 @@ initrd.
 - some hardware/firmware/memory sanity checks
 - serial device
 - PS2 and i8042
+- Para-virtualization support (for KVM)
 
 #### Binary Structure
 
