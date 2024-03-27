@@ -1,5 +1,3 @@
-# Bundles and exports all modules of the "libutil" Nix library.
-
 # nixpkgs fallback is only here for quick prototyping. See README.md.
 { pkgs ? builtins.trace "WARN: Using nixpkgs from ./nixpkgs.nix" (import ./nixpkgs.nix) }:
 
