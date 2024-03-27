@@ -24,7 +24,6 @@ to use not less than 700MB of RAM.
 
 ## initrd functionality
 
-
 ### minimal
 - bash
 - coreutils from busybox
@@ -80,6 +79,7 @@ initrd.
 
 - BTF debug info
 - Relocatable Kernel
+- Xen PVH entry
 
 #### Device and Subsystem Drivers
 
