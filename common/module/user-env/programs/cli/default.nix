@@ -37,7 +37,7 @@ in
               bat
               bottom
               calc
-              coreutils #default package; here only for completeness
+              coreutils # default package; here only for completeness
               cpu-x # TUI-like equivalent to CPU-Z on Windows
               curl
               dig # dig and nslookup

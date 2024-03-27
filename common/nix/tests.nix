@@ -12,8 +12,8 @@ in
       bootitem = rec {
         # Multiboot kernel in different formats, as Multiboot1 loaders usually
         # only load ELF32 files.
-        elf32 = libutil.builders.flattenDrv { drv = bootitems.kernels.tinytoykernel; artifactPath = "kernel.elf32"; };
-        elf64 = libutil.builders.flattenDrv { drv = bootitems.kernels.tinytoykernel; artifactPath = "kernel.elf64"; };
+        elf32 = libutil.builders.flattenDrv { drv = bootitems.tinytoykernel; artifactPath = "kernel.elf32"; };
+        elf64 = libutil.builders.flattenDrv { drv = bootitems.tinytoykernel; artifactPath = "kernel.elf64"; };
         iso = libutil.images.x86.createBootableMultibootIso {
           kernel = elf32;
           multibootVersion = 2;

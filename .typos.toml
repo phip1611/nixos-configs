@@ -1,0 +1,10 @@
+# Configuration for https://github.com/crate-ci/typos
+
+[files]
+extend-exclude = [
+  "common/nix/bootitems/linux/minimal-kernel.config",
+]
+
+[default.extend-words]
+
+[default.extend-identifiers]

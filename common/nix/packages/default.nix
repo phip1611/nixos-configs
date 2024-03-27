@@ -1,8 +1,4 @@
-# Bundles and exports all sub modules of the "libutil" nix library.
-
-{ pkgs
-  # , libutil ? pkgs.phip1611.libutil
-}:
+{ pkgs }:
 
 {
   ddns-update = pkgs.callPackage ./ddns-update { };

@@ -1,10 +1,8 @@
 # Bundles and exports all modules of the "libutil" Nix library.
 
-{ pkgs }:
+{ pkgs ? builtins.trace "WARN: Using nixpkgs from NIX_PATH" (import <nixpkgs> { }) }:
 
 {
-  kernels = {
-    tinytoykernel = pkgs.callPackage ./tinytoykernel { };
-  };
-  initrds = { };
+  linux = import ./linux { inherit pkgs; };
+  tinytoykernel = pkgs.callPackage ./tinytoykernel { };
 }

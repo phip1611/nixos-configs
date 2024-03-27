@@ -103,6 +103,7 @@
         flake = {
           # Here I simply re-export the library files without initializing
           # it with the nixpkgs input, i.e., this is no "per system" attribute.
+          # TODO is this cool? Should I init nixpkgs here?
           lib = {
             bootitems = commonSrc.nix.bootitems;
             libutil = commonSrc.nix.libutil;

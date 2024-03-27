@@ -15,6 +15,7 @@
       common = {
         user-env = {
           enable = true;
+          withBootitems = false;
           withDevCAndRust = false;
           withDevJava = false;
           withDevJavascript = false;

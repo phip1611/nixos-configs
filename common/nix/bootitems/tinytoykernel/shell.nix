@@ -1,4 +1,3 @@
-# TODO add this to shell from flake.nix.
 { pkgs ? import <nixpkgs> { } }:
 
 let

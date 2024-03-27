@@ -6,7 +6,6 @@ let
   cfg = config.phip1611.common.user-env;
 in
 {
-
   config = lib.mkIf (cfg.enable && cfg.withGui) {
     # https://nixos.wiki/wiki/Fonts
     fonts = {
