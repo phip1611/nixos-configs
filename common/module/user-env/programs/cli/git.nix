@@ -66,6 +66,7 @@ in
             };
           };
         };
+        lfs.enable = true; # Enable "git lfs <cmd>"
       };
     };
   };

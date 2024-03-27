@@ -35,7 +35,7 @@ in
         eza = "eza -lagh -F --time-style=long-iso";
         # eza used to be exa.
         exa = eza;
-        ip  = "ip --color=auto"; # a shame that this is not the default
+        ip = "ip --color=auto"; # a shame that this is not the default
       };
 
       # With zsh, the location where the definitions of the global NixOS option
