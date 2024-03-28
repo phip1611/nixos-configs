@@ -4,7 +4,7 @@
 
 rec {
   ansi = import ./ansi { };
-  builders = import ./builders { inherit (pkgs) runCommandLocal; };
+  builders = import ./builders { inherit pkgs; };
   images = import ./images {
     inherit (pkgs)
       ansi lib grub2 grub2_efi writeTextFile runCommand writeShellScriptBin

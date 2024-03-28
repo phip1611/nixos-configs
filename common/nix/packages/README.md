@@ -8,6 +8,8 @@ worth upstreaming.
 This directory bundles some utility packages, such as
 
 - `ddns-update`
+- `extract-vmlinux`
 - `nix-shell-init`
+- `normalize-file-permissions`
 - `qemu-uefi`
 - `run-efi`

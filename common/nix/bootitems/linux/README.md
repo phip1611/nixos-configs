@@ -24,7 +24,6 @@ to use not less than 700MB of RAM.
 
 ## initrd functionality
 
-
 ### minimal
 - bash
 - coreutils from busybox
@@ -75,11 +74,13 @@ initrd.
 - some hardware/firmware/memory sanity checks
 - serial device
 - PS2 and i8042
+- Para-virtualization support (for KVM)
 
 #### Binary Structure
 
 - BTF debug info
 - Relocatable Kernel
+- Xen PVH entry
 
 #### Device and Subsystem Drivers
 
