@@ -2,7 +2,6 @@
 
 let
   cfg = config.phip1611.common.system;
-  username = config.phip1611.username;
 
   # Additional trusted binary caches. The one from
   # cache.nixos.org is always added by default.
@@ -37,7 +36,7 @@ in
         keep-outputs = true;
         keep-derivations = true;
 
-        trusted-users = [ "@wheel" username ];
+        trusted-users = [ "@wheel" ];
 
         substituters = map ({ url, ... }: url) trustedBinaryCaches;
         trusted-public-keys = map ({ key, ... }: key) trustedBinaryCaches;

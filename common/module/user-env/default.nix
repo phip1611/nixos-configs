@@ -15,8 +15,9 @@ in
   imports = [
     ./env
     ./programs
-    ./fonts.nix
     ./bootitems.nix
+    ./fonts.nix
+    ./nix.nix
     ./gnome-exts.nix
   ];
 
