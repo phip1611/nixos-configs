@@ -32,6 +32,7 @@ in
     withGui = lib.mkEnableOption "Include GUI-based applications";
     withMedia = lib.mkEnableOption "Include tools to enable media (images, videos, ...)";
     withPkgsJ4F = lib.mkEnableOption "Include just-for-fun packages (cowsay, lolcat, hollywood, ...)";
+    withVmms = lib.mkEnableOption "Include VMMs (QEMU, Cloud Hypervisor)";
   };
 
   config = lib.mkIf cfg.enable {

@@ -23,6 +23,7 @@
           withGui = false;
           withMedia = false;
           withPkgsJ4F = false;
+          withVmms = false;
           git.username = "Philipp Schuster";
           git.email = "phip1611@gmail.com";
         };
