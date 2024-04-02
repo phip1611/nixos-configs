@@ -14,15 +14,24 @@ let
     {
       imports = [
         (import ${home-manager}/nixos)
-        (import "${commonSrc.module}")
+
+        (import "${commonSrc.modules}/network-boot")
+        (import "${commonSrc.modules}/overlays")
+        (import "${commonSrc.modules}/services")
+        (import "${commonSrc.modules}/system")
+        (import "${commonSrc.modules}/user-env")
       ];
 
       phip1611.common.user-env.enable = true;
-      phip1611.common.user-env.git.email = "phip1611@gmail.com";
+      phip1611.common.user-env.username = "foobar123";
+      phip1611.common.user-env.git.email = "phip1611n@gmail.com";
       phip1611.common.user-env.git.username = "Philipp Schuster";
       phip1611.common.system.enable = true;
       phip1611.network-boot.enable = true;
-      phip1611.network-boot.interfaces = []; # remove used but not defined error
+
+       # Remove some used but not defined errors.
+      phip1611.network-boot.username = "foobar123";
+      phip1611.network-boot.interfaces = [];
     }
   '';
 in

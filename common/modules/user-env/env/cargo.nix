@@ -8,7 +8,6 @@
 { config, lib, pkgs, ... }:
 
 let
-  username = config.phip1611.username;
   cfg = config.phip1611.common.user-env;
 
   # List of binaries to create a symlink to in `~/.cargo/bin`.
@@ -26,7 +25,7 @@ let
   # Function that creates a list of cargo symlinks for the home-manager.
   createCargoBinSymlinks = mkOutOfStoreSymlink: bins: builtins.foldl'
     (acc: bin: {
-      ".cargo/bin/${bin}".source = mkOutOfStoreSymlink "/etc/profiles/per-user/${username}/bin/${bin}";
+      ".cargo/bin/${bin}".source = mkOutOfStoreSymlink "/etc/profiles/per-user/${cfg.username}/bin/${bin}";
     } // acc)
     { } # accumulator
     bins;
@@ -41,7 +40,7 @@ in
 {
   config = lib.mkIf (cfg.enable && cfg.withDevCAndRust) {
 
-    home-manager.users."${username}" =
+    home-manager.users."${cfg.username}" =
       {
         # Refers to the home-manager config, not the NixOS config
         config
@@ -56,7 +55,7 @@ in
         # Add tools installed via cargo to the end of $PATH.
         # This gives those binaries the lowest precedence in $PATH.
         home.sessionPath = [
-          "/home/${username}/.cargo/bin"
+          "/home/${cfg.username}/.cargo/bin"
         ];
       };
   };

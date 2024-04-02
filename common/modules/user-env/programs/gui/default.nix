@@ -8,7 +8,6 @@ let
       allowUnfree = true;
     };
   };
-  username = config.phip1611.username;
 in
 {
   imports = [
@@ -22,7 +21,7 @@ in
     # Teamviewer GUI doesn't work without the daemon.
     services.teamviewer.enable = true;
 
-    users.users."${username}".packages = (
+    users.users."${cfg.username}".packages = (
       with pkgs; [
         gimp
         google-chrome

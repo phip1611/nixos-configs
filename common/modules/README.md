@@ -1,9 +1,9 @@
 # Common NixOS Modules
 
-This directory contains my common NixOS module (`./default.nix`). It consists of
-further submodules that provide various configuration options that can be
-activated or deactivated on a fine-grained level. It is intended to include
-the top-level module only. For fine-tuning, you can use the provided options.
+This directory contains my common NixOS modules. Each consists of multiple
+submodules but this is irrelevant for consuming them. By default, no module
+does something to your system without the corresponding `enable` option
+that must be set to true. For fine-tuning, you can use the provided options.
 
 In this directory, each `default.nix` usually is a NixOS module.
 
@@ -11,11 +11,12 @@ There are the following major submodules available:
 - [network-boot](network-boot/README.md): Configurations for a network boot setup
 - [user-env](user-env/README.md): typical user-environment specific things,
   such as the shell and CLI tools
+- [overlays](overlays/README.md): common overlays
 - [services](services/README.md): common system services
 - [system](system/README.md): typical global environment setup
 
-All options are prefixed with `phip1611`. You can view a list of all oft those
-with their default option by running:
+All NixOS options are prefixed with `phip1611`. You can view a list of all oft
+those with their default option by running:
 
 ```shell
 $ nix run .\#listNixosOptions

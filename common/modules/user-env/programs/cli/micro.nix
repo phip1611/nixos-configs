@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 
 let
-  username = config.phip1611.username;
   cfg = config.phip1611.common.user-env;
 
   # Something from `$ micro -plugin available`
@@ -11,7 +10,7 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
-    home-manager.users."${username}" =
+    home-manager.users."${cfg.username}" =
       # Module variables from home-manager, not NixOS.
       { config, lib, ... }: {
         # TODO somehow add the ".editorconfig" plugin:

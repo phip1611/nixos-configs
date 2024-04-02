@@ -1,18 +1,17 @@
 { config, lib, pkgs, ... }:
 
 let
-  username = config.phip1611.username;
   cfg = config.phip1611.common.user-env;
 in
 {
   config = lib.mkIf cfg.enable {
-    # Adds zsh to PATH and to /etc/shells
+    # Adds zsh to PATH and to /etc/shells and link /share/zsh for completions.
     programs.zsh.enable = true;
 
-    home-manager.users."${username}" = {
+    home-manager.users."${cfg.username}" = {
       home.sessionVariables = {
         # Hide "user@host" in ZSH's agnoster-theme => shorter prompt
-        DEFAULT_USER = username;
+        DEFAULT_USER = cfg.username;
       };
 
       programs.zsh = {

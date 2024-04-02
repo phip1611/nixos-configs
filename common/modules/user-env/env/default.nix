@@ -5,7 +5,6 @@
 { config, lib, pkgs, ... }:
 
 let
-  username = config.phip1611.username;
   stateVersion = config.system.stateVersion;
   cfg = config.phip1611.common.user-env;
 in
@@ -18,7 +17,7 @@ in
   # Set some aliases and environment variables, plus other misc stuff.
   config = lib.mkIf cfg.enable {
     # ZSH as default shell for my user.
-    users.users."${username}" = {
+    users.users."${cfg.username}" = {
       shell = pkgs.zsh;
     };
 
@@ -29,7 +28,7 @@ in
     # desktop environment anymore.
     home-manager.useUserPackages = false;
 
-    home-manager.users."${username}" = {
+    home-manager.users."${cfg.username}" = {
       home.stateVersion = stateVersion;
       home.shellAliases = rec {
         eza = "eza -lagh -F --time-style=long-iso";

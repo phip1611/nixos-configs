@@ -3,7 +3,6 @@
 
 let
   cfg = config.phip1611.common.user-env;
-  username = config.phip1611.username;
   pkgsUnstable = import nixpkgs-unstable {
     system = pkgs.system;
     config = {
@@ -29,7 +28,7 @@ in
         programs.traceroute.enable = true;
         programs.yazi.enable = false;
 
-        users.users."${username}".packages =
+        users.users."${cfg.username}".packages =
           # Apply my custom packages from the overlay.
           (builtins.attrValues pkgs.phip1611.packages) ++ (
             with pkgs; [
@@ -97,7 +96,7 @@ in
     )
     (
       lib.mkIf cfg.withPkgsJ4F {
-        users.users."${username}".packages = (
+        users.users."${cfg.username}".packages = (
           with pkgs; [
             cmatrix
             cowsay
@@ -112,7 +111,7 @@ in
       # Especially QEMU comes with 1+ GiB of additional dependencies, so it is
       # smart to feature-gate it.
       lib.mkIf cfg.withVmms {
-        users.users."${username}".packages = (
+        users.users."${cfg.username}".packages = (
           with pkgs;  [
             cloud-hypervisor
             qemu

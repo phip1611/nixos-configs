@@ -3,10 +3,10 @@
 {
   # phip1611 dotfiles common NixOS module configuration
   phip1611 = {
-    username = "phip1611";
     common = {
       user-env = {
         enable = true;
+        username = "phip1611";
         git.username = "Philipp Schuster";
         git.email = "phip1611@gmail.com";
       };

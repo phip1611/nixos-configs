@@ -23,11 +23,11 @@ in
 
   # phip1611 dotfiles common NixOS module configuration
   phip1611 = {
-    username = "pschuster";
     common = {
       # Enable all default options.
       user-env = {
         enable = true;
+        username = "pschuster";
         git.username = "Philipp Schuster";
         git.email = "philipp.schuster@cyberus-technology.de";
       };
