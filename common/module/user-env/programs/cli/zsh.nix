@@ -6,7 +6,7 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
-    # Adds zsh to PATH and to /etc/shells
+    # Adds zsh to PATH and to /etc/shells and link /share/zsh for completions.
     programs.zsh.enable = true;
 
     home-manager.users."${username}" = {

@@ -8,7 +8,9 @@ in
   config = lib.mkIf cfg.withMedia {
     users.users."${username}".packages = (
       with pkgs; [
+        exiftool
         ffmpeg
+        jhead # `jheda -ft *` is very cool!
         imagemagick
         libwebp # webp encoder
       ]
