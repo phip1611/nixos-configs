@@ -1,18 +1,16 @@
 { config, lib, pkgs, ... }:
 
 {
-  # phip1611 dotfiles common NixOS module configuration
+  imports = [
+    ../../profiles/dev-machine.nix
+  ];
+
   phip1611 = {
     common = {
       user-env = {
-        enable = true;
         username = "phip1611";
         git.username = "Philipp Schuster";
         git.email = "phip1611@gmail.com";
-      };
-
-      system = {
-        enable = true;
       };
     };
   };
