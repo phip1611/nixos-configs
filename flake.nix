@@ -148,8 +148,11 @@
           };
 
           nixosModules = rec {
-            default = phip1611-common;
-            phip1611-common = commonSrc.module;
+            network-boot = "${commonSrc.modules}/network-boot";
+            overlays = "${commonSrc.modules}/overlays";
+            services = "${commonSrc.modules}/services";
+            system = "${commonSrc.modules}/system";
+            user-env = "${commonSrc.modules}/user-env";
           };
 
           overlays = {
