@@ -45,7 +45,7 @@
           libutil = "${base}/nix/libutil";
           packages = "${base}/nix/packages";
         };
-        module = "${base}/module";
+        modules = "${base}/modules";
       };
 
       # Initializes nixpkgs with the provided overlays.
@@ -58,7 +58,11 @@
       # Common modules originating from a flake.
       commonFlakeNixosModules = [
         home-manager.nixosModules.home-manager
-        commonSrc.module
+        "${commonSrc.modules}/network-boot"
+        "${commonSrc.modules}/overlays"
+        "${commonSrc.modules}/services"
+        "${commonSrc.modules}/system"
+        "${commonSrc.modules}/user-env"
       ];
 
       # Helper function to build a NixOS system with my common modules,

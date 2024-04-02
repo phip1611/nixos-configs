@@ -55,6 +55,13 @@ in
         ];
       };
 
+      username = lib.mkOption {
+        type = lib.types.str;
+        description = "Username that is the owner of all files in the tftproot directory";
+        example = "myuser";
+        default = null;
+      };
+
       # Root directory for the tftpboot. Automatically created by the dnsmasq
       # service on startup, if it doesn't exist.
       #
@@ -143,7 +150,7 @@ in
         cfg.interfaces;
 
     # Additional dnsmasq setup. Prepare the tftproot directory.
-    systemd.services.dnsmasq = {
+    systemd.services.dnsmasq = lib.mkIf (cfg.username != null) {
       # Ensure that the directory is created, if it doesn't exist.
       # Only relevant when a new NixOS machine is initially set up.
       preStart = ''
@@ -157,7 +164,7 @@ in
 
           if ! [ -f "$dest" ]; then
             echo installing "$file" to "$dest"
-            install -m 0755 -o ${username} "$file" "$dest"
+            install -m 0755 -o ${cfg.username} "$file" "$dest"
           fi
         }
 

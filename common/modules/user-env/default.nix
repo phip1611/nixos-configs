@@ -23,6 +23,10 @@ in
 
   options.phip1611.common.user-env = {
     enable = lib.mkEnableOption "Enable all user sub-modules at once";
+    username = lib.mkOption {
+      description = "User for that all enabled configurations apply";
+      example = "phip1611";
+    };
     withBootitems = lib.mkEnableOption "Place various ready-to-use bootitems in /etc/bootitems for OS development";
     withDevCAndRust = lib.mkEnableOption "Include a C++ and Rust toolchain and convenient helper tools for development";
     withDevJava = lib.mkEnableOption "Include a Java toolchain and convenient helper tools for development";

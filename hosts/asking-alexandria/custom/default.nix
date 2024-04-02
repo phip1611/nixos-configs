@@ -11,10 +11,10 @@
 
   config = {
     phip1611 = {
-      username = "phip1611";
       common = {
         user-env = {
           enable = true;
+          username = "phip1611";
           withBootitems = false;
           withDevCAndRust = false;
           withDevJava = false;

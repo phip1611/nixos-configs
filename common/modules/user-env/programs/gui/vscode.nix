@@ -2,14 +2,13 @@
 
 let
   cfg = config.phip1611.common.user-env;
-  username = config.phip1611.username;
   pkgsUnstable = import nixpkgs-unstable {
     system = pkgs.system;
     config = {
       allowUnfree = true;
     };
   };
-  alacritty = pkgsUnstable.alacritty;
+  vscode = pkgsUnstable.vscode;
 in
 {
   config = lib.mkIf (cfg.enable && cfg.withGui) {
@@ -18,11 +17,17 @@ in
       source-code-pro
     ];
 
-    home-manager.users."${username}" = {
-      programs.alacritty = {
+    home-manager.users."${cfg.username}" = {
+      programs.vscode = {
         enable = true;
-        package = alacritty;
-        settings = builtins.fromTOML (builtins.readFile ./alacritty.toml);
+        package = vscode;
+        extensions = with pkgs.vscode-extensions; [
+          bbenoist.nix
+          tamasfe.even-better-toml
+          editorconfig.editorconfig
+          rust-lang.rust-analyzer
+          github.vscode-github-actions
+        ];
       };
     };
   };
