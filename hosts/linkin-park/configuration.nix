@@ -10,6 +10,8 @@ let
 in
 {
   imports = [
+    ../../profiles/dev-machine.nix
+
     ./modules/user
     ./modules/boot.nix
     ./modules/general-nixos.nix
@@ -26,13 +28,10 @@ in
     common = {
       # Enable all default options.
       user-env = {
-        enable = true;
         username = "pschuster";
         git.username = "Philipp Schuster";
         git.email = "philipp.schuster@cyberus-technology.de";
       };
-
-      system = { enable = true; };
     };
     services.meshcommander.enable = true;
   };
