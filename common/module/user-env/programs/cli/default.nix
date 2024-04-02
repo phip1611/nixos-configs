@@ -70,7 +70,6 @@ in
               # pkg-config
               poppler_utils # for pdfunite
               python3Toolchain
-              qemu
               ripgrep
               tcpdump
               tldr
@@ -105,6 +104,18 @@ in
             fortune
             hollywood
             lolcat
+          ]
+        );
+      }
+    )
+    (
+      # Especially QEMU comes with 1+ GiB of additional dependencies, so it is
+      # smart to feature-gate it.
+      lib.mkIf cfg.withVmms {
+        users.users."${username}".packages = (
+          with pkgs;  [
+            cloud-hypervisor
+            qemu
           ]
         );
       }
