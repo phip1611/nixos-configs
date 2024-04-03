@@ -58,11 +58,12 @@
       # Common modules originating from a flake.
       commonFlakeNixosModules = [
         home-manager.nixosModules.home-manager
-        "${commonSrc.modules}/network-boot"
-        "${commonSrc.modules}/overlays"
-        "${commonSrc.modules}/services"
-        "${commonSrc.modules}/system"
-        "${commonSrc.modules}/user-env"
+
+        self.nixosModules.network-boot
+        self.nixosModules.overlays
+        self.nixosModules.services
+        self.nixosModules.system
+        self.nixosModules.user-env
       ];
 
       # Helper function to build a NixOS system with my common modules,
@@ -107,10 +108,17 @@
         flake = {
           # Here I simply re-export the library files without initializing
           # it with the nixpkgs input, i.e., this is no "per system" attribute.
-          # TODO is this cool? Should I init nixpkgs here?
+          #
+          # Use like this (nix repl example):
+          # ```nix
+          # :lf .
+          # pkgs = import <nixpkgs> {}
+          # libutil = import lib.libutil { inherit pkgs };
+          # ```
           lib = {
             bootitems = commonSrc.nix.bootitems;
             libutil = commonSrc.nix.libutil;
+            packages = commonSrc.nix.packages;
           };
 
           nixosConfigurations = {
@@ -124,8 +132,7 @@
               ];
             };
 
-            # My personal PC at home where I've also have my Windows installed
-            # (on a dedicated disk).
+            # My personal PC at home.
             homepc = buildNixosSystem {
               hostName = "homepc";
               system = "x86_64-linux";
@@ -135,7 +142,7 @@
               ];
             };
 
-            # My main laptop.
+            # Dell XPS 13 Laptop.
             linkin-park = buildNixosSystem {
               hostName = "linkin-park";
               system = "x86_64-linux";
@@ -147,7 +154,7 @@
             };
           };
 
-          nixosModules = rec {
+          nixosModules = {
             network-boot = "${commonSrc.modules}/network-boot";
             overlays = "${commonSrc.modules}/overlays";
             services = "${commonSrc.modules}/services";
