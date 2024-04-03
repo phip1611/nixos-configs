@@ -1,3 +1,8 @@
+# Developer machine configuration.
+#
+# Intended for manual updates and frequent active activity from myself.
+
+
 { config, lib, pkgs, ... }:
 
 {
@@ -9,6 +14,7 @@
         };
         system = {
           enable = true;
+          withAutoUpgrade = false;
         };
       };
     };
