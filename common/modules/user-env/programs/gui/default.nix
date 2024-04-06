@@ -39,6 +39,12 @@ in
           jetbrains.rust-rover
         ]
       )
+    ) ++ (
+      lib.optionals cfg.withMedia (
+        with pkgs; [
+          audacity
+        ]
+      )
     );
   };
 }
