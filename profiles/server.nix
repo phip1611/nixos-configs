@@ -31,5 +31,13 @@
 
     # Comes with a pre-configured configuration for ssh.
     services.fail2ban.enable = true;
+
+    nix = {
+      # Safe some disk space.
+      settings = {
+        keep-outputs = lib.mkForce false;
+        keep-derivations = lib.mkForce false;
+      };
+    };
   };
 }

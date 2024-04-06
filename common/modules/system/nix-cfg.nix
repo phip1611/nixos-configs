@@ -16,10 +16,9 @@ in
 {
   config = lib.mkIf cfg.enable {
     nix = {
+      # Reference: https://nixos.org/manual/nix/stable/command-ref/conf-file
       settings = {
-        # Some configs are taken from:
-        # https://jackson.dev/post/nix-reasonable-defaults/
-        connect-timeout = 5;
+        connect-timeout = 3;
         log-lines = 25;
         min-free = 268435456; # 256 MiB
         max-free = 1073741824; # 1 GiB
@@ -30,9 +29,7 @@ in
         # by replacing identical files in the store by hard links.
         auto-optimise-store = true;
 
-        # These both options are activated for multiple reasons
-        # 1) useful for developers
-        # 2) recommended in https://github.com/nix-community/nix-direnv
+        # These two options are activated for multiple reasons
         keep-outputs = true;
         keep-derivations = true;
 

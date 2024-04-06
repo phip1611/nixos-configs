@@ -1,3 +1,5 @@
+# TODO remove once https://github.com/NixOS/nixpkgs/pull/301260 is merged
+
 # Extracts <linux-latest-src>/scripts/extract-vmlinux as package. As this script
 # is rather basic and generic, we do not need to care about the specific Linux
 # src version from that we get the script.
