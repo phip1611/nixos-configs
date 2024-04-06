@@ -16,10 +16,9 @@ in
 {
   config = lib.mkIf cfg.enable {
     nix = {
+      # Reference: https://nixos.org/manual/nix/stable/command-ref/conf-file
       settings = {
-        # Some configs are taken from:
-        # https://jackson.dev/post/nix-reasonable-defaults/
-        connect-timeout = 5;
+        connect-timeout = 3;
         log-lines = 25;
         min-free = 268435456; # 256 MiB
         max-free = 1073741824; # 1 GiB
