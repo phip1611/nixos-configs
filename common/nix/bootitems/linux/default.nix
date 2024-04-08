@@ -3,7 +3,9 @@
 {
   kernels = {
     latest = pkgs.callPackage ./build-kernel.nix {
-      kernelPkg = pkgs.linux_latest;
+      # Use the default stable LTS Linux kernel of that release to prevent
+      # frequent unnecessary rebuilds.
+      kernelPkg = pkgs.linux;
     };
   };
   initrds = {
