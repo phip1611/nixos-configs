@@ -29,7 +29,7 @@ in
         signal-desktop
         spotify
         teamviewer
-        tdesktop # telegram desktop
+        telegram-desktop
         xournalpp
       ]
     ) ++ (
