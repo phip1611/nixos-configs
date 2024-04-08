@@ -1,3 +1,5 @@
+# DEPRECATED. USE local-dev-network
+
 # NixOS: Network Boot Module
 
 This module sets up a network boot setup on the provided network interfaces.

@@ -81,9 +81,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    nixpkgs.overlays = [
-      (import ./overlay.nix)
-    ];
 
     # Ignore all those interfaces in the (graphical) GNOME network manager.
     networking.networkmanager.unmanaged = interfaceNames;

@@ -15,6 +15,7 @@ let
       imports = [
         (import ${home-manager}/nixos)
 
+        (import "${commonSrc.modules}/local-networks")
         (import "${commonSrc.modules}/network-boot")
         (import "${commonSrc.modules}/overlays")
         (import "${commonSrc.modules}/services")
@@ -32,6 +33,10 @@ let
        # Remove some used but not defined errors.
       phip1611.network-boot.username = "foobar123";
       phip1611.network-boot.interfaces = [];
+
+      # Remove not defined errors plus ensure that nixos-option list all
+      # those options. This doesn't happen when no network is defined.
+      phip1611.local-networks.test.interface = "ethfoo";
     }
   '';
 in
