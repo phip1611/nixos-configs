@@ -1,8 +1,9 @@
-This directory is most likely created and managed by the following NixOS
-module: <https://github.com/phip1611/dotfiles/tree/main/NixOS/network-boot>
+This directory is most likely created and managed by a NixOS module from
+<https://github.com/phip1611/nixos-configs>
 
-If not present, it will create the files:
+If not present, the following files will be created:
+
+- ipxe-default.cfg
 - ipxe.efi
 - ipxe.kpxe
 - ipxe.md
-- ipxe-default.cfg
