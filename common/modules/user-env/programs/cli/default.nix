@@ -113,7 +113,7 @@ in
       lib.mkIf cfg.withVmms {
         users.users."${cfg.username}".packages = (
           with pkgs;  [
-            cloud-hypervisor
+            pkgsUnstable.cloud-hypervisor
             qemu
           ]
         );
