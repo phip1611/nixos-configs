@@ -80,10 +80,11 @@ in
         );
       }
     )
-    # A legacy env for development. For example, helpful to compile Linux.
     (
       lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = [
+          # A legacy env for development. For example, helpful to build Linux
+          # out-of-tree modules right from the shell.
           (pkgs.buildFHSUserEnv {
             name = "legacy-env";
             targetPkgs = pkgs: with pkgs; [
@@ -105,6 +106,8 @@ in
               gmp.dev
               gnumake
               libmpc
+              linux.dev
+              linux_latest.dev
               m4
               mpfr
               mpfr.dev
