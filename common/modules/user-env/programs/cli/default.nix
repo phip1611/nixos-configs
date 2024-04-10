@@ -29,9 +29,15 @@ in
         programs.yazi.enable = false;
 
         users.users."${cfg.username}".packages =
-          # Apply my custom packages from the overlay.
-          (builtins.attrValues pkgs.phip1611.packages) ++ (
+          (
             with pkgs; [
+              # All my custom packages that are not too size-intensive.
+              pkgs.phip1611.packages.ddns-update
+              pkgs.phip1611.packages.extract-vmlinux
+              pkgs.phip1611.packages.keep-directory-diff
+              pkgs.phip1611.packages.nix-shell-init
+              pkgs.phip1611.packages.normalize-file-permissions
+
               ansi
               bat
               bottom
@@ -112,7 +118,10 @@ in
       # smart to feature-gate it.
       lib.mkIf cfg.withVmms {
         users.users."${cfg.username}".packages = (
-          with pkgs;  [
+          with pkgs; [
+            pkgs.phip1611.packages.qemu-uefi
+            pkgs.phip1611.packages.run-efi
+
             pkgsUnstable.cloud-hypervisor
             qemu
           ]

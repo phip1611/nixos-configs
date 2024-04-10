@@ -43,6 +43,8 @@ in
       gc = {
         automatic = true;
         dates = "weekly";
+        # Runs normal garbage-collection plus removes all NixOS generations
+        # that are older than the specified amount.
         options = "--delete-older-than 30d";
       };
 
