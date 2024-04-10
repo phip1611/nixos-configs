@@ -85,7 +85,7 @@ in
         users.users."${cfg.username}".packages = [
           # A legacy env for development. For example, helpful to build Linux
           # out-of-tree modules right from the shell.
-          (pkgs.buildFHSUserEnv {
+          (pkgs.buildFHSEnv {
             name = "legacy-env";
             targetPkgs = pkgs: with pkgs; [
               acpica-tools
