@@ -16,6 +16,7 @@ in
     ./git.nix
     ./micro.nix
     ./tmux.nix
+    ./zellij.nix
     ./zsh.nix
   ];
   config = lib.mkIf cfg.enable (lib.mkMerge [
