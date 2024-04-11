@@ -26,5 +26,5 @@
 
   # The required external driver (no upstream driver) does not (always)
   # compile for the latest kernel.
-  boot.kernelPackages = lib.mkForce pkgs.linuxPackages;
+  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_6; # instead of 6.1 which is standard kernel of NixOS 23.11
 }
