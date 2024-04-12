@@ -49,6 +49,7 @@ in
           pkgs.phip1611.packages.ddns-update
           pkgs.phip1611.packages.extract-vmlinux
           pkgs.phip1611.packages.keep-directory-diff
+          pkgs.phip1611.packages.link-to-copy
           pkgs.phip1611.packages.nix-shell-init
           pkgs.phip1611.packages.normalize-file-permissions
 
