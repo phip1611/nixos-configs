@@ -32,6 +32,7 @@ in
       programs.tmux.enable = true;
       programs.tmux.extraConfig = builtins.readFile ./tmux.cfg;
 
+      # Cool modern tmux replacement with tmux key bindings compatibility.
       programs.zellij.enable = true;
       # https://zellij.dev/documentation/options
       programs.zellij.settings = {
