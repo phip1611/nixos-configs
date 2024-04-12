@@ -7,10 +7,19 @@ let
 in
 {
   config = lib.mkIf (cfg.enable && cfg.withBootitems) {
-    environment.etc."bootitems/tinytoykernel.elf32".source = "${bootitems.tinytoykernel}/kernel.elf32";
-    environment.etc."bootitems/tinytoykernel.elf64".source = "${bootitems.tinytoykernel}/kernel.elf64";
-    environment.etc."bootitems/linux/kernel_minimal_latest.bzImage".source = "${bootitems.linux.kernels.latest}/bzImage";
-    environment.etc."bootitems/linux/kernel_minimal_latest.vmlinux".source = "${libutil.builders.extractVmlinux bootitems.linux.kernels.latest}/vmlinux";
-    environment.etc."bootitems/linux/initrd_minimal".source = "${bootitems.linux.initrds.default}/initrd";
+    environment.etc = ({
+      "bootitems/tinytoykernel.elf32".source = "${bootitems.tinytoykernel}/kernel.elf32";
+      "bootitems/tinytoykernel.elf64".source = "${bootitems.tinytoykernel}/kernel.elf64";
+      "bootitems/linux/initrd_minimal".source = "${bootitems.linux.initrds.default}/initrd";
+    } // (
+      (builtins.foldl'
+        (acc: kernel: acc // {
+          "bootitems/linux/kernel_minimal_${kernel.version}.bzImage".source = "${kernel}/bzImage";
+          "bootitems/linux/kernel_minimal_${kernel.version}.vmlinux".source = "${libutil.builders.extractVmlinux kernel}/vmlinux";
+        })
+        { }
+        (builtins.attrValues bootitems.linux.kernels)
+      )
+    ));
   };
 }
