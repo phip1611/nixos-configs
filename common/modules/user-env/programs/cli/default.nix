@@ -45,7 +45,9 @@ in
     users.users."${cfg.username}".packages =
       (
         with pkgs; [
-          # All my custom packages that are not too size-intensive.
+          # All my custom packages that are not too size-intensive and should
+          # not live behind any special feature gate.
+          pkgs.phip1611.packages.colortest
           pkgs.phip1611.packages.ddns-update
           pkgs.phip1611.packages.extract-vmlinux
           pkgs.phip1611.packages.keep-directory-diff
