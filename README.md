@@ -85,18 +85,16 @@ $ nixos-rebuild build --flake .#<system name>
 The top-level Nix flake exports the following attributes (following the [Nix
 flake conventions](https://nixos.wiki/wiki/Flakes)):
 
-- `apps`: not used; you can `$ nix run` all packages also from the `packages`
-          export
 - `checks`: various unit tests
 - `devShells`
   - everything needed to build and format this repository
-  - all custom pkgs from `common/pkgs`
+  - all custom pkgs from `common/nix/packages`
   - additional util packages for this repository
 - `nixosConfigurations`: the configurations for my NixOS systems
 - `nixosModules`: my common NixOS module
-- `overlays`: overlays for my common Nix pkgs and utility libraries
+- `overlays`: overlays for my common Nix packages and utility libraries
 - `packages`:
-  - all custom pkgs from `common/pkgs`
+  - all custom packages from `common/nix/packages`
   - additional util packages for this repository
 
 The following non-standard attributes are exported as well:
