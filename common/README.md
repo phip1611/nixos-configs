@@ -25,8 +25,84 @@ However, I recommend using this project as flake input:
   };
   outputs = { self, phip1611, ...}@attrs:
     # use `phip1611.lib.*` for libraries
-    # use `phip1611.nixosModules.default` for the common NixOS module
+    # use `phip1611.nixosModules.<module name>`
     "...";
 }
 ```
+
+## Consume NixOS Modules (Minimal approach)
+
+To consume the minimal version of these modules, do something like this
+(note that all minimal required dependencies are included):
+
+**flake.nix:**
+
+```nix
+{
+  description = "Testbox NixOS Setup";
+
+  inputs = {
+    home-manager.url = "github:nix-community/home-manager/release-23.11";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+
+    phip1611.url = "github:phip1611/nixos-configs/main";
+    phip1611.inputs.home-manager.follows = "home-manager";
+    phip1611.inputs.nixpkgs.follows = "nixpkgs";
+    phip1611.inputs.nixpkgs-unstable.follows = "nixpkgs-unstable";
+  };
+
+  outputs = { self, ... }@inputs: {
+    nixosConfigurations.testbox = inputs.nixpkgs.lib.nixosSystem {
+      system = "x86-64-linux";
+      specialArgs = inputs;
+      modules = [
+        ./configuration.nix
+        inputs.home-manager.nixosModules.default
+        inputs.phip1611.nixosModules.overlays
+        inputs.phip1611.nixosModules.user-env
+        inputs.phip1611.nixosModules.system
+      ];
+    };
+  };
+}
+```
+
+**configuration.nix:**
+
+```nix
+{ config, pkgs, ... }:
+
+{
+  # ...
+  # Minimal setup. Basic tools without all the optional (and size-intensive)
+  # packages.
+  phip1611 = {
+    common = {
+      # Enable all default options.
+      user-env = {
+        enable = true;
+        username = "pschuster";
+        withBootitems = false;
+        withDevCAndRust = false;
+        withDevJava = false;
+        withDevJavascript = false;
+        withDevNix = false;
+        withGui = false;
+        withMedia = false;
+        withPkgsJ4F = false;
+      };
+      system = {
+        enable = true;
+        withAutoUpgrade = false;
+        withDocker = false;
+      };
+    };
+  };
+  # ...
+}
+```
+
 
