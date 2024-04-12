@@ -37,17 +37,20 @@ in
         ip = "ip --color=auto"; # a shame that this is not the default
       };
 
-      # With zsh, the location where the definitions of the global NixOS option
-      # "environment.variables.*" are placed is not taken into account.
-      # (This is a bug, I guess?). Hence, I add these definitions in
-      # home-manager, so they are actually sourced.
-      #
-      # I never came across a case where these variables are needed, however,
-      # better be safe so that I can always use my favorite terminal editor in
-      # my CLI utilities.
       home.sessionVariables = {
+        # With zsh, the location where the definitions of the global NixOS option
+        # "environment.variables.*" are placed is not taken into account.
+        # (This is a bug, I guess?). Hence, I add these definitions in
+        # home-manager, so they are actually sourced.
+        #
+        # I never came across a case where these variables are needed, however,
+        # better be safe so that I can always use my favorite terminal editor in
+        # my CLI utilities.
         EDITOR = "${pkgs.micro}/bin/micro";
         VISUAL = "${pkgs.micro}/bin/micro";
+
+        # Configuration for LESS pager.
+        LESS = "-R --mouse --wheel-lines=3 ";
       };
     };
   };

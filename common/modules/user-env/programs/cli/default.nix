@@ -38,7 +38,9 @@ in
       programs.zellij.settings = {
         theme = "catppuccin-mocha";
         default_layout = "compact";
-        copy_on_select = false;
+        copy_command = "xclip -selection clipboard";
+        # Seems to have no effect? Do I want it at all?
+        # copy_on_select = false;
         ui.pane_frames.hide_session_name = true;
 
         # unbind in all modes
