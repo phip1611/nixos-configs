@@ -33,7 +33,7 @@ in
         keep-outputs = true;
         keep-derivations = true;
 
-        trusted-users = [ "@wheel" ];
+        trusted-users = [ "root" "@wheel" ];
 
         substituters = map ({ url, ... }: url) trustedBinaryCaches;
         trusted-public-keys = map ({ key, ... }: key) trustedBinaryCaches;
