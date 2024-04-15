@@ -4,7 +4,7 @@ let
   cfg = config.phip1611.common.user-env;
 in
 {
-  config = lib.mkIf cfg.withMedia {
+  config = lib.mkIf (cfg.enable && cfg.withMedia) {
     users.users."${cfg.username}".packages = (
       with pkgs; [
         exiftool

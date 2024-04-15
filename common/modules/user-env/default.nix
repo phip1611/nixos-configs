@@ -35,6 +35,7 @@ in
     # withGui also means "with desktop environment"
     withGui = lib.mkEnableOption "Include GUI-based applications";
     withMedia = lib.mkEnableOption "Include tools to enable media (images, videos, ...)";
+    withPerf = lib.mkEnableOption "Include perf tooling for the current kernel";
     withPkgsJ4F = lib.mkEnableOption "Include just-for-fun packages (cowsay, lolcat, hollywood, ...)";
     withVmms = lib.mkEnableOption "Include VMMs (QEMU, Cloud Hypervisor)";
   };
@@ -47,6 +48,7 @@ in
     phip1611.common.user-env.withDevNix = lib.mkDefault true;
     phip1611.common.user-env.withGui = lib.mkDefault true;
     phip1611.common.user-env.withMedia = lib.mkDefault true;
+    phip1611.common.user-env.withPerf = lib.mkDefault true;
     phip1611.common.user-env.withPkgsJ4F = lib.mkDefault true;
     phip1611.common.user-env.withVmms = lib.mkDefault true;
   };

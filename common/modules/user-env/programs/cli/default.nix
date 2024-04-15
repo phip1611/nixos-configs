@@ -17,7 +17,7 @@ in
     ./micro.nix
     ./zsh.nix
   ];
-  config = {
+  config = lib.mkIf cfg.enable {
     programs.iftop.enable = true;
     programs.htop.enable = true;
     # Additionally to adding traceroute to the path, this enables a few cases
@@ -26,7 +26,6 @@ in
 
     # Very size intensive and I don't really use it. But it's cool.
     programs.yazi.enable = cfg.withPkgsJ4F;
-
 
     home-manager.users."${cfg.username}" = {
       programs.tmux.enable = true;
@@ -93,7 +92,6 @@ in
           ouch # cool convenient (de)compression tool
           paging-calculator
           pciutils # lspci
-          config.boot.kernelPackages.perf
           # Experience shows that this is not working in all cases as intended.
           # Instead, projects should open a nix-shell like this:
           # `$ nix-shell -p openssl pkg-config`
@@ -122,6 +120,9 @@ in
           zsh
           zx
         ]
+        # Dedicated feature-gate as sometimes, build problems with fresh
+        # (or old) kernels occur.
+        ++ lib.optional cfg.withPerf config.boot.kernelPackages.perf
         # Don't waste disk space when not needed.
         ++ lib.optionals cfg.withPkgsJ4F (with pkgs; [
           cmatrix

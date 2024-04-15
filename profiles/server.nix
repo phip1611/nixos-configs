@@ -17,6 +17,7 @@
           withDevNix = false;
           withGui = false;
           withMedia = false;
+          withPerf = true;
           withPkgsJ4F = false;
           withVmms = false;
         };

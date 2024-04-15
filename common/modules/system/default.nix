@@ -55,6 +55,7 @@ in
       Defaults        timestamp_timeout=30
     '';
 
+    # Don't accumulate crap.
     services.journald.extraConfig = ''
       SystemMaxUse=250M
       SystemMaxFileSize=50M
