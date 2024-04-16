@@ -42,10 +42,16 @@ in
         # copy_on_select = false;
         ui.pane_frames.hide_session_name = true;
 
-        # unbind in all modes
-        # I don't use/need the mode switch between normal and scroll. But I use
-        # "Ctrl + s" often in micro, so it should work there as expected!
-        keybinds.unbind = [ "Ctrl s" ];
+        # Unbind the following keys in all modes.
+        keybinds.unbind = [
+          # I don't use/need the mode switch between normal and scroll. But I use
+          # "Ctrl + s" often in micro, so it should work there as expected!
+          "Ctrl s"
+
+          # This way to quit is very unintuitive for me. As in tmux, I "Ctrl d"
+          # until all terminals are closed.
+          "Ctrl q"
+        ];
       };
     };
 
