@@ -65,7 +65,7 @@ COMPRESSED="$argc_target".tar.zst
 echo -e "$(ansi bold)Compressing as '$COMPRESSED$(ansi reset)'"
 tar -acf "$COMPRESSED" "$argc_target"
 
-if [ -z "${argc_keep:-}"]; then
+if [ -z "${argc_keep:-}" ]; then
   echo -e "$(ansi bold)Removing directory '$argc_target$(ansi reset)'"
   rm -r "$argc_target"
 else
