@@ -18,6 +18,7 @@ callPackages
     "ddns-update"
     # TODO remove once https://github.com/NixOS/nixpkgs/pull/301260 is merged
     "extract-vmlinux"
+    "ftp-backup"
     "keep-directory-diff"
     "link-to-copy"
     "nix-shell-init"

@@ -63,6 +63,7 @@ in
           pkgs.phip1611.packages.colortest
           pkgs.phip1611.packages.ddns-update
           pkgs.phip1611.packages.extract-vmlinux
+          pkgs.phip1611.packages.ftp-backup
           pkgs.phip1611.packages.keep-directory-diff
           pkgs.phip1611.packages.link-to-copy
           pkgs.phip1611.packages.nix-shell-init
@@ -88,6 +89,7 @@ in
           httpie
           killall
           less
+          lftp
           magic-wormhole # e2e encrypted file transfer "wormhole"
           micro
           # for USB serial: "sudo minicom -D /dev/ttyUSB0"
