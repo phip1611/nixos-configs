@@ -19,6 +19,7 @@ in
         programs.micro.settings = {
           colorcolumn = 80;
           colorscheme = "material-tc";
+          mkparents = true;
           rmtrailingws = true;
           savecursor = true;
           tabsize = 4;

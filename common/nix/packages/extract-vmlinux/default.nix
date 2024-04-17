@@ -47,5 +47,6 @@ runCommandLocal "extract-vmlinux-${toString linux_latest.version}"
   cp ./linux-${toString linux_latest.version}/scripts/extract-vmlinux $out/bin
 
   wrapProgram $out/bin/extract-vmlinux \
+    --inherit-argv0 \
     --prefix PATH : ${lib.makeBinPath deps}
 ''
