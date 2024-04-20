@@ -83,10 +83,10 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.phip1611 = {
     isNormalUser = true;
-    description = "phip1611";
+    description = "Philipp Schuster";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-      firefox
+      # firefox
       #  thunderbird
     ];
   };
