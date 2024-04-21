@@ -29,10 +29,6 @@
 # Target directory on local machine.
 # @flag --keep
 # Keep the downloaded directory (next to the compressed archive).
-# TODO (but Probably not needed)
-# @ flag --ignore-errors
-# Ignore errors by lftp. Activate this if there are permission issues or so that
-# prevent the successful termination of the tool.
 
 set -euo pipefail
 
