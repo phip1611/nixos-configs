@@ -21,5 +21,6 @@ runCommandLocal "link-to-copy"
 
   chmod +x $out/bin/link-to-copy
   wrapProgram $out/bin/link-to-copy \
+    --inherit-argv0 \
     --prefix PATH : ${lib.makeBinPath deps}
 ''

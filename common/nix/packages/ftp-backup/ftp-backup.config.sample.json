@@ -1,0 +1,18 @@
+[
+    {
+        "host": "313.ftphost.com",
+        "user": "123",
+        "pass": "123PASS",
+        "dirs": [
+            "/"
+        ]
+    },
+    {
+        "host": "3132.ftphost.com",
+        "user": "313",
+        "pass": "123PASS",
+        "dirs": [
+            "/"
+        ]
+    }
+]

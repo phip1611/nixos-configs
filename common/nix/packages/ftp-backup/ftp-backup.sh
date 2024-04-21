@@ -5,9 +5,15 @@
 # @describe
 # FTPS Backup using lftp. Parallel recursive downloads of an FTP directory using
 # explicit FTP over TLS. The downloaded archive is compressed as tar.zst (zstd).
+# The underlying lftp command is smart enough to continue a mirroring when some
+# of the files are already locally available.
+# The password SHOULD be passed as FTP_PASS environment variable so that it
+# doesn't appear in the process list.
 #
 # Example invocation:
-# $ ftp-backup --host w1234.kasserver.com --user w1234 --pass 'password123!' logs automated-backups --target local-backup-dir --keep
+#
+# $ ftp-backup --host w1234.ftphost.com --user w1234 --pass 'password123!' logs automated-backups --target local-backup-dir --keep
+#
 #
 # @option --host=$FTP_HOST Host Name (must match certificate)
 # @option --user=$FTP_USER FTP username
@@ -23,6 +29,10 @@
 # Target directory on local machine.
 # @flag --keep
 # Keep the downloaded directory (next to the compressed archive).
+# TODO (but Probably not needed)
+# @ flag --ignore-errors
+# Ignore errors by lftp. Activate this if there are permission issues or so that
+# prevent the successful termination of the tool.
 
 set -euo pipefail
 
@@ -56,13 +66,14 @@ for directory in "${argc_source[@]}"; do
   	set ftp:ssl-force true \
   	set ftp:ssl-protect-data true \
   	" $argc_host <<EOF
-  mirror --continue --parallel=$argc_connections --verbose $directory $target
+  mirror --continue --parallel=$argc_connections --verbose=3 $directory $target
   quit
 EOF
 done
 
 COMPRESSED="$argc_target".tar.zst
 echo -e "$(ansi bold)Compressing as '$COMPRESSED$(ansi reset)'"
+rm -f "$COMPRESSED"
 tar -acf "$COMPRESSED" "$argc_target"
 
 if [ -z "${argc_keep:-}" ]; then
