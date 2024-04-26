@@ -4,6 +4,15 @@ let
   cfg = config.phip1611.bootitems;
   bootitems = pkgs.phip1611.bootitems;
   libutil = pkgs.phip1611.libutil;
+
+  # Transforms a version string from "1.2.3" to "1.2".
+  stripMinorVersion = version: builtins.concatStringsSep
+    "."
+    (
+      lib.take
+        2
+        (builtins.splitVersion version)
+    );
 in
 {
   options.phip1611.bootitems = {
@@ -18,7 +27,10 @@ in
       (builtins.foldl'
         (acc: kernel: acc // {
           "bootitems/linux/kernel_minimal_${kernel.version}.bzImage".source = "${kernel}/bzImage";
+          "bootitems/linux/kernel_minimal_${stripMinorVersion kernel.version}.bzImage".source = "${kernel}/bzImage";
+
           "bootitems/linux/kernel_minimal_${kernel.version}.vmlinux".source = "${libutil.builders.extractVmlinux kernel}/vmlinux";
+          "bootitems/linux/kernel_minimal_${stripMinorVersion kernel.version}.vmlinux".source = "${libutil.builders.extractVmlinux kernel}/vmlinux";
         })
         { }
         (builtins.attrValues bootitems.linux.kernels)
