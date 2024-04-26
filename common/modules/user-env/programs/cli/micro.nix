@@ -23,6 +23,8 @@ in
           rmtrailingws = true;
           savecursor = true;
           tabsize = 4;
+          # Will still be overriden for Makefiles by the "ftoptions" plugin.
+          tabstospaces = true;
         };
         # Taken from https://github.com/nix-community/home-manager/pull/3224
         # Remove once the upstream PR is ever merged.
