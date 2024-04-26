@@ -59,6 +59,7 @@
       commonFlakeNixosModules = [
         home-manager.nixosModules.home-manager
 
+        self.nixosModules.bootitems
         self.nixosModules.network-boot
         self.nixosModules.overlays
         self.nixosModules.services
@@ -155,6 +156,7 @@
           };
 
           nixosModules = {
+            bootitems = "${commonSrc.modules}/bootitems";
             network-boot = "${commonSrc.modules}/network-boot";
             overlays = "${commonSrc.modules}/overlays";
             services = "${commonSrc.modules}/services";

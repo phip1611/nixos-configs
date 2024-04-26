@@ -1,13 +1,14 @@
 # Developer machine configuration.
 #
-# Intended for manual updates and frequent active activity from myself.
-
+# Intended for my developer machines. NixOS updates are not performed
+# automatically.
 
 { config, lib, pkgs, ... }:
 
 {
   config = {
     phip1611 = {
+      bootitems.enable = true;
       common = {
         user-env = {
           enable = true;

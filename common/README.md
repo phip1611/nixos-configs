@@ -85,7 +85,6 @@ To consume the minimal version of these modules, do something like this
       user-env = {
         enable = true;
         username = "pschuster";
-        withBootitems = false;
         withDevCAndRust = false;
         withDevJava = false;
         withDevJavascript = false;

@@ -15,6 +15,7 @@ let
       imports = [
         (import ${home-manager}/nixos)
 
+        (import "${commonSrc.modules}/bootitems")
         (import "${commonSrc.modules}/network-boot")
         (import "${commonSrc.modules}/overlays")
         (import "${commonSrc.modules}/services")
@@ -22,11 +23,12 @@ let
         (import "${commonSrc.modules}/user-env")
       ];
 
+      phip1611.bootitems.enable = true;
+      phip1611.common.system.enable = true;
       phip1611.common.user-env.enable = true;
       phip1611.common.user-env.username = "foobar123";
       phip1611.common.user-env.git.email = "phip1611n@gmail.com";
       phip1611.common.user-env.git.username = "Philipp Schuster";
-      phip1611.common.system.enable = true;
       phip1611.network-boot.enable = true;
 
        # Remove some used but not defined errors.

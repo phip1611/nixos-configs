@@ -1,12 +1,15 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.phip1611.common.user-env;
+  cfg = config.phip1611.bootitems;
   bootitems = pkgs.phip1611.bootitems;
   libutil = pkgs.phip1611.libutil;
 in
 {
-  config = lib.mkIf (cfg.enable && cfg.withBootitems) {
+  options.phip1611.bootitems = {
+    enable = lib.mkEnableOption "Place various ready-to-use bootitems (kernels, initrds) in /etc/bootitems for OS development";
+  };
+  config = lib.mkIf cfg.enable {
     environment.etc = ({
       "bootitems/tinytoykernel.elf32".source = "${bootitems.tinytoykernel}/kernel.elf32";
       "bootitems/tinytoykernel.elf64".source = "${bootitems.tinytoykernel}/kernel.elf64";

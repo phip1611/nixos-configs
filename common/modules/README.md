@@ -8,6 +8,7 @@ that must be set to true. For fine-tuning, you can use the provided options.
 In this directory, each `default.nix` usually is a NixOS module.
 
 There are the following major submodules available:
+- [bootitems](bootitems/README.md): Place various ready-to-use bootitems (kernels, initrds) in /etc/bootitems for OS development
 - [network-boot](network-boot/README.md): Configurations for a network boot setup
 - [user-env](user-env/README.md): typical user-environment specific things,
   such as the shell and CLI tools

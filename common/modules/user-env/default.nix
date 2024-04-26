@@ -15,7 +15,6 @@ in
   imports = [
     ./env
     ./programs
-    ./bootitems.nix
     ./fonts.nix
     ./nix.nix
     ./gnome-exts.nix
@@ -27,7 +26,6 @@ in
       description = "User for that all enabled configurations apply";
       example = "phip1611";
     };
-    withBootitems = lib.mkEnableOption "Place various ready-to-use bootitems in /etc/bootitems for OS development";
     withDevCAndRust = lib.mkEnableOption "Include a C++ and Rust toolchain and convenient helper tools for development";
     withDevJava = lib.mkEnableOption "Include a Java toolchain and convenient helper tools for development";
     withDevJavascript = lib.mkEnableOption "Include developer tools for JavaScript (Node, yarn, ...)";
@@ -41,7 +39,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    phip1611.common.user-env.withBootitems = lib.mkDefault true;
     phip1611.common.user-env.withDevCAndRust = lib.mkDefault true;
     phip1611.common.user-env.withDevJava = lib.mkDefault true;
     phip1611.common.user-env.withDevJavascript = lib.mkDefault true;
