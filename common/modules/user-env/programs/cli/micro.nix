@@ -3,8 +3,10 @@
 let
   cfg = config.phip1611.common.user-env;
 
-  # Something from `$ micro -plugin available`
+  # List here anything from `$ micro -plugin available`
+  # TODO: remove this hacky workaround:
   additionalMicroPlugins = [
+    # https://github.com/10sr/editorconfig-micro
     "editorconfig"
   ];
 in
