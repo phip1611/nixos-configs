@@ -1,5 +1,10 @@
-# Ensures that the used nixpkgs and nixpkgs-unstable version are available
-# from the NIX_PATH as well as the Nix flake registry.
+# On all my flake-based NixOS systems I remove all global Nix channels.
+# However, for convenience (Nix repl, Nix shell, or simply prototyping) it is
+# very convenient to have the pinned nixpkgs version in NIX_PATH and the flake
+# registry (`$ nix-shell -p foo` or `pkgs = import <nixpkgs> {}` work).
+#
+# Changes to these are only applied to the environment after a re-login
+# of the user session.
 
 # Some inputs refers to flake inputs.
 { config, lib, pkgs, ... }@inputs:
@@ -9,15 +14,12 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
+    # Deactivate the upstream functionally. I use my own variant of setting
+    # NIX_PATH and the Flake registry for nixpkgs as well as nixpkgs-unstable.
+    nixpkgs.flake.setNixPath = false;
+    nixpkgs.flake.setFlakeRegistry = false;
+
     nix = {
-      # On all my flake-based NixOS systems I remove all Nix channels. However,
-      # as having nixpkgs in NIX_PATH simplifies easy prototyping in a Nix
-      # repl or a Nix shell, I like to configure NIX_PATH accordingly.
-      #
-      # Having nixpkgs in NIX_PATH is also required for `$ nix-shell -p foo`.
-      #
-      # Changes to these are only applied to the environment after a re-login
-      # of the user session.
       nixPath = [
         "nixpkgs=${inputs.nixpkgs}"
         "nixpkgs-unstable=${inputs.nixpkgs-unstable}"
