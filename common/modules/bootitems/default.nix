@@ -20,6 +20,7 @@ in
   };
   config = lib.mkIf cfg.enable {
     environment.etc = ({
+      "bootitems/OVMF_CODE.fd".source = "${pkgs.OVMF.fd}/OVMF_CODE.fd";
       "bootitems/tinytoykernel.elf32".source = "${bootitems.tinytoykernel}/kernel.elf32";
       "bootitems/tinytoykernel.elf64".source = "${bootitems.tinytoykernel}/kernel.elf64";
       "bootitems/linux/initrd_minimal".source = "${bootitems.linux.initrds.default}/initrd";

@@ -4,7 +4,7 @@
 { pkgs ? import <nixpkgs> { } }:
 
 pkgs.mkShell {
-  nativeBuildInputs = with pkgs; [
+  packages = with pkgs; [
     binutils
     bc
     bison
@@ -13,8 +13,10 @@ pkgs.mkShell {
     gcc
     gnumake
     ncurses
+    ncurses.dev
     openssl
     pahole
+    pkg-config
     python3
     zlib
   ];
