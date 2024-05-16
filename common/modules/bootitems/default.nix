@@ -13,6 +13,8 @@ let
         2
         (builtins.splitVersion version)
     );
+
+  tinyToyKernelElf64 = libutil.builders.flattenDrv { drv = bootitems.tinytoykernel; artifactPath = "kernel.elf64"; };
 in
 {
   options.phip1611.bootitems = {
@@ -23,6 +25,12 @@ in
       "bootitems/OVMF_CODE.fd".source = "${pkgs.OVMF.fd}/OVMF_CODE.fd";
       "bootitems/tinytoykernel.elf32".source = "${bootitems.tinytoykernel}/kernel.elf32";
       "bootitems/tinytoykernel.elf64".source = "${bootitems.tinytoykernel}/kernel.elf64";
+      "bootitems/tinytoykernel.efi".source = "${libutil.images.x86.createBootableMultibootEfi {
+        kernel = tinyToyKernelElf64;
+      }}";
+      "bootitems/tinytoykernel.iso".source = "${libutil.images.x86.createBootableMultibootIso {
+        kernel = tinyToyKernelElf64;
+      }}";
       "bootitems/linux/initrd_minimal".source = "${bootitems.linux.initrds.default}/initrd";
     } // (
       (builtins.foldl'
