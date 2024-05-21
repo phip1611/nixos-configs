@@ -90,6 +90,7 @@ in
           killall
           less
           lftp
+          lurk # cool strace alternative
           magic-wormhole # e2e encrypted file transfer "wormhole"
           micro
           # for USB serial: "sudo minicom -D /dev/ttyUSB0"
@@ -107,6 +108,7 @@ in
           poppler_utils # for pdfunite
           python3Toolchain
           ripgrep
+          strace
           tcpdump
           tldr
           tmux
