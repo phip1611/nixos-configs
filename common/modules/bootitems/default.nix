@@ -28,7 +28,7 @@ in
       "bootitems/tinytoykernel.efi".source = "${libutil.images.x86.createMultibootEfi {
         kernel = tinyToyKernelElf64;
       }}";
-      "bootitems/tinytoykernel.iso".source = "${libutil.images.x86.createMultibootIso {
+      "bootitems/tinytoykernel.iso".source = "${libutil.images.x86.createHybridMultibootIso {
         kernel = tinyToyKernelElf64;
       }}";
       "bootitems/linux/initrd_minimal".source = "${bootitems.linux.initrds.default}/initrd";
