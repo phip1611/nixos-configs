@@ -14,5 +14,7 @@
   };
 
   # Add Vanilla VBox.
-  virtualisation.virtualbox.host.enable = true;
+  # TODO temporarily disabled. Doesn't build with Linux 6.9 right now. Wait for
+  # nixpkgs update.
+  # virtualisation.virtualbox.host.enable = true;
 }
