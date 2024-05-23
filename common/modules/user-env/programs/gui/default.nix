@@ -24,7 +24,16 @@ in
     users.users."${cfg.username}".packages = (
       with pkgs; [
         gimp
-        google-chrome
+        (google-chrome.override {
+          # Some of these flags correspond to chrome://flags
+          commandLineArgs = [
+            # Correct fractional scaling.
+            "--ozone-platform-hint=wayland"
+            # Hardware video encoding on Chrome on Linux.
+            # See chrome://gpu to verify.
+            "--enable-features=VaapiVideoDecoder,VaapiVideoEncoder"
+          ];
+        })
         gparted
         signal-desktop
         spotify
