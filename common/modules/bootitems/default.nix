@@ -25,10 +25,10 @@ in
       "bootitems/OVMF_CODE.fd".source = "${pkgs.OVMF.fd}/OVMF_CODE.fd";
       "bootitems/tinytoykernel.elf32".source = "${bootitems.tinytoykernel}/kernel.elf32";
       "bootitems/tinytoykernel.elf64".source = "${bootitems.tinytoykernel}/kernel.elf64";
-      "bootitems/tinytoykernel.efi".source = "${libutil.images.x86.createBootableMultibootEfi {
+      "bootitems/tinytoykernel.efi".source = "${libutil.images.x86.createMultibootEfi {
         kernel = tinyToyKernelElf64;
       }}";
-      "bootitems/tinytoykernel.iso".source = "${libutil.images.x86.createBootableMultibootIso {
+      "bootitems/tinytoykernel.iso".source = "${libutil.images.x86.createMultibootIso {
         kernel = tinyToyKernelElf64;
       }}";
       "bootitems/linux/initrd_minimal".source = "${bootitems.linux.initrds.default}/initrd";

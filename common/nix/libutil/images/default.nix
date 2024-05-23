@@ -75,7 +75,7 @@ let
 
   # Embeds an Multiboot (1 or 2) ELF binary in a legacy-bootable ISO image.
   # The image is based on GRUB.
-  createBootableMultibootIso =
+  createMultibootIso =
     {
       # Multiboot-compliant kernel.
       kernel
@@ -119,7 +119,7 @@ let
   # https://uefi.org/specs/UEFI/2.10/02_Overview.html#uefi-images
   #
   # It is recommended to use Multiboot2 here.
-  createBootableMultibootEfi =
+  createMultibootEfi =
     {
       # Multiboot-compliant kernel.
       kernel
@@ -172,8 +172,8 @@ in
 {
   # For x86 and x86_64.
   x86 = {
-    inherit createBootableMultibootIso;
-    inherit createBootableMultibootEfi;
+    inherit createMultibootIso;
+    inherit createMultibootEfi;
   };
 }
 

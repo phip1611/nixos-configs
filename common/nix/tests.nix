@@ -14,7 +14,7 @@ in
         # only load ELF32 files.
         elf32 = libutil.builders.flattenDrv { drv = bootitems.tinytoykernel; artifactPath = "kernel.elf32"; };
         elf64 = libutil.builders.flattenDrv { drv = bootitems.tinytoykernel; artifactPath = "kernel.elf64"; };
-        iso = libutil.images.x86.createBootableMultibootIso {
+        iso = libutil.images.x86.createMultibootIso {
           kernel = elf32;
           multibootVersion = 2;
           bootModules = [
@@ -24,7 +24,7 @@ in
             }
           ];
         };
-        efi = mb: libutil.images.x86.createBootableMultibootEfi {
+        efi = mb: libutil.images.x86.createMultibootEfi {
           kernel = elf64;
           multibootVersion = mb;
           bootModules = [
