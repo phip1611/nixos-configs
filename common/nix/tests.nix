@@ -14,17 +14,8 @@ in
         # only load ELF32 files.
         elf32 = libutil.builders.flattenDrv { drv = bootitems.tinytoykernel; artifactPath = "kernel.elf32"; };
         elf64 = libutil.builders.flattenDrv { drv = bootitems.tinytoykernel; artifactPath = "kernel.elf64"; };
+        # Hybrid bootable iso.
         iso = libutil.images.x86.createMultibootIso {
-          kernel = elf32;
-          multibootVersion = 2;
-          bootModules = [
-            {
-              file = elf32;
-              cmdline = "some additional boot module";
-            }
-          ];
-        };
-        iso_hybrid = libutil.images.x86.createHybridMultibootIso {
           kernel = elf64;
           multibootVersion = 2;
           bootModules = [
@@ -78,13 +69,12 @@ in
       testRunQemuDirect = bootWithTimeout "iso" "32 bit via MB1" "qemu-system-x86_64 -kernel ${bootitem.elf32} ${commonQemuArgs}";
       testRunQemuEfiMb1 = bootWithTimeout "efi-mb1" "32 bit via MB1" "run-efi --no-common-options --qemu-args='${commonQemuArgs}' ${bootitem.efiMb1}";
       testRunQemuEfiMb2 = bootWithTimeout "efi-mb2" "64 bit via MB2" "run-efi --no-common-options --qemu-args='${commonQemuArgs}' ${bootitem.efiMb2}";
-      testRunQemuIso = bootWithTimeout "iso" "32 bit via MB2" "qemu-system-x86_64 -cdrom ${bootitem.iso} ${commonQemuArgs}";
-      testRunQemuHybridIso = bootWithTimeout "iso-hybrid" "32 bit via MB2" "qemu-system-x86_64 -cdrom ${bootitem.iso_hybrid} ${commonQemuArgs}";
+      testRunQemuIso = bootWithTimeout "iso-hybrid-bios" "32 bit via MB2" "qemu-system-x86_64 -cdrom ${bootitem.iso} ${commonQemuArgs}";
       # It surprises me that this doesn't tell 64-bit, as CSM support was
       # removed from OVMF: https://github.com/NixOS/nixpkgs/pull/291963. Somehow,
       # the handoff doesnt happen from BOOTX64.EFI, I assume at least.
       # Otherwise, I would have expected AMD 64-bit AMD machine state.
-      testRunQemuHybridIsoUefi = bootWithTimeout "iso-hybrid-uefi" "32 bit via MB2" "qemu-system-x86_64 -cdrom ${bootitem.iso_hybrid} -bios ${pkgs.OVMF.fd}/FV/OVMF.fd ${commonQemuArgs}";
+      testRunQemuIsoUefi = bootWithTimeout "iso-hybrid-uefi" "32 bit via MB2" "qemu-system-x86_64 -cdrom ${bootitem.iso} -bios ${pkgs.OVMF.fd}/FV/OVMF.fd ${commonQemuArgs}";
       testRunXenPVH = bootWithTimeout "xen-pvh" "32 bit via Xen PVH" "cloud-hypervisor --console off --debug-console file=out.txt --kernel ${bootitem.elf64}";
     };
 }

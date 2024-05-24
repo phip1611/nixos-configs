@@ -69,9 +69,10 @@ let
       '';
     });
 
-  # Creates a bootable hybrid ISO using Limine to boot a Multiboot kernel.
+  # Creates a hybrid bootable ISO using Limine as bootloader to boot a
+  # Multiboot kernel.
   # The image is bootable on legacy x86 BIOS and UEFI platforms.
-  createHybridMultibootIso =
+  createMultibootIso =
     {
       # Multiboot-compliant kernel.
       kernel
@@ -159,47 +160,6 @@ let
       '';
     };
 
-  # Embeds an Multiboot (1 or 2) ELF binary in a legacy-bootable ISO image.
-  # The image is based on GRUB.
-  createMultibootIso =
-    {
-      # Multiboot-compliant kernel.
-      kernel
-      # Command line for the kernel.
-    , kernelCmdline ? ""
-      # Name of the derivation.
-    , name ? "${kernel.name}-x86-iso"
-      # Additional multiboot boot modules.
-      # Format: [{file=<derivation or Nix path>; cmdline=<string>;}]
-    , bootModules ? [ ]
-      # Multiboot version. 1 or 2.
-    , multibootVersion ? 2
-    }@args:
-    let
-      grubCfg = createGrubMultibootCfg args;
-      bootItems = [ kernel ] ++ map (elem: elem.file) bootModules;
-      # -f: don't fail if the same file is added multiple times; for example
-      #     the kernel itself is passed as boot module. This is sometimes nice
-      #     for quick prototyping.
-      copyBootitemsLines = map (elem: "cp ${elem} -f filesystem/boot/${builtins.baseNameOf elem}") bootItems;
-    in
-    runCommand name
-      {
-        nativeBuildInputs = [ grub2 xorriso scriptCheckIsMultiboot ];
-        passthru = { inherit bootItems grubCfg; };
-      }
-      ''
-        set -euo pipefail
-
-        check-is-multiboot ${kernel} ${toString multibootVersion}
-
-        mkdir -p filesystem/boot/grub
-        cp ${grubCfg} filesystem/boot/grub/grub.cfg
-        ${builtins.concatStringsSep "\n" copyBootitemsLines}
-
-        grub-mkrescue -d ${grub2}/lib/grub/i386-pc/ -o "$out" filesystem
-      '';
-
   # Embeds an Multiboot2 ELF binary in a bootable EFI image.
   # The image is based on GRUB.
   # https://uefi.org/specs/UEFI/2.10/02_Overview.html#uefi-images
@@ -258,7 +218,6 @@ in
 {
   # For x86 and x86_64.
   x86 = {
-    inherit createHybridMultibootIso;
     inherit createMultibootIso;
     inherit createMultibootEfi;
   };
