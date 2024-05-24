@@ -34,7 +34,7 @@ in
       tests.combinedTests.kernelboot.testRunQemuHybridIsoUefi
       tests.combinedTests.kernelboot.testRunQemuEfiMb1
       tests.combinedTests.kernelboot.testRunQemuEfiMb2
-      # TODO tests.combinedTests.kernelboot.testRunXenPVH
+      tests.combinedTests.kernelboot.testRunXenPVH
     ];
   };
 

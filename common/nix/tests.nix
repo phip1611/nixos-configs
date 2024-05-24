@@ -54,6 +54,7 @@ in
         {
           nativeBuildInputs = [
             pkgs.ansi
+            pkgs.cloud-hypervisor
             pkgs.qemu
             packages.run-efi
           ];
@@ -84,5 +85,6 @@ in
       # the handoff doesnt happen from BOOTX64.EFI, I assume at least.
       # Otherwise, I would have expected AMD 64-bit AMD machine state.
       testRunQemuHybridIsoUefi = bootWithTimeout "iso-hybrid-uefi" "32 bit via MB2" "qemu-system-x86_64 -cdrom ${bootitem.iso_hybrid} -bios ${pkgs.OVMF.fd}/FV/OVMF.fd ${commonQemuArgs}";
+      testRunXenPVH = bootWithTimeout "xen-pvh" "32 bit via Xen PVH" "cloud-hypervisor --console off --debug-console file=out.txt --kernel ${bootitem.elf64}";
     };
 }
