@@ -6,7 +6,7 @@
 }:
 
 stdenv.mkDerivation {
-  name = "tinykernel";
+  name = "tinytoykernel";
   src = nix-gitignore.gitignoreSource [ ] ./..;
   nativeBuildInputs = [
     grub2 # for grub-file
