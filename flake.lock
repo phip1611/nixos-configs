@@ -1,5 +1,28 @@
 {
   "nodes": {
+    "dd-systems-meetup-website": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1716633209,
+        "narHash": "sha256-gqMxXcANHpyoA5iCrUe1xaNLE0LtU0ih9m6cp830+vE=",
+        "owner": "phip1611",
+        "repo": "dd-systems-meetup-website",
+        "rev": "b0480ca9c5466363d78a6c958de6532e11b390a5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "phip1611",
+        "repo": "dd-systems-meetup-website",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
@@ -135,6 +158,7 @@
     },
     "root": {
       "inputs": {
+        "dd-systems-meetup-website": "dd-systems-meetup-website",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "img-to-webp-service": "img-to-webp-service",

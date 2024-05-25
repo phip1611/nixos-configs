@@ -7,6 +7,7 @@
     ./nginx.nix
 
     # Hosted web projects
+    ./dd-systems-meetup.nix
     ./img-to-webp-service.nix
     ./wambo-web.nix
   ];

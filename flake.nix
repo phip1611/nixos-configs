@@ -19,9 +19,13 @@
 
     # Web Projects
 
+    dd-systems-meetup-website.url = "github:phip1611/dd-systems-meetup-website";
+    dd-systems-meetup-website.inputs.flake-parts.follows = "flake-parts";
+    dd-systems-meetup-website.inputs.nixpkgs.follows = "nixpkgs";
+
     img-to-webp-service.url = "github:phip1611/img-to-webp-spring-service/main";
-    img-to-webp-service.inputs.nixpkgs.follows = "nixpkgs";
     img-to-webp-service.inputs.flake-parts.follows = "flake-parts";
+    img-to-webp-service.inputs.nixpkgs.follows = "nixpkgs";
 
     wambo-web.url = "github:phip1611/wambo-web";
     wambo-web.inputs.nixpkgs.follows = "nixpkgs";
