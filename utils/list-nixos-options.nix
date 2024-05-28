@@ -1,46 +1,51 @@
-# Lists the NixOS options of my NixOS common module.
+# Lists all NixOS options of the common NixOS modules.
+
 { home-manager
 , nixpkgs
+, self
+
 , ansi
-, commonSrc
 , lib
 , nixos-option
 , writeShellScriptBin
 , writeText
+, ...
 }:
 
 let
-  minimalNixOSModule = writeText "minimal-nixos-module" ''
+  selfModules = builtins.attrValues self.nixosModules;
+  # Not sure why, but it seems flake-parts transforms the modules to this
+  # rather odd structure. The module path is the first (and only) element in
+  # module.imports.
+  extractModulePath = module: builtins.head module.imports;
+  toModuleImportLine = module: "(import ${builtins.head module.imports})";
+  combinedConfig = writeText "combined-config" ''
     {
       imports = [
+        # Pre-reququisites
         (import ${home-manager}/nixos)
-
-        (import "${commonSrc.modules}/bootitems")
-        (import "${commonSrc.modules}/network-boot")
-        (import "${commonSrc.modules}/overlays")
-        (import "${commonSrc.modules}/services")
-        (import "${commonSrc.modules}/system")
-        (import "${commonSrc.modules}/user-env")
+        ${builtins.concatStringsSep "\n" (map toModuleImportLine selfModules)}
       ];
 
+      # Activate all default options
       phip1611.bootitems.enable = true;
       phip1611.common.system.enable = true;
       phip1611.common.user-env.enable = true;
+      phip1611.network-boot.enable = true;
+
+      # Remove some used but not defined errors.
       phip1611.common.user-env.username = "foobar123";
       phip1611.common.user-env.git.email = "phip1611n@gmail.com";
       phip1611.common.user-env.git.username = "Philipp Schuster";
-      phip1611.network-boot.enable = true;
-
-       # Remove some used but not defined errors.
       phip1611.network-boot.username = "foobar123";
       phip1611.network-boot.interfaces = [];
     }
   '';
 in
-writeShellScriptBin "list-phip1611-common-module-nixos-options" ''
+writeShellScriptBin "list-common-nixos-options" ''
   export PATH="${lib.makeBinPath [ansi nixos-option]}:$PATH"
   export NIX_PATH="nixpkgs=${nixpkgs}"
-  export NIXOS_CONFIG=${minimalNixOSModule}
+  export NIXOS_CONFIG=${combinedConfig}
 
   echo -ne "$(ansi bold)Printing all configuration options of the phip1611 common module$(ansi reset) "
   echo -e "$(ansi bold)with their default value:$(ansi reset)"

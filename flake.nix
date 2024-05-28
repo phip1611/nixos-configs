@@ -239,10 +239,7 @@
             # $ nix build .\#packages.x86_64-linux.<attribute-name>
             # $ nix run .\#<attribute-name>
             packages = commonNix.packages // {
-              listNixosOptions = import ./test/pkgs/list-nixos-options.nix {
-                inherit (pkgs) ansi lib nixos-option writeShellScriptBin writeText;
-                inherit home-manager nixpkgs commonSrc;
-              };
+              listNixosOptions = pkgs.callPackage ./utils/list-nixos-options.nix inputs;
             };
           };
       };
