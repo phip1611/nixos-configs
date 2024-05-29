@@ -18,7 +18,7 @@ let
   # rather odd structure. The module path is the first (and only) element in
   # module.imports.
   extractModulePath = module: builtins.head module.imports;
-  toModuleImportLine = module: "(import ${builtins.head module.imports})";
+  toModuleImportLine = module: "(import ${extractModulePath module})";
   combinedConfig = writeText "combined-config" ''
     {
       imports = [
