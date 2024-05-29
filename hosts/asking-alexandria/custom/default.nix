@@ -9,6 +9,7 @@
     # Hosted web projects
     ./dd-systems-meetup.nix
     ./img-to-webp-service.nix
+    ./netdata.nix
     ./wambo-web.nix
   ];
 
