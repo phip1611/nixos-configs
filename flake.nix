@@ -10,8 +10,7 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
-    # TODO use branch "nixos-24.05" after June 1st.
-    nixpkgs.url = "github:NixOS/nixpkgs/release-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     # Use nixpkgs-unstable instead of master so that packages are more likely
     # to be cached already while still being as fresh as possible.
     # See https://discourse.nixos.org/t/differences-between-nix-channels/13998
