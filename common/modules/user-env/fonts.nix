@@ -10,6 +10,7 @@ in
     # https://nixos.wiki/wiki/Fonts
     fonts = {
       packages = with pkgs; [
+        # XXX wait until https://github.com/NixOS/nixpkgs/pull/317423 is merged
         corefonts # Arial, Times New Roman, etc.
         dancing-script
         # Used/Prefered by many applications, such as "yazi". Comes with
