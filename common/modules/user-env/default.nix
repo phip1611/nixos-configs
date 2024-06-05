@@ -17,7 +17,7 @@ in
     ./programs
     ./fonts.nix
     ./nix.nix
-    ./gnome-exts.nix
+    ./gnome.nix
   ];
 
   options.phip1611.common.user-env = {
