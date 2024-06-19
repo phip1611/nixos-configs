@@ -10,6 +10,7 @@ in
     # https://nixos.wiki/wiki/Fonts
     fonts = {
       packages = with pkgs; [
+        corefonts # Arial, Times New Roman, etc.
         dancing-script
         # Used/Prefered by many applications, such as "yazi". Comes with
         # powerline symbols.
