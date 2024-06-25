@@ -25,13 +25,12 @@
     };
 
     # My server obtains a IPv4 address by DHCP but not an IPv6 address. For IPv6,
-    # Netcup only provides me a "2a03:4000:53:f7f::/64" net. I pick one IP and
-    # configure it:
+    # Netcup provides me an IPv6 "/64" net. I picked the first possible IP.
     networking.interfaces."ens3" = {
       useDHCP = true; # obtain IPv4 address
       ipv6.addresses = [
         {
-          address = "2a03:4000:53:f7f::1";
+          address = "2a03:4000:63:d3::1";
           prefixLength = 64;
         }
       ];
