@@ -52,7 +52,7 @@ jobs:
           - linkin-park
     env:
       # SSH port on asking-alexandria
-      NIX_SSH_OPTS: '-p 7331'
+      NIX_SSHOPTS: '-p 7331'
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@V27
@@ -67,7 +67,7 @@ jobs:
           chmod 400 ~/.ssh/key
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
-          ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$NIX_SSH_OPTS" "echo ssh works"
+          ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$NIX_SSHOPTS" "echo ssh works"
       - name: "NixOS: build ${{ matrix.hostname }}"
         run: |
           nix develop --command bash -c "nixos-rebuild build \
