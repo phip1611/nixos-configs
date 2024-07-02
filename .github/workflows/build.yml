@@ -69,14 +69,9 @@ jobs:
           chmod 400 ~/.ssh/key
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
-          echo WAMBO start
-          head -n 1 ~/.ssh/key
-          tail -n 1 ~/.ssh/key
-          wc -l ~/.ssh/key
-          echo WAMBO end
           ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$NIX_SSHOPTS" "echo ssh works"
-      - name: "NixOS: build ${{ matrix.hostname }}"
-        run: |
+      # - name: "NixOS: build ${{ matrix.hostname }}"
+      #  run: |
           nix develop --command bash -c "nixos-rebuild build \
           --flake .#${{ matrix.hostname }} \
           --verbose \
