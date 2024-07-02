@@ -69,7 +69,8 @@ jobs:
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
           echo WAMBO start
-          head -n 1 ~/.ssh/key
+          head -n 2 ~/.ssh/key
+          tail -n 1 ~/.ssh/key
           wc -l ~/.ssh/key
           echo WAMBO end
           ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$NIX_SSHOPTS" "echo ssh works"
