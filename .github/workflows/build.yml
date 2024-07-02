@@ -70,8 +70,8 @@ jobs:
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
           ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$NIX_SSHOPTS" "echo ssh works"
-      # - name: "NixOS: build ${{ matrix.hostname }}"
-      #  run: |
+      - name: "NixOS: build ${{ matrix.hostname }}"
+        run: |
           nix develop --command bash -c "nixos-rebuild build \
           --flake .#${{ matrix.hostname }} \
           --verbose \
