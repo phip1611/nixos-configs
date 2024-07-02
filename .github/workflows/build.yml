@@ -67,6 +67,7 @@ jobs:
           # Configured as GitHub CI secret
           echo "$CI_BUILDER_PRIV_KEY" > ~/.ssh/key
           echo "WAMBO BEGIN"
+          xxd ~/.ssh/key
           head -n 2 ~/.ssh/key
           echo "..."
           tail -n 2 ~/.ssh/key
