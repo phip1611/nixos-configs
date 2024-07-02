@@ -52,7 +52,8 @@ jobs:
           - linkin-park
     env:
       # SSH port on asking-alexandria
-      NIX_SSHOPTS: '-p 7331'
+      NIX_SSHOPTS: -p 7331
+      CI_BUILDER_PRIV_KEY: ${{ secrets.CI_BUILDER_PRIV_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@V27
@@ -64,12 +65,12 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           # Configured as GitHub CI secret
-          echo "${{ secrets.CI_BUILDER_PRIV_KEY }}" > ~/.ssh/key
+          echo "$CI_BUILDER_PRIV_KEY" > ~/.ssh/key
           chmod 400 ~/.ssh/key
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
           echo WAMBO start
-          head -n 2 ~/.ssh/key
+          head -n 1 ~/.ssh/key
           tail -n 1 ~/.ssh/key
           wc -l ~/.ssh/key
           echo WAMBO end
