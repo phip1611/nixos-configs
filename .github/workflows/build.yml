@@ -66,6 +66,11 @@ jobs:
           chmod 700 ~/.ssh
           # Configured as GitHub CI secret
           echo "$CI_BUILDER_PRIV_KEY" > ~/.ssh/key
+          echo "WAMBO BEGIN"
+          head -n 2 ~/.ssh/key
+          echo "..."
+          tail -n 2 ~/.ssh/key
+          echo "WAMBO END"
           chmod 400 ~/.ssh/key
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
