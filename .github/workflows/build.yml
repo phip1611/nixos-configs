@@ -25,25 +25,65 @@ jobs:
           # if git files have been changed.
           git diff --quiet
 
-  # A big gun that runs all checks.
-  # This gets better once https://github.com/NixOS/nix/issues/9629 is solved.
-  checks:
+  # TODO make more fine-grained once https://github.com/NixOS/nix/issues/9629 is
+  # solved.
+  check:
     name: nix flake check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@V27
       - uses: DeterminateSystems/magic-nix-cache-action@main
-      # Performs some basic checks of the NixOS system configurations and runs
-      # all checks.
+        # Performs some basic checks of the NixOS system configurations and runs
+        # all checks.
       - run: nix flake check
-      # dry-build: everything that needs GUI and dev tools
-      #            --> causes "no space left on device" in GitHub CI
-      # build    : lightweight server environments
-      - name: "NixOS: dry-build #homepc"
-        run: nix develop --command bash -c "nixos-rebuild dry-build --flake .#homepc"
-      - name: "NixOS: dry-build #linkin-park"
-        run: nix develop --command bash -c "nixos-rebuild dry-build --flake .#linkin-park"
-      - name: "NixOS: build #asking-alexandria"
-        run: nix develop --command bash -c "nixos-rebuild build --flake .#asking-alexandria"
 
+  # Builds all NixOS systems from the flake, thus transitively also all custom
+  # packages. This uses my host at nix-binary-cache.phip1611.dev as CI remote
+  # builder.
+  # 1) The GitHub CI is slow for such large builds
+  # 2) The volume quickly runs out of space in GitHub CI for large systems
+  # 3) This way, the binary cache gets filled: CI builder <=> Nix binary cache.
+  build_nixos:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hostname:
+          - asking-alexandria
+          - homepc
+          - linkin-park
+    env:
+      # SSH port on asking-alexandria
+      NIX_SSHOPTS: -p 7331
+      CI_BUILDER_PRIV_KEY: ${{ secrets.CI_BUILDER_PRIV_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@V27
+      # Doesn't bring any value. Slower than fetching the large artifacts
+      # directly from cache.nixos.org.
+      # - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Prepare SSH Key to Access Remote Builder
+        run: |
+          mkdir -p ~/.ssh
+          chmod 0700 ~/.ssh
+          # Configured as GitHub CI secret
+          echo "$CI_BUILDER_PRIV_KEY" > ~/.ssh/key
+          chmod 0600 ~/.ssh/key
+      - name: Test SSH to Remote Builder works
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/key
+          ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$NIX_SSHOPTS" "echo ssh works"
+      # From my observation, the GitLab CI is quite slow in uploading artifacts.
+      # So this may take A WHILE... I still think it is worth it.
+      - name: "NixOS: build ${{ matrix.hostname }}"
+        run: |
+          # TODO: ssh-agent: this state is lost between steps?!
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/key
+
+          nix develop --command bash -c "nixos-rebuild build \
+          --flake .#${{ matrix.hostname }} \
+          --build-host ci-builder@nix-binary-cache.phip1611.dev \
+          --target-host ci-builder@nix-binary-cache.phip1611.dev \
+          --use-substitutes"
