@@ -56,8 +56,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@V27
-      # TODO does this bring a value here?
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      # Doesn't bring any value. Slower than fetching the large artifacts
+      # directly from cache.nixos.org.
+      # - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Prepare SSH to Access Remote Builder
         run: |
           mkdir -p ~/.ssh
