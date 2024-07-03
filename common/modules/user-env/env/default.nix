@@ -31,7 +31,7 @@ in
     home-manager.users."${cfg.username}" = {
       home.stateVersion = stateVersion;
       home.shellAliases = rec {
-        eza = "eza -lagh -F --time-style=long-iso";
+        eza = "eza -lagh -F --time-style=long-iso -o";
         # eza used to be exa.
         exa = eza;
       };
