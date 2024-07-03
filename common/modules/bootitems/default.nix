@@ -23,7 +23,8 @@ in
   config = lib.mkIf cfg.enable {
     environment.etc = ({
       "bootitems/edk2-uefi-shell.efi".source = "${pkgs.edk2-uefi-shell}/shell.efi";
-      "bootitems/OVMF_CODE.fd".source = "${pkgs.OVMF.fd}/OVMF_CODE.fd";
+      "bootitems/OVMF_CODE.fd".source = "${pkgs.OVMF.fd}/FV/OVMF_CODE.fd";
+      "bootitems/OVMF.fd".source = "${pkgs.OVMF.fd}/FV/OVMF.fd";
       "bootitems/tinytoykernel.elf32".source = "${bootitems.tinytoykernel}/kernel.elf32";
       "bootitems/tinytoykernel.elf64".source = "${bootitems.tinytoykernel}/kernel.elf64";
       "bootitems/tinytoykernel.efi".source = "${libutil.images.x86.createMultibootEfi {
