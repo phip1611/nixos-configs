@@ -1,0 +1,24 @@
+name: Build NixOS
+description: Builds NixOS system
+inputs:
+  hostname:
+    required: true
+    description: Hostname
+runs:
+  using: 'composite'
+  steps:
+    - name: "NixOS: build ${{inputs.hostname}}"
+      shell: bash
+      run: |
+        # TODO: ssh-agent: this state is lost between steps?!
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/key
+
+        # From my observation, the GitLab CI is quite slow in uploading file
+        # to the remote builder.  So this may take A WHILE..., at leats if the
+        # target /nix/store doesn't has all files already.
+        nix develop --command bash -c "nixos-rebuild build \
+        --flake .#${{inputs.hostname}} \
+        --build-host ci-builder@nix-binary-cache.phip1611.dev \
+        --target-host ci-builder@nix-binary-cache.phip1611.dev \
+        --use-substitutes"

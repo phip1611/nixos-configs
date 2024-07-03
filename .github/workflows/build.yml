@@ -45,6 +45,7 @@ jobs:
   # 2) The volume quickly runs out of space in GitHub CI for large systems
   # 3) This way, the binary cache gets filled: CI builder <=> Nix binary cache.
   build_nixos:
+    name: Build all NixOS systems
     runs-on: ubuntu-latest
     env:
       # SSH port on asking-alexandria
@@ -68,39 +69,15 @@ jobs:
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
           ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$NIX_SSHOPTS" "echo ssh works"
-      # From my observation, the GitLab CI is quite slow in uploading file
-      # to the remote builder.  So this may take A WHILE..., at leats if the
-      # target /nix/store doesn't has all files already.
-      - name: "NixOS: build asking-alexandria"
-        run: |
-          # TODO: ssh-agent: this state is lost between steps?!
-          eval $(ssh-agent -s)
-          ssh-add ~/.ssh/key
-
-          nix develop --command bash -c "nixos-rebuild build \
-          --flake .#asking-alexandria \
-          --build-host ci-builder@nix-binary-cache.phip1611.dev \
-          --target-host ci-builder@nix-binary-cache.phip1611.dev \
-          --use-substitutes"
-      - name: "NixOS: build homepc"
-        run: |
-          # TODO: ssh-agent: this state is lost between steps?!
-          eval $(ssh-agent -s)
-          ssh-add ~/.ssh/key
-
-          nix develop --command bash -c "nixos-rebuild build \
-          --flake .#homepc \
-          --build-host ci-builder@nix-binary-cache.phip1611.dev \
-          --target-host ci-builder@nix-binary-cache.phip1611.dev \
-          --use-substitutes"
-      - name: "NixOS: build linkin-park"
-        run: |
-          # TODO: ssh-agent: this state is lost between steps?!
-          eval $(ssh-agent -s)
-          ssh-add ~/.ssh/key
-
-          nix develop --command bash -c "nixos-rebuild build \
-          --flake .#linkin-park \
-          --build-host ci-builder@nix-binary-cache.phip1611.dev \
-          --target-host ci-builder@nix-binary-cache.phip1611.dev \
-          --use-substitutes"
+      - uses: ./.github/actions/build-nixos
+        name: Build 'asking-alexandria'
+        with:
+          hostname: asking-alexandria
+      - uses: ./.github/actions/build-nixos
+        name: Build 'homepc'
+        with:
+          hostname: homepc
+      - uses: ./.github/actions/build-nixos
+        name: Build 'linkin-park'
+        with:
+          hostname: linkin-park
