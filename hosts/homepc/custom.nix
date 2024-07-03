@@ -18,6 +18,8 @@
   # TPLink T3U WiFi USB Dongle
   # Unfortunately, this is buggy and only works sometimes. Reboots help.
   boot.kernelModules = [
+    # The name of the module build by `kernelPackages.rtl88x2bu`.
+    # See https://github.com/morrownr/88x2bu-20210702/blob/main/Makefile
     "88x2bu"
   ];
   boot.extraModulePackages = [
