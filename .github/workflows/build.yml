@@ -46,12 +46,6 @@ jobs:
   # 3) This way, the binary cache gets filled: CI builder <=> Nix binary cache.
   build_nixos:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        hostname:
-          - asking-alexandria
-          - homepc
-          - linkin-park
     env:
       # SSH port on asking-alexandria
       NIX_SSHOPTS: -p 7331
@@ -74,16 +68,39 @@ jobs:
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
           ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$NIX_SSHOPTS" "echo ssh works"
-      # From my observation, the GitLab CI is quite slow in uploading artifacts.
-      # So this may take A WHILE... I still think it is worth it.
-      - name: "NixOS: build ${{ matrix.hostname }}"
+      # From my observation, the GitLab CI is quite slow in uploading file
+      # to the remote builder.  So this may take A WHILE..., at leats if the
+      # target /nix/store doesn't has all files already.
+      - name: "NixOS: build asking-alexandria"
         run: |
           # TODO: ssh-agent: this state is lost between steps?!
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
 
           nix develop --command bash -c "nixos-rebuild build \
-          --flake .#${{ matrix.hostname }} \
+          --flake .#asking-alexandria \
+          --build-host ci-builder@nix-binary-cache.phip1611.dev \
+          --target-host ci-builder@nix-binary-cache.phip1611.dev \
+          --use-substitutes"
+      - name: "NixOS: build homepc"
+        run: |
+          # TODO: ssh-agent: this state is lost between steps?!
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/key
+
+          nix develop --command bash -c "nixos-rebuild build \
+          --flake .#homepc \
+          --build-host ci-builder@nix-binary-cache.phip1611.dev \
+          --target-host ci-builder@nix-binary-cache.phip1611.dev \
+          --use-substitutes"
+      - name: "NixOS: build linkin-park"
+        run: |
+          # TODO: ssh-agent: this state is lost between steps?!
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/key
+
+          nix develop --command bash -c "nixos-rebuild build \
+          --flake .#linkin-park \
           --build-host ci-builder@nix-binary-cache.phip1611.dev \
           --target-host ci-builder@nix-binary-cache.phip1611.dev \
           --use-substitutes"
