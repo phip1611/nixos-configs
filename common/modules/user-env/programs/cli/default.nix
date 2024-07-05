@@ -78,7 +78,6 @@ in
           # not live behind any special feature gate.
           pkgs.phip1611.packages.colortest
           pkgs.phip1611.packages.ddns-update
-          pkgs.phip1611.packages.extract-vmlinux
           pkgs.phip1611.packages.ftp-backup
           pkgs.phip1611.packages.keep-directory-diff
           pkgs.phip1611.packages.link-to-copy
@@ -106,6 +105,7 @@ in
           killall
           less
           lftp
+          linux-scripts
           lurk # cool strace alternative
           magic-wormhole # e2e encrypted file transfer "wormhole"
           micro
