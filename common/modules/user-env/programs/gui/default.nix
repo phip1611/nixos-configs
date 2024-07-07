@@ -23,6 +23,7 @@ in
 
     users.users."${cfg.username}".packages = (
       with pkgs; [
+        _1password-gui
         gimp
         (google-chrome.override {
           # Some of these flags correspond to chrome://flags
