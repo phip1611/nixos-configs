@@ -2,6 +2,9 @@
 
 let
   src = ./.;
+  dirEntries = builtins.readDir ./.;
+  # All directory names.
+  packageDirs = builtins.filter (n: dirEntries.${n} == "directory") (builtins.attrNames dirEntries);
   callPackages = names:
     builtins.foldl'
       (acc: package:
@@ -12,17 +15,4 @@ let
       { }
       names;
 in
-callPackages
-  [
-    "colortest"
-    "ddns-update"
-    # TODO remove once https://github.com/NixOS/nixpkgs/pull/301260 is merged
-    "extract-vmlinux"
-    "ftp-backup"
-    "keep-directory-diff"
-    "link-to-copy"
-    "nix-shell-init"
-    "normalize-file-permissions"
-    "run-efi"
-    "qemu-uefi"
-  ]
+callPackages packageDirs
