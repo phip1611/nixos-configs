@@ -1,3 +1,6 @@
+# Bundles all overlays coming from the common Nix functionality and activates
+# them.
+
 { config, lib, pkgs, ... }:
 
 {

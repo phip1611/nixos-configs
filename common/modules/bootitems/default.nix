@@ -14,14 +14,21 @@ let
         (builtins.splitVersion version)
     );
 
-  tinyToyKernelElf64 = libutil.builders.flattenDrv { drv = bootitems.tinytoykernel; artifactPath = "kernel.elf64"; };
+  tinyToyKernelElf64 = libutil.builders.flattenDrv {
+    drv = bootitems.tinytoykernel;
+    artifactPath = "kernel.elf64";
+  };
 in
 {
   options.phip1611.bootitems = {
     enable = lib.mkEnableOption "Place various ready-to-use bootitems (kernels, initrds) in /etc/bootitems for OS development";
   };
   config = lib.mkIf cfg.enable {
-    environment.etc = ({
+    # Pre-requisites
+    phip1611.bootitems-overlay.enable = true;
+    phip1611.libutil-overlay.enable = true;
+
+    environment.etc = {
       "bootitems/edk2-uefi-shell.efi".source = "${pkgs.edk2-uefi-shell}/shell.efi";
       "bootitems/OVMF_CODE.fd".source = "${pkgs.OVMF.fd}/FV/OVMF_CODE.fd";
       "bootitems/OVMF.fd".source = "${pkgs.OVMF.fd}/FV/OVMF.fd";
@@ -34,18 +41,26 @@ in
         kernel = tinyToyKernelElf64;
       }}";
       "bootitems/linux/initrd_minimal".source = "${bootitems.linux.initrds.default}/initrd";
-    } // (
-      (builtins.foldl'
-        (acc: kernel: acc // {
-          "bootitems/linux/kernel_minimal_${kernel.version}.bzImage".source = "${kernel}/bzImage";
-          "bootitems/linux/kernel_minimal_${stripMinorVersion kernel.version}.bzImage".source = "${kernel}/bzImage";
+    } //
+    # Make Linux kernels accessible by their exact version number and
+    # "x.y" version format.
+    (builtins.foldl'
+      (acc: kernel: acc // (
+        let
+          prefix = "bootitems/linux/kernel_minimal";
+          bzImage = "${kernel}/bzImage";
+          vmlinux = "${libutil.builders.extractVmlinux kernel}/vmlinux";
+        in
+        {
+          "${prefix}_${kernel.version}.bzImage".source = bzImage;
+          "${prefix}_${stripMinorVersion kernel.version}.bzImage".source = bzImage;
 
-          "bootitems/linux/kernel_minimal_${kernel.version}.vmlinux".source = "${libutil.builders.extractVmlinux kernel}/vmlinux";
-          "bootitems/linux/kernel_minimal_${stripMinorVersion kernel.version}.vmlinux".source = "${libutil.builders.extractVmlinux kernel}/vmlinux";
-        })
-        { }
-        (builtins.attrValues bootitems.linux.kernels)
-      )
-    ));
+          "${prefix}_${kernel.version}.vmlinux".source = vmlinux;
+          "${prefix}_${stripMinorVersion kernel.version}.vmlinux".source = vmlinux;
+        }
+      ))
+      { }
+      (builtins.attrValues bootitems.linux.kernels)
+    );
   };
 }
