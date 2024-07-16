@@ -95,11 +95,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1719910808,
-        "narHash": "sha256-ArQNtesd5CZB6Ixl0gFzOtWuJ0w1wArWTh53MDfMCZg=",
+        "lastModified": 1721114067,
+        "narHash": "sha256-WAUgafMDMTZzSVE6WBNN6Tyvw/J4lkDgL2RGNokZrDk=",
         "owner": "phip1611",
         "repo": "img-to-webp-spring-service",
-        "rev": "006fecf6aa8e85f045a2f66abbd41edd0a25144c",
+        "rev": "d8f0fa7efc30719780ddb4586724809c42d616de",
         "type": "github"
       },
       "original": {
