@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# The following @-annotations belong to https://github.com/sigoden/argc
+
 # @describe
 # DDNS update script for `all-inkl.com` and similar DDNS services that updates
 # DDNS information via a HTTP request. The IP is updated to the IP performing
