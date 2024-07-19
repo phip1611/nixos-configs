@@ -99,28 +99,25 @@ in
           git
           grub2 # for grub-file
           hexyl # hex viewer
+          httpie
           iperf3
           jq # pretty-print JSON
-          httpie
           killall
           less
           lftp
           linux-scripts
+          lshw
           lurk # cool strace alternative
           magic-wormhole # e2e encrypted file transfer "wormhole"
           micro
-          # for USB serial: "sudo minicom -D /dev/ttyUSB0"
-          minicom
+          minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
           nflz
           nodejs
           ookla-speedtest
           ouch # cool convenient (de)compression tool
           paging-calculator
           pciutils # lspci
-          # Experience shows that this is not working in all cases as intended.
-          # Instead, projects should open a nix-shell like this:
-          # `$ nix-shell -p openssl pkg-config`
-          # pkg-config
+          # pkg-config # Not really working globally. Use per-project!
           poppler_utils # for pdfunite
           python3Toolchain
           ripgrep
@@ -137,10 +134,10 @@ in
           unzip
           usbutils # lsusb
           util-linux # lsblk and more
+          vim
           wambo
           wget
           whois
-          vim
           xclip # for copy & paste in several tools, such as micro
           yamlfmt
           zip
