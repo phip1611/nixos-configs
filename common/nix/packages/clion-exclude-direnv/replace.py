@@ -11,4 +11,4 @@ with open(FILE, mode="r+") as f:
     else:
         f.seek(0)
         f.write(content.replace(SEARCH, REPLACE))
-        print(f".direnv is now included in {FILE}")
+        print(f".direnv is now marked as excluded in {FILE}")
