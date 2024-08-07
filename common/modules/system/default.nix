@@ -11,7 +11,6 @@ in
     ./firmware.nix
     ./nix-cfg.nix
     ./nix-path-from-flake.nix
-    ./self-binary-cache.nix
   ];
 
   options = {
@@ -24,10 +23,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Set some defaults.
-    phip1611.common.system.withDocker = lib.mkDefault true;
-    phip1611.common.system.withSelfBinaryCache = lib.mkDefault true;
-
     # Use latest stable kernel.
     # to disable set to: `lib.mkForce pkgs.linuxPackages; # default`
     boot.kernelPackages = pkgs.linuxPackages_latest;

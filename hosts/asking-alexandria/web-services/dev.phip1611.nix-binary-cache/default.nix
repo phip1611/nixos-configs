@@ -10,8 +10,8 @@
   ];
 
   config = {
-    # All but the Host hosting the cache itself should use it. So deactivate it.
-    phip1611.common.system.withSelfBinaryCache = false;
+    # All but the Host hosting the cache itself should use it. Deactivate it.
+    phip1611.nix-binary-cache.enable = lib.mkForce false;
 
     services.nginx.virtualHosts."nix-binary-cache.phip1611.dev" = {
       enableACME = true;

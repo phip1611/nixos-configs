@@ -27,6 +27,7 @@
           withDocker = false;
         };
       };
+      nix-binary-cache.enable = true;
     };
 
     # Comes with a pre-configured configuration for ssh.
