@@ -18,9 +18,8 @@ in
     { }
     # List of kernel to build with the minimal config.
     [
-      # Use the default stable LTS Linux kernel of that release to prevent
-      # frequent unnecessary rebuilds.
       pkgs.linux
+      pkgs.linux_latest
     ]
   ;
   initrds = {

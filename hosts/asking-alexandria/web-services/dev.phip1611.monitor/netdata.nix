@@ -1,4 +1,4 @@
-{ config, lib, pkgs, img-to-webp-service, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   # https://learn.netdata.cloud/docs/netdata-agent/securing-netdata-agents/web-server
