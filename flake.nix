@@ -59,18 +59,6 @@
           config = { };
         };
 
-      # Common modules originating from a flake.
-      commonFlakeNixosModules = [
-        home-manager.nixosModules.home-manager
-
-        self.nixosModules.bootitems
-        self.nixosModules.network-boot
-        self.nixosModules.overlays
-        self.nixosModules.services
-        self.nixosModules.system
-        self.nixosModules.user-env
-      ];
-
       # Helper function to build a NixOS system with my common modules,
       # relevant special args, and the host-specific configuration.
       buildNixosSystem =
@@ -85,18 +73,27 @@
           nixpkgs.lib.nixosSystem {
             inherit system;
             # specialArgs are additional arguments passed to a NixOS module
-            # function. This should only include the flake inputs itself.
+            # function. This should only include the flake inputs.
             # Apart from that, it's an anti-pattern (according to Jacek (@tfc)).
             specialArgs = inputs;
-            # The idea here is to only provide one `configuration.nix` per host
-            # as entry. This file then imports all other files of the
-            # configuration. This way, the NixOS system and the flake
-            # definitions can be better separated and the NixOS configurations
-            # are less dependent on flake.nix.
-            modules = commonFlakeNixosModules ++
-              [ ./hosts/${hostName}/configuration.nix ] ++
-              additionalModules ++
-              # Configuration modules that bind outer properties to the NixOS
+            modules = builtins.attrValues self.nixosModules ++
+              [
+                # Other modules from Flake inputs:
+                home-manager.nixosModules.home-manager
+
+                # The idea here is to only provide one `configuration.nix` per
+                # host as entry. This file then imports all other files of the
+                # configuration. This way, the NixOS system and the flake
+                # definitions can be better separated and the NixOS
+                # configurations are less dependent on flake.nix.
+                ./hosts/${hostName}/configuration.nix
+
+                # Other defaults that apply to all systems.
+                {
+                  phip1611.nix-binary-cache.enable = true;
+                }
+              ] ++ additionalModules ++
+              # Configurations that bind outer properties to the NixOS
               # configuration. This way, we can keep specialArgs small.
               [
                 (
@@ -162,6 +159,7 @@
           nixosModules = {
             bootitems = "${commonSrc.modules}/bootitems";
             network-boot = "${commonSrc.modules}/network-boot";
+            nix-binary-cache = "${commonSrc.modules}/nix-binary-cache";
             overlays = "${commonSrc.modules}/overlays";
             services = "${commonSrc.modules}/services";
             system = "${commonSrc.modules}/system";

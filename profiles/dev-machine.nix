@@ -16,6 +16,7 @@
         system = {
           enable = true;
           withAutoUpgrade = false;
+          withDocker = true;
         };
       };
     };

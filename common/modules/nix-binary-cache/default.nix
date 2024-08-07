@@ -3,10 +3,10 @@
 { config, pkgs, lib, ... }:
 
 let
-  cfg = config.phip1611.common.system;
+  cfg = config.phip1611.nix-binary-cache;
 in
 {
-  options.phip1611.common.system.withSelfBinaryCache = lib.mkEnableOption "Enables the Nix binary cache with the artifacts of this project/repository (\"self\")";
+  options.phip1611.nix-binary-cache.enable = lib.mkEnableOption "Enables the Nix binary cache with the artifacts of this project/repository";
 
   config = lib.mkIf cfg.enable {
     nix = {
