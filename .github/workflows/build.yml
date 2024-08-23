@@ -49,14 +49,18 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # SSH port on asking-alexandria
+      SSHOPTS: -p 7331
+      SCPOPTS: -P 7331
       NIX_SSHOPTS: -p 7331
       CI_BUILDER_PRIV_KEY: ${{ secrets.CI_BUILDER_PRIV_KEY }}
+      REMOTE_CI_PWD: /tmp/github-ci-run--${{ github.EVENT_NAME }}--${{ github.REF_TYPE }}--${{ github.RUN_ID }}--${{ github.RUN_ATTEMPT }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@V27
-      # Doesn't bring any value. Slower than fetching the large artifacts
-      # directly from cache.nixos.org.
-      # - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: actions/checkout@v4 # Required to reuse the local action.
+        # Utilize the GitHub-specific local git repository so we do not have to
+        # replicate any implementation details for the remote CI builder's
+        # project checkout.
+      - name: ZIP Git Checkout
+        run: zip -r checkout.zip .
       - name: Prepare SSH Key to Access Remote Builder
         run: |
           mkdir -p ~/.ssh
@@ -68,7 +72,30 @@ jobs:
         run: |
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
-          ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$NIX_SSHOPTS" "echo ssh works"
+
+          ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$SSHOPTS" "echo ssh works"
+      - name: Checkout Repo on Remote Builder
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/key
+
+          echo "[GitHub CI] REMOTE_CI_PWD: $REMOTE_CI_PWD"
+          
+          echo "[GitHub CI] Create destination directory"
+          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+            mkdir $REMOTE_CI_PWD 
+          EOF
+          
+          echo "[GitHub CI] Copy checkout.zip to destination"
+          scp $SCPOPTS checkout.zip ci-builder@nix-binary-cache.phip1611.dev:/$REMOTE_CI_PWD 
+          
+          echo "[GitHub CI] Unpack zip at destination directory"
+          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+            cd $REMOTE_CI_PWD || exit 1
+            nix-shell -p unzip --run "unzip checkout.zip"
+            test -d .git
+            test -f flake.nix
+          EOF
       - uses: ./.github/actions/build-nixos
         name: Build 'asking-alexandria'
         with:
@@ -81,3 +108,12 @@ jobs:
         name: Build 'linkin-park'
         with:
           hostname: linkin-park
+      - name: Cleanup on Remote Builder
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/key
+
+          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+            echo "[Remote Builder] Removing $REMOTE_CI_PWD"
+            rm -r "$REMOTE_CI_PWD"
+          EOF

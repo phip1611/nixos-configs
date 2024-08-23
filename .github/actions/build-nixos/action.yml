@@ -10,15 +10,13 @@ runs:
     - name: "NixOS: build ${{inputs.hostname}}"
       shell: bash
       run: |
-        # TODO: ssh-agent: this state is lost between steps?!
         eval $(ssh-agent -s)
         ssh-add ~/.ssh/key
-
-        # From my observation, the GitLab CI is quite slow in uploading file
-        # to the remote builder.  So this may take A WHILE..., at leats if the
-        # target /nix/store doesn't has all files already.
-        nix develop --command bash -c "nixos-rebuild build \
-        --flake .#${{inputs.hostname}} \
-        --build-host ci-builder@nix-binary-cache.phip1611.dev \
-        --target-host ci-builder@nix-binary-cache.phip1611.dev \
-        --use-substitutes"
+        
+        echo "[GitHub CI] Building ${{inputs.hostname}} on remote"
+        ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+          cd "$REMOTE_CI_PWD" || exit 1
+          echo "[Remote Builder] Building ${{inputs.hostname}}"
+          echo "[Remote Builder] pwd = " '$PWD'
+          nixos-rebuild build --flake .#${{inputs.hostname}} --verbose
+        EOF
