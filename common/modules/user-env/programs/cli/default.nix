@@ -77,7 +77,7 @@ in
               traceroute
               tree
               ttfb
-              pkgsUnstable.typos
+              pkgsUnstable.typos # unstable: always freshest version
               unzip
               usbutils # lsusb
               util-linux # lsblk and more
@@ -113,7 +113,7 @@ in
       lib.mkIf cfg.withVmms {
         users.users."${cfg.username}".packages = (
           with pkgs;  [
-            cloud-hypervisor
+            pkgsUnstable.cloud-hypervisor # unstable: always freshest version
             qemu
           ]
         );

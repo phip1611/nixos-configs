@@ -48,5 +48,6 @@ in
     phip1611.common.user-env.withGui = lib.mkDefault true;
     phip1611.common.user-env.withMedia = lib.mkDefault true;
     phip1611.common.user-env.withPkgsJ4F = lib.mkDefault true;
+    phip1611.common.user-env.withVmms = lib.mkDefault true;
   };
 }
