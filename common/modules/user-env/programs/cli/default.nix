@@ -116,7 +116,7 @@ in
           traceroute
           tree
           ttfb
-          pkgsUnstable.typos
+          pkgsUnstable.typos# unstable: always freshest version
           unzip
           usbutils # lsusb
           util-linux # lsblk and more
@@ -147,7 +147,7 @@ in
           pkgs.phip1611.packages.qemu-uefi
           pkgs.phip1611.packages.run-efi
 
-          pkgsUnstable.cloud-hypervisor
+          pkgsUnstable.cloud-hypervisor # unstable: always freshest version
           qemu
         ])
       );
