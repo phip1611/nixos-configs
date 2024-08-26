@@ -47,7 +47,10 @@ with lib;
         22 # ssh
         80 # http
         443 # https
-        8080 # often used for local http services
+        # often used for local http services
+        3000
+        8000
+        8080
       ];
     };
 
@@ -60,15 +63,16 @@ with lib;
         53 # dns
         67 # dhcp/bootp (server)
         68 # dhcp/bootp (client)
-        69 # tftp
+        69 # tftp (network boot)
       ];
     };
 
     tftpRoot = mkOption {
       type = types.nullOr types.str;
       description = "TFTP root path on the host to serve network boot requests.";
-      example = "/tftpboot";
+      example = "/src/tftproot";
       default = null; # network boot disabled
+      # default = "/tmp";
     };
   };
 }
