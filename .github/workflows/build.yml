@@ -71,12 +71,12 @@ jobs:
           chmod 0700 ~/.ssh
           # Configured as GitHub CI secret
           echo "$CI_BUILDER_PRIV_KEY" > ~/.ssh/key
-          chmod 0600 ~/.ssh/key
-      # Prevent "broken pipe" in long-running SSH sessions
+          chmod 0600 ~/.ssh/key      # Verify if remote host is reachable. This uses curl instead of a Ping,
+      # as GitHub runners can't use `ping` by design.
+      # We check if the default message from "nix-serve" is returned.
       - name: Check Remote Builder is available
-        run: |
-          ip --color=always a
-          ping -c 1 nix-binary-cache.phip1611.dev
+        timeout-minutes: 1
+        run: curl https://nix-binary-cache.phip1611.dev | grep -F "File not found."
       # Prevent "broken pipe" in long-running SSH sessions
       - name: Prepare Local SSH Config
         run: |

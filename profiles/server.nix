@@ -33,6 +33,9 @@
     # Comes with a pre-configured configuration for ssh.
     services.fail2ban.enable = true;
 
+    networking.firewall.allowPing = true;
+    networking.firewall.rejectPackets = true;
+
     nix = {
       # Safe some disk space.
       settings = {
