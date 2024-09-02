@@ -1,8 +1,11 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
   python3Toolchain = import ./python3-toolchain.nix { inherit pkgs; };
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.system;
+  };
 in
 {
   config = lib.mkIf cfg.enable (lib.mkMerge [
@@ -75,7 +78,7 @@ in
 
             # Rustup can't auto-update itself but manage installed Rust
             # toolchains.
-            rustup
+            pkgsUnstable.rustup
           ]
         );
       }
