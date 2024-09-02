@@ -2,6 +2,10 @@ name: Build Nix Unit Tests and NixOS System Configurations
 
 on: [ push, pull_request, merge_group ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   list-nixos-options-of-common-module:
     name: run "listNixosOptions" utility
