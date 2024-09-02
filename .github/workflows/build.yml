@@ -2,6 +2,10 @@ name: Build Nix Unit Tests and NixOS System Configurations
 
 on: [ push, pull_request, merge_group ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   list-nixos-options-of-common-module:
     name: run "listNixosOptions" utility
@@ -68,27 +72,39 @@ jobs:
           # Configured as GitHub CI secret
           echo "$CI_BUILDER_PRIV_KEY" > ~/.ssh/key
           chmod 0600 ~/.ssh/key
+      # Prevent "broken pipe" in long-running SSH sessions
+      - name: Check Remote Builder is available
+        run: |
+          ip --color=always a
+          ping -c 1 nix-binary-cache.phip1611.dev
+      # Prevent "broken pipe" in long-running SSH sessions
+      - name: Prepare Local SSH Config
+        run: |
+          echo 'ServerAliveInterval 30' | tee -a ~/.ssh/config
+          echo 'ServerAliveCountMax 3' | tee -a ~/.ssh/config
       - name: Test SSH to Remote Builder works
+        timeout-minutes: 1
         run: |
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
 
           ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$SSHOPTS" "echo ssh works"
       - name: Checkout Repo on Remote Builder
+        timeout-minutes: 1
         run: |
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
 
           echo "[GitHub CI] REMOTE_CI_PWD: $REMOTE_CI_PWD"
-          
+
           echo "[GitHub CI] Create destination directory"
           ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
-            mkdir $REMOTE_CI_PWD 
+            mkdir $REMOTE_CI_PWD
           EOF
-          
+
           echo "[GitHub CI] Copy checkout.zip to destination"
-          scp $SCPOPTS checkout.zip ci-builder@nix-binary-cache.phip1611.dev:/$REMOTE_CI_PWD 
-          
+          scp $SCPOPTS checkout.zip ci-builder@nix-binary-cache.phip1611.dev:/$REMOTE_CI_PWD
+
           echo "[GitHub CI] Unpack zip at destination directory"
           ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
             cd $REMOTE_CI_PWD || exit 1
@@ -98,17 +114,21 @@ jobs:
           EOF
       - uses: ./.github/actions/build-nixos
         name: Build 'asking-alexandria'
+        timeout-minutes: 60
         with:
           hostname: asking-alexandria
       - uses: ./.github/actions/build-nixos
         name: Build 'homepc'
+        timeout-minutes: 60
         with:
           hostname: homepc
       - uses: ./.github/actions/build-nixos
         name: Build 'linkin-park'
+        timeout-minutes: 60
         with:
           hostname: linkin-park
       - name: Cleanup on Remote Builder
+        timeout-minutes: 1
         run: |
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
