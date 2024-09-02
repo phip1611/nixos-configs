@@ -74,7 +74,9 @@ jobs:
           chmod 0600 ~/.ssh/key
       # Prevent "broken pipe" in long-running SSH sessions
       - name: Check Remote Builder is available
-        run: ping -c 1 nix-binary-cache.phip1611.dev
+        run: |
+          ip --color=always a
+          ping -c 1 nix-binary-cache.phip1611.dev
       # Prevent "broken pipe" in long-running SSH sessions
       - name: Prepare Local SSH Config
         run: |
