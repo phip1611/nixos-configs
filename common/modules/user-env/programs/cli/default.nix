@@ -98,6 +98,7 @@ in
           fd # better find
           file
           git
+          pkgsUnstable.gitlab-timelogs
           grub2 # for grub-file
           hexyl # hex viewer
           httpie
