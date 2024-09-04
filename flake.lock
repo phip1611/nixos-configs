@@ -95,11 +95,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1721114067,
-        "narHash": "sha256-WAUgafMDMTZzSVE6WBNN6Tyvw/J4lkDgL2RGNokZrDk=",
+        "lastModified": 1725453673,
+        "narHash": "sha256-7Nvx2kkRPXQNx3zd6o21GVj3xCsX0nrHpuKtzm9v1dY=",
         "owner": "phip1611",
         "repo": "img-to-webp-spring-service",
-        "rev": "d8f0fa7efc30719780ddb4586724809c42d616de",
+        "rev": "b091c270137be7978848e0ad239c523a4c2b452b",
         "type": "github"
       },
       "original": {
@@ -111,11 +111,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1724878143,
-        "narHash": "sha256-UjpKo92iZ25M05kgSOw/Ti6VZwpgdlOa73zHj8OcaDk=",
+        "lastModified": 1725436345,
+        "narHash": "sha256-sWfTgSJ3Wq/L7jEZHiU82NaBjpMMmBR1y+MSvx88WeE=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "95c3dfe6ef2e96ddc1ccdd7194e3cda02ca9a8ef",
+        "rev": "ba7bb3761c960793001ed153a333e543345f34cf",
         "type": "github"
       },
       "original": {
