@@ -10,6 +10,8 @@
 }:
 
 let
+  limineX = limine.override ({ enableAll = true; });
+
   scriptCheckIsMultiboot =
     writeShellScriptBin
       "check-is-multiboot"
@@ -49,23 +51,25 @@ let
     }:
     let
       moduleLines = map
-        (elem: "MODULE_PATH boot:///${builtins.baseNameOf elem.file}\nMODULE_STRING${elem.cmdline}")
+        (elem: "    module_path: boot():/${builtins.baseNameOf elem.file}\nMODULE_STRING${elem.cmdline}")
         bootModules;
     in
     (writeTextFile {
-      name = "${kernel.name}-limine.cfg";
+      name = "${kernel.name}-limine.conf";
       text = ''
-        TIMEOUT=0
-        SERIAL=yes
-        VERBOSE=yes
+        default_entry: 1
+        timeout: 0
+        serial: yes
+        verbose: yes
 
-        INTERFACE_BRANDING=${kernel.name}
+        interface_branding: ${kernel.name}
 
-        :${baseNameOf kernel}
-        PROTOCOL=multiboot${toString multibootVersion}
-        KERNEL_PATH=boot:///${baseNameOf kernel}
-        KERNEL_CMDLINE=${kernelCmdline}
-        ${builtins.concatStringsSep "\n" moduleLines}
+        /Boot ${kernel.name}
+            comment: Boot ${baseNameOf kernel} via Multiboot${toString multibootVersion}
+            protocol: multiboot${toString multibootVersion}
+            kernel_path: boot():/${baseNameOf kernel}
+            kernel_cmdline: ${kernelCmdline}
+            ${builtins.concatStringsSep "\n" moduleLines}
       '';
     });
 
@@ -85,7 +89,7 @@ let
     , multibootVersion ? 2
     }@args:
     let
-      limineCfg = createLimineMultibootCfg args;
+      bootCfg = createLimineMultibootCfg args;
       bootItems = [ kernel ] ++ map (elem: elem.file) bootModules;
       # -f: don't fail if the same file is added multiple times; for example
       #     the kernel itself is passed as boot module. This is sometimes nice
@@ -94,19 +98,22 @@ let
     in
     runCommand "${kernel.name}-multiboot2-hybrid-iso"
       {
-        nativeBuildInputs = [ limine xorriso scriptCheckIsMultiboot ];
-        passthru = { inherit bootItems limineCfg; };
+        nativeBuildInputs = [ limineX xorriso scriptCheckIsMultiboot ];
+        passthru = { inherit bootItems bootCfg; };
       } ''
       check-is-multiboot ${kernel} ${toString multibootVersion}
 
       mkdir -p filesystem/EFI/BOOT
-      install -m 0644 ${limine}/share/limine/limine-bios.sys filesystem
-      install -m 0644 ${limine}/share/limine/limine-bios-cd.bin filesystem
-      install -m 0644 ${limine}/share/limine/limine-uefi-cd.bin filesystem
-      install -m 0644 ${limine}/share/limine/BOOTIA32.EFI filesystem/EFI/BOOT
-      install -m 0644 ${limine}/share/limine/BOOTX64.EFI filesystem/EFI/BOOT
 
-      cp ${limineCfg} filesystem/limine.cfg
+      echo "Copying Limine artifacts from '${limineX}':"
+
+      install -m 0644 ${limineX.out}/share/limine/limine-bios.sys filesystem
+      install -m 0644 ${limineX.out}/share/limine/limine-bios-cd.bin filesystem
+      install -m 0644 ${limineX.out}/share/limine/limine-uefi-cd.bin filesystem
+      install -m 0644 ${limineX.out}/share/limine/BOOTIA32.EFI filesystem/EFI/BOOT
+      install -m 0644 ${limineX.out}/share/limine/BOOTX64.EFI filesystem/EFI/BOOT
+
+      cp ${bootCfg} filesystem/limine.conf
       ${builtins.concatStringsSep "\n" copyBootitemsLines}
 
       # The following paths are relative to the root of the baked in file system.
