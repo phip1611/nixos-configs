@@ -8,7 +8,7 @@ in
 {
   config = lib.mkIf (cfg.enable && gnomeEnabled) {
     users.users."${cfg.username}".packages = with pkgs; [
-      gnome.gnome-tweaks
+      gnome-tweaks
       # This is only a subset of extensions but dash-to-dock
       # is the most important one. However, without further
       # manual out-of-Nix configuration, it doesn't look what I want it to look
