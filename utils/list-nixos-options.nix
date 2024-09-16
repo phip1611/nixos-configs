@@ -14,10 +14,8 @@
 
 let
   selfModules = builtins.attrValues self.nixosModules;
-  # Not sure why, but it seems flake-parts transforms the modules to this
-  # rather odd structure. The module path is the first (and only) element in
-  # module.imports.
-  extractModulePath = module: builtins.head module.imports;
+  # This add structure is caused by flake-parts.
+  extractModulePath = module: builtins.head (builtins.head (builtins.head module.imports).imports).imports;
   toModuleImportLine = module: "(import ${extractModulePath module})";
   combinedConfig = writeText "combined-config" ''
     {
