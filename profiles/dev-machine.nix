@@ -20,10 +20,5 @@
         };
       };
     };
-
-    # Prevent frequent "/boot volume full" errors. Limit this to a sane small
-    # number.
-    boot.loader.grub.configurationLimit = 7;
-    boot.loader.systemd-boot.configurationLimit = 7;
   };
 }

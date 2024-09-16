@@ -23,6 +23,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Prevent frequent "/boot volume full" errors. Limit this to a sane small
+    # number. Something small is suffucient due to my extensive git versioning.
+    boot.loader.grub.configurationLimit = 7;
+    boot.loader.systemd-boot.configurationLimit = 7;
+
     # Use latest stable kernel.
     # to disable set to: `lib.mkForce pkgs.linuxPackages; # default`
     boot.kernelPackages = pkgs.linuxPackages_latest;
