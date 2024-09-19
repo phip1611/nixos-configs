@@ -25,6 +25,9 @@
 
     services.nix-serve = {
       enable = true;
+      # Drop-in replacement on steroids
+      # https://github.com/aristanetworks/nix-serve-ng
+      package = pkgs.nix-serve-ng;
       secretKeyFile = "/var/cache-priv-key.pem";
     };
   };
