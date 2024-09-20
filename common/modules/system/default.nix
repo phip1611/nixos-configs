@@ -18,6 +18,7 @@ in
       enable = lib.mkEnableOption "Enable the common system module";
       # Only server-environments should enable that.
       withAutoUpgrade = lib.mkEnableOption "Enable automatic system upgrades from this flake on GitHub";
+      withBleedingEdgeLinux = lib.mkEnableOption "Enable bleeding edge Linux version and configs";
       withDocker = lib.mkEnableOption "Enable (rootless) docker";
     };
   };
@@ -28,12 +29,6 @@ in
       # number. Something small is suffucient due to my extensive git versioning.
       boot.loader.grub.configurationLimit = 7;
       boot.loader.systemd-boot.configurationLimit = 7;
-
-      # Use latest stable kernel.
-      # to disable set to: `lib.mkForce pkgs.linuxPackages; # default`
-      boot.kernelPackages = pkgs.linuxPackages_latest;
-      # Living on the edge. 2-5% faster compilation times.
-      boot.kernelParams = [ "mitigations=off" ];
 
       # Don't accumulate crap.
       boot.tmp.cleanOnBoot = true;
@@ -72,5 +67,12 @@ in
         memoryPercent = 25;
       };
     }
+    # Use latest stable kernel and disable mitigations.
+    (lib.mkIf cfg.withBleedingEdgeLinux {
+      # To reset to default, set to `lib.mkForce pkgs.linuxPackages`.
+      boot.kernelPackages = pkgs.linuxPackages_latest;
+      # Living on the edge. 2-5% faster compilation times.
+      boot.kernelParams = [ "mitigations=off" ];
+    })
   ]);
 }

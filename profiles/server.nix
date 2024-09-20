@@ -24,6 +24,8 @@
         system = {
           enable = true;
           withAutoUpgrade = true;
+          # Security and stability ftw.
+          withBleedingEdgeLinux = false;
           withDocker = false;
         };
       };
