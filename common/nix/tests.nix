@@ -63,7 +63,7 @@ in
         mkdir $out
       '';
       # Machine q35 necessary for UEFI, otherwise it doesn't boot.
-      commonQemuArgs = "-debugcon file:${bootOutputFile} -no-reboot -display none -machine q35";
+      commonQemuArgs = "-debugcon file:${bootOutputFile} -no-reboot -display none -machine q35 -serial stdio";
     in
     {
       testRunQemuDirect = bootWithTimeout "iso" "32 bit via MB1" "qemu-system-x86_64 -kernel ${bootitem.elf32} ${commonQemuArgs}";

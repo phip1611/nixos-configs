@@ -16,7 +16,7 @@ let
     configfile = ./minimal-kernel.config;
 
     version = "${kernelSrc.version}";
-    modDirVersion = "${kernelSrc.version}-minimal";
+    modDirVersion = "${kernelSrc.modDirVersion}-minimal";
 
     # allowImportFromDerivation = true;
   };
