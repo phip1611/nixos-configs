@@ -42,22 +42,35 @@ in
       }}";
       "bootitems/linux/initrd_minimal".source = "${bootitems.linux.initrds.default}/initrd";
     } //
-    # Make Linux kernels accessible by their exact version number and
-    # "x.y" version format.
+    # Maḱe the linux kernels accessible in "/etc/bootitems" as vmlinux (ELF)
+    # and bzImage with a path reflecting the version number (x.y and x.y.z).
     (builtins.foldl'
       (acc: kernel: acc // (
         let
-          prefix = "bootitems/linux/kernel_minimal";
           bzImage = "${kernel}/bzImage";
           vmlinux = "${libutil.builders.extractVmlinux kernel}/vmlinux";
-        in
-        {
-          "${prefix}_${kernel.version}.bzImage".source = bzImage;
-          "${prefix}_${stripMinorVersion kernel.version}.bzImage".source = bzImage;
 
-          "${prefix}_${kernel.version}.vmlinux".source = vmlinux;
-          "${prefix}_${stripMinorVersion kernel.version}.vmlinux".source = vmlinux;
-        }
+          prefix = "bootitems/linux/kernel_minimal";
+          longVerName = "${prefix}_${kernel.version}";
+          shortVerName = "${prefix}_${stripMinorVersion kernel.version}";
+
+          # For versions such as "6.11", this list contains one element,
+          # for versions such as "6.11.4", this list contains two elements.
+          verNames = lib.unique [ longVerName shortVerName ];
+        in
+        (
+          # This either returns
+          # - "6.11.<classifier>" or
+          # - "6.11.<classifier>" and "6.11.x.<classifier>" per kernel,
+          # depending whether ${kernel.version} has a third component.
+          builtins.foldl'
+            (acc: verName: acc // {
+              "${verName}.bzImage".source = bzImage;
+              "${verName}.vmlinux".source = vmlinux;
+            })
+            { }
+            verNames
+        )
       ))
       { }
       (builtins.attrValues bootitems.linux.kernels)
