@@ -37,11 +37,11 @@ in
     ];
   };
 
-  /*# Useful for quick prototyping.
-    iso = libutil.images.x86.createMultibootIso {
-    kernel = libutil.builders.flattenDrv {
+  # Useful for quick prototyping.
+  /* iso = libutil.images.x86.createMultibootIso {
+    kernel = (libutil.builders.flattenDrv {
       drv = bootitems.tinytoykernel;
       artifactPath = "kernel.elf64";
-    };
-  };*/
+    }).overrideAttrs { name = "tinytoykernel"; };
+  }; */
 }
