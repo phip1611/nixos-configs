@@ -16,6 +16,7 @@
         system = {
           enable = true;
           withAutoUpgrade = false;
+          withBleedingEdgeLinux = true;
           withDocker = true;
         };
       };
