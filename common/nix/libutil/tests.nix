@@ -27,6 +27,6 @@ let
       testUnflattened = libutil.testing.bashCondToDrv "testUnflattened" "-d ${unflattened}";
     };
 in
-{
+libutil.trace.prettyWithPrefix "Test: trace.prettyWithPrefix " "works" {
   inherit builders;
 }

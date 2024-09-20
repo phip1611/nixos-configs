@@ -1,6 +1,8 @@
 { pkgs }:
 
 let
+  lib = pkgs.lib;
+
   # Makes the version name more Nix friendly, so that typical convenience
   # in a Nix repl for example still work.
   # - no "."
@@ -16,11 +18,11 @@ in
       };
     })
     { }
-    # List of kernel to build with the minimal config.
-    [
+    # List of kernels to build with the minimal config.
+    (lib.lists.unique [
       pkgs.linux
       pkgs.linux_latest
-    ]
+    ])
   ;
   initrds = {
     minimal = pkgs.callPackage ./build-initrd.nix { };
