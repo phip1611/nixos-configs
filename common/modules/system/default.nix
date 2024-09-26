@@ -9,6 +9,7 @@ in
     ./docker.nix
     ./documentation.nix
     ./firmware.nix
+    ./networking.nix
     ./nix-cfg.nix
     ./nix-path-from-flake.nix
   ];
@@ -47,10 +48,6 @@ in
       # better to set the env var NIX_LD_LIBRARY_PATH only for specific bins, such
       # as through a nix shell.
       programs.nix-ld.enable = true;
-
-      # Improve network analysis.
-      networking.firewall.allowPing = true;
-      networking.firewall.rejectPackets = true;
 
       # Set sudo password timeout to 30 min instead of 5 min.
       security.sudo.extraConfig = ''
