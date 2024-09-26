@@ -48,6 +48,10 @@ in
       # as through a nix shell.
       programs.nix-ld.enable = true;
 
+      # Improve network analysis.
+      networking.firewall.allowPing = true;
+      networking.firewall.rejectPackets = true;
+
       # Set sudo password timeout to 30 min instead of 5 min.
       security.sudo.extraConfig = ''
         Defaults        timestamp_timeout=30
