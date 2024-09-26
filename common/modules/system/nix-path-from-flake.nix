@@ -42,6 +42,7 @@ in
         phip1611.flake =
           if inputs ? phip1611 then inputs.phip1611
           else if inputs ? phip1611-common then inputs.phip1611-common
+          # inputs.self is another flake when this module is consumed.
           else inputs.self;
         phip1611-upstream.to = builtins.parseFlakeRef "github:phip1611/nixos-configs";
       };
