@@ -18,5 +18,5 @@ runs:
           cd "$REMOTE_CI_PWD" || exit 1
           echo "[Remote Builder] Building ${{inputs.hostname}}"
           echo "[Remote Builder] pwd = " '$PWD'
-          nixos-rebuild build --flake .#${{inputs.hostname}}
+          nice -n 19 nixos-rebuild build --flake .#${{inputs.hostname}}
         EOF
