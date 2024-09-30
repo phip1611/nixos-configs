@@ -37,6 +37,12 @@ in
       # I use german QWERTZ layout everywhere.
       console.keyMap = "de";
 
+      # Common system-wide shell alias. This will end up in the generated
+      # "${shell}rc"-files in the Nix store.
+      environment.shellAliases = {
+        list-generations = "nixos-rebuild list-generations";
+      };
+
       # When unpatched dynamically linked programs are executed, they fail with
       # file not found. Usually, the file "/lib64/ld-linux-x86-x64.so.2" is not
       # found. This NixOS package adds a compatibility layer for that case.
