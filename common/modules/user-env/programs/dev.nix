@@ -2,17 +2,17 @@
 
 let
   cfg = config.phip1611.common.user-env;
-  python3Toolchain = import ./python3-toolchain.nix { inherit pkgs; };
   pkgsUnstable = import inputs.nixpkgs-unstable {
     system = pkgs.system;
   };
+  python3Toolchain = import ./python3-toolchain.nix { pkgs = pkgsUnstable; };
 in
 {
   config = lib.mkIf cfg.enable (lib.mkMerge [
     (
       lib.mkIf cfg.withDevJava {
         users.users."${cfg.username}".packages = (
-          with pkgs; [
+          with pkgsUnstable; [
             jdk
             maven # TODO, JDK might be not needed, as the maven derivation
             # already comes with a JDK.
@@ -23,7 +23,7 @@ in
     (
       lib.mkIf cfg.withDevJavascript {
         users.users."${cfg.username}".packages = (
-          with pkgs; [
+          with pkgsUnstable; [
             nodejs
             yarn
           ]
@@ -33,7 +33,7 @@ in
     (
       lib.mkIf cfg.withDevNix {
         users.users."${cfg.username}".packages = (
-          with pkgs; [
+          with pkgsUnstable; [
             deadnix
             niv
             nixpkgs-fmt
@@ -47,7 +47,7 @@ in
     (
       lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = (
-          with pkgs; [
+          with pkgsUnstable; [
             gcc
             # already there automatically; here only for completeness
             binutils
@@ -65,7 +65,7 @@ in
     (
       lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = (
-          with pkgs; [
+          with pkgsUnstable; [
             cargo-deny
             cargo-expand
             cargo-license
@@ -78,7 +78,7 @@ in
 
             # Rustup can't auto-update itself but manage installed Rust
             # toolchains.
-            pkgsUnstable.rustup
+            rustup
           ]
         );
       }
@@ -90,7 +90,7 @@ in
           # out-of-tree modules right from the shell.
           (pkgs.buildFHSEnv {
             name = "legacy-env";
-            targetPkgs = pkgs: with pkgs; [
+            targetPkgs = _pkgs: with pkgsUnstable; [
               acpica-tools
               bc
               binutils

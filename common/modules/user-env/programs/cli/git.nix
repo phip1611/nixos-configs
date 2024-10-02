@@ -1,7 +1,10 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.system;
+  };
 in
 {
   options.phip1611.common.user-env = {
@@ -22,6 +25,7 @@ in
     home-manager.users."${cfg.username}" = {
       programs.git = {
         enable = true;
+        package = pkgsUnstable.git;
         userName = cfg.git.username;
         userEmail = cfg.git.email;
         aliases = {
@@ -39,7 +43,7 @@ in
         ];
         extraConfig = {
           core = {
-            editor = "${pkgs.micro}/bin/micro";
+            editor = "micro";
           };
           pull = {
             rebase = true;

@@ -1,14 +1,10 @@
-{ config, lib, pkgs, nixpkgs-unstable, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import nixpkgs-unstable {
+  pkgsUnstable = import inputs.nixpkgs-unstable {
     system = pkgs.system;
-    config = {
-      allowUnfree = true;
-    };
   };
-  alacritty = pkgsUnstable.alacritty;
 in
 {
   config = lib.mkIf (cfg.enable && cfg.withGui) {
@@ -20,7 +16,7 @@ in
     home-manager.users."${cfg.username}" = {
       programs.alacritty = {
         enable = true;
-        package = alacritty;
+        package = pkgsUnstable.alacritty;
         settings = builtins.fromTOML (builtins.readFile ./alacritty.toml);
       };
     };
