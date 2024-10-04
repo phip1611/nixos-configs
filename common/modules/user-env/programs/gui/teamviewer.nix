@@ -11,6 +11,7 @@ in
     # services.teamviewer.package = pkgsUnstable.teamviewer;
 
     users.users."${cfg.username}".packages = [
+      # Remove once the MR mentioned above is set.
       pkgs.teamviewer
     ];
   };

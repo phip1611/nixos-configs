@@ -18,9 +18,6 @@ in
   config = lib.mkIf (cfg.enable && cfg.withGui) {
     programs.firefox.enable = true;
 
-    # Teamviewer GUI doesn't work without the daemon.
-    services.teamviewer.enable = true;
-
     users.users."${cfg.username}".packages = (
       with pkgsUnstable; [
         _1password-gui
@@ -39,7 +36,6 @@ in
         gparted
         signal-desktop
         spotify
-        teamviewer
         telegram-desktop
         xournalpp
       ]
