@@ -99,6 +99,7 @@ in
           micro
           minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
           nflz
+          nixfmt-rfc-style
           nodejs
           ookla-speedtest
           ouch # cool convenient (de)compression tool
