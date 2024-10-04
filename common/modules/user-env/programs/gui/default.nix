@@ -19,10 +19,9 @@ in
     programs.firefox.enable = true;
 
     users.users."${cfg.username}".packages = (
-      with pkgsUnstable; [
-        _1password-gui
-        drawio
-        gimp
+      # Packages that reliably are backported to release channels. Also packages
+      # where I want be safe.
+      with pkgs; [
         (google-chrome.override {
           # Some of these flags correspond to chrome://flags
           commandLineArgs = [
@@ -33,6 +32,12 @@ in
             "--enable-features=VaapiVideoDecoder,VaapiVideoEncoder"
           ];
         })
+      ]
+    ) ++ (
+      with pkgsUnstable; [
+        _1password-gui
+        drawio
+        gimp
         gparted
         signal-desktop
         spotify
