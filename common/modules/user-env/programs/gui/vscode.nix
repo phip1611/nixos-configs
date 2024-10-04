@@ -1,18 +1,16 @@
-{ config, lib, pkgs, nixpkgs-unstable, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import nixpkgs-unstable {
+  pkgsUnstable = import inputs.nixpkgs-unstable {
     system = pkgs.system;
     config = {
       allowUnfree = true;
     };
   };
-  vscode = pkgsUnstable.vscode;
 in
 {
   config = lib.mkIf (cfg.enable && cfg.withGui) {
-
     fonts.packages = with pkgs; [
       source-code-pro
     ];
@@ -20,7 +18,7 @@ in
     home-manager.users."${cfg.username}" = {
       programs.vscode = {
         enable = true;
-        package = vscode;
+        package = pkgsUnstable.vscode;
         extensions = with pkgs.vscode-extensions; [
           bbenoist.nix
           tamasfe.even-better-toml

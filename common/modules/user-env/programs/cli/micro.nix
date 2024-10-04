@@ -2,6 +2,9 @@
 
 let
   cfg = config.phip1611.common.user-env;
+  /* pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.system;
+  }; */
 
   # List here anything from `$ micro -plugin available`
   # TODO: remove this hacky workaround:
@@ -17,7 +20,10 @@ in
       { config, lib, ... }: {
         # TODO somehow add the ".editorconfig" plugin:
         # https://github.com/10sr/editorconfig-micro
+
         programs.micro.enable = true;
+        # TODO only in  home-manager >= 24.11
+        #programs.micro.package = pkgsUnstable.micro;
         programs.micro.settings = {
           colorcolumn = 80;
           colorscheme = "material-tc";

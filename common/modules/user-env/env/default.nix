@@ -2,11 +2,14 @@
 # dotfiles) and corresponding home-manager settings for the given user. This is
 # intended as a big "all-in-one" module with no further enable sub-options.
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   stateVersion = config.system.stateVersion;
   cfg = config.phip1611.common.user-env;
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.system;
+  };
 in
 {
   imports = [
@@ -45,8 +48,8 @@ in
         # I never came across a case where these variables are needed, however,
         # better be safe so that I can always use my favorite terminal editor in
         # my CLI utilities.
-        EDITOR = "${pkgs.micro}/bin/micro";
-        VISUAL = "${pkgs.micro}/bin/micro";
+        EDITOR = "${pkgsUnstable.micro}/bin/micro";
+        VISUAL = "${pkgsUnstable.micro}/bin/micro";
 
         # Configuration for LESS pager.
         LESS = "-R --mouse --wheel-lines=3 ";

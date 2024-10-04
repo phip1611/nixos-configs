@@ -1,9 +1,9 @@
 # Some inputs refers to flake inputs.
-{ config, lib, pkgs, nixpkgs-unstable, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import nixpkgs-unstable {
+  pkgsUnstable = import inputs.nixpkgs-unstable {
     system = pkgs.system;
     config = {
       allowUnfree = true;
@@ -57,19 +57,19 @@ in
 
     users.users."${cfg.username}".packages =
       (
-        with pkgs; [
+        with pkgs.phip1611.packages; [
           # All my custom packages that are not too size-intensive and should
           # not live behind any special feature gate.
-          pkgs.phip1611.packages.clion-exclude-direnv
-          pkgs.phip1611.packages.colortest
-          pkgs.phip1611.packages.ddns-update
-          pkgs.phip1611.packages.ftp-backup
-          pkgs.phip1611.packages.keep-directory-diff
-          pkgs.phip1611.packages.link-to-copy
-          pkgs.phip1611.packages.nix-shell-init
-          pkgs.phip1611.packages.normalize-file-permissions
-          pkgs.phip1611.packages.strace-with-colors
-
+          clion-exclude-direnv
+          colortest
+          ddns-update
+          ftp-backup
+          keep-directory-diff
+          link-to-copy
+          nix-shell-init
+          normalize-file-permissions
+          strace-with-colors
+        ] ++ (with pkgsUnstable; [
           ansi
           bat
           bottom
@@ -83,7 +83,7 @@ in
           fd # better find
           file
           git
-          pkgsUnstable.gitlab-timelogs
+          gitlab-timelogs
           grub2 # for grub-file
           hexyl # hex viewer
           httpie
@@ -99,12 +99,12 @@ in
           micro
           minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
           nflz
+          nixfmt-rfc-style
           nodejs
           ookla-speedtest
           ouch # cool convenient (de)compression tool
           paging-calculator
           pciutils # lspci
-          # pkg-config # Not really working globally. Use per-project!
           poppler_utils # for pdfunite
           python3Toolchain
           ripgrep
@@ -116,7 +116,7 @@ in
           traceroute
           tree
           ttfb
-          pkgsUnstable.typos
+          typos
           unzip
           usbutils # lsusb
           util-linux # lsblk and more
@@ -129,12 +129,12 @@ in
           zip
           zsh
           zx
-        ]
+        ])
         # Dedicated feature-gate as sometimes, build problems with fresh
         # (or old) kernels occur.
         ++ lib.optional cfg.withPerf config.boot.kernelPackages.perf
         # Don't waste disk space when not needed.
-        ++ lib.optionals cfg.withPkgsJ4F (with pkgs; [
+        ++ lib.optionals cfg.withPkgsJ4F (with pkgsUnstable; [
           cmatrix
           cowsay
           fortune
@@ -143,11 +143,11 @@ in
         ])
         # Especially QEMU comes with 1+ GiB of additional dependencies, so it is
         # smart to feature-gate it.
-        ++ lib.optionals cfg.withVmms (with pkgs; [
+        ++ lib.optionals cfg.withVmms (with pkgsUnstable; [
           pkgs.phip1611.packages.qemu-uefi
           pkgs.phip1611.packages.run-efi
 
-          pkgsUnstable.cloud-hypervisor
+          cloud-hypervisor
           qemu
         ])
       );

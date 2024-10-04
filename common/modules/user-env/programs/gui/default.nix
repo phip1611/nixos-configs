@@ -1,8 +1,8 @@
-{ config, lib, pkgs, nixpkgs-unstable, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import nixpkgs-unstable {
+  pkgsUnstable = import inputs.nixpkgs-unstable {
     system = pkgs.system;
     config = {
       allowUnfree = true;
@@ -22,7 +22,7 @@ in
     services.teamviewer.enable = true;
 
     users.users."${cfg.username}".packages = (
-      with pkgs; [
+      with pkgsUnstable; [
         _1password-gui
         drawio
         gimp
@@ -52,7 +52,7 @@ in
       )
     ) ++ (
       lib.optionals cfg.withMedia (
-        with pkgs; [
+        with pkgsUnstable; [
           audacity
         ]
       )

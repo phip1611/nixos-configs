@@ -1,7 +1,10 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.system;
+  };
 in
 {
   config = lib.mkIf cfg.enable {
@@ -16,6 +19,7 @@ in
 
       programs.zsh = {
         enable = true;
+        package = pkgsUnstable.zsh;
 
         # Context:
         # - https://www.soberkoder.com/better-zsh-history/
