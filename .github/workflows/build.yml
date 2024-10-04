@@ -65,18 +65,31 @@ jobs:
         # project checkout.
       - name: ZIP Git Checkout
         run: zip -r checkout.zip .
-      - name: Prepare SSH Key to Access Remote Builder
+      - name: Prepare SSH key to access remote builder
         run: |
+          # Configure private key stored in GitHub CI secret
           mkdir -p ~/.ssh
           chmod 0700 ~/.ssh
-          # Configured as GitHub CI secret
           echo "$CI_BUILDER_PRIV_KEY" > ~/.ssh/key
-          chmod 0600 ~/.ssh/key      # Verify if remote host is reachable. This uses curl instead of a Ping,
-      # as GitHub runners can't use `ping` by design.
-      # We check if the default message from "nix-serve" is returned.
+          chmod 0600 ~/.ssh/key
+
+          # Load SSH config into environment
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/key
+
+          # Make SSH agent config persistent across CI steps. I ran
+          # `echo $(ssh-agent -s)` to find out what is happening underneath
+          # and which variables need to be exported.
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> $GITHUB_ENV
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $GITHUB_ENV
+      # Verify if remote host is reachable. This uses curl instead of a Ping,
+      # as GitHub runners can't use `ping` by design. We check if the default
+      # message from "nix-serve" is returned.
       - name: Check Remote Builder is available
         timeout-minutes: 1
-        run: curl https://nix-binary-cache.phip1611.dev | grep -F "File not found."
+        run: |
+          DEFAULT_MSG="File not found."
+          curl https://nix-binary-cache.phip1611.dev | grep -F "$DEFAULT_MSG"
       # Prevent "broken pipe" in long-running SSH sessions
       - name: Prepare Local SSH Config
         run: |
@@ -84,17 +97,10 @@ jobs:
           echo 'ServerAliveCountMax 3' | tee -a ~/.ssh/config
       - name: Test SSH to Remote Builder works
         timeout-minutes: 1
-        run: |
-          eval $(ssh-agent -s)
-          ssh-add ~/.ssh/key
-
-          ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$SSHOPTS" "echo ssh works"
+        run: ssh -o StrictHostKeyChecking=accept-new ci-builder@nix-binary-cache.phip1611.dev "$SSHOPTS" "echo ssh works"
       - name: Checkout Repo on Remote Builder
         timeout-minutes: 1
         run: |
-          eval $(ssh-agent -s)
-          ssh-add ~/.ssh/key
-
           echo "[GitHub CI] REMOTE_CI_PWD: $REMOTE_CI_PWD"
 
           echo "[GitHub CI] Create destination directory"

@@ -10,9 +10,6 @@ runs:
     - name: "NixOS: build ${{inputs.hostname}}"
       shell: bash
       run: |
-        eval $(ssh-agent -s)
-        ssh-add ~/.ssh/key
-
         echo "[GitHub CI] Building ${{inputs.hostname}} on remote"
         ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
           cd "$REMOTE_CI_PWD" || exit 1
