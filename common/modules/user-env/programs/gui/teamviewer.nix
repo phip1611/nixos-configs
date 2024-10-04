@@ -1,21 +1,17 @@
-{ config, lib, pkgs, ... }@inputs:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.system;
-    config = {
-      allowUnfree = true;
-    };
-  };
 in
 {
   config = lib.mkIf (cfg.enable && cfg.withGui) {
     # Teamviewer GUI doesn't work without the daemon.
     services.teamviewer.enable = true;
+    # Wait for https://github.com/NixOS/nixpkgs/pull/346365
+    # services.teamviewer.package = pkgsUnstable.teamviewer;
 
     users.users."${cfg.username}".packages = [
-      pkgsUnstable.teamviewer
+      pkgs.teamviewer
     ];
   };
 }
