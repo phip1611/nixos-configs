@@ -14,6 +14,6 @@ runs:
         ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
           cd "$REMOTE_CI_PWD" || exit 1
           echo "[Remote Builder] Building ${{inputs.hostname}}"
-          echo "[Remote Builder] pwd = " '$PWD'
+          echo "[Remote Builder] pwd = $REMOTE_CI_PWD"
           nice -n 19 nixos-rebuild build --flake .#${{inputs.hostname}}
         EOF
