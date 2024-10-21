@@ -66,6 +66,7 @@ in
       lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = (
           with pkgsUnstable; [
+            cargo-careful
             cargo-deny
             cargo-expand
             cargo-license
