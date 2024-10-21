@@ -12,7 +12,6 @@ in
 {
   imports = [
     ./alacritty.nix
-    ./localsend.nix
     ./teamviewer.nix
     ./vscode.nix
   ];
