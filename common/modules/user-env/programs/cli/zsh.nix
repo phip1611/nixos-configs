@@ -63,7 +63,6 @@ in
             "git"
             "mvn"
             "ng"
-            "ripgrep"
             "urltools"
           ];
         };
