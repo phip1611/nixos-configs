@@ -10,14 +10,9 @@
     services.nginx.virtualHosts."webp.phip1611.dev" =
       let
         port = toString config.services.img-to-webp-service.port;
+        commonCfg = import ../nginx-common-host-config.nix;
       in
-      {
-        enableACME = true;
-        http2 = true;
-        http3 = true;
-        quic = true; # also needed when http3 = true
-        # Upgrade HTTP to HTTPS
-        forceSSL = true;
+      commonCfg // {
         locations."/".proxyPass = "http://localhost:${port}";
       };
   };
