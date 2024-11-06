@@ -23,13 +23,22 @@ For quick prototyping and testing, you can do:
 - `nix-build -A <attr>`
 - `nix-build -E "(import ./. {}).attr"`
 
+To build something from the flake referenced as remote resource in a Nix repl,
+do something as shown below:
+
+```
+:lf github:phip1611/nixos-configs
+bootitems = import lib.bootitems {}
+:b bootitems.linux.kernels.linux-6-11-6
+```
+
 ## Unit Tests and Naming Convention
 
 As there is no default Nix unit test framework yet, I use my own convention.
 
-Everything called `testing` is supposed to be used as general test 
-infrastructure and not a test itself. Everything called `tests.nix` exports an 
-attribute set of unit tests. Each test is a derivation that must evaluate 
+Everything called `testing` is supposed to be used as general test
+infrastructure and not a test itself. Everything called `tests.nix` exports an
+attribute set of unit tests. Each test is a derivation that must evaluate
 successfully.
 
 To run all tests, run `$ nix-build -A all-tests`.
