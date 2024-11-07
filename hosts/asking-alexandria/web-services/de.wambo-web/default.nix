@@ -2,10 +2,11 @@
 
 let
   commonCfg = import ../nginx-common-host-config.nix;
+  webApp = wambo-web.packages.${pkgs.system}.default;
 in
 {
   services.nginx.virtualHosts."wambo-web.de" = commonCfg // {
-    root = "${wambo-web.packages.${pkgs.system}.default}/share/wambo-web";
+    root = "${webApp}/share/wambo-web";
   };
 
 }
