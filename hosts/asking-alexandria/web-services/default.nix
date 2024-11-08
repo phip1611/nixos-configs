@@ -7,7 +7,7 @@
     ./nginx.nix
 
     # Hosted web projects
-    # ./de.wambo-web temporarily deactivated as it doesn't build in Linux 6.6
+    ./de.wambo-web
     ./dev.phip1611.monitor/netdata.nix
     ./dev.phip1611.nix-binary-cache
     ./dev.phip1611.webp/img-to-webp-service.nix
