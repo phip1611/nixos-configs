@@ -24,8 +24,12 @@
         system = {
           enable = true;
           withAutoUpgrade = true;
-          # Security and stability ftw.
-          withBleedingEdgeLinux = false;
+          # Originally I deactivated this with "security ftw!" in mind. But
+          # in November I experienced that buildNpmPackage of the wambo-web
+          # flake failed in Linux 6.6, probably due to io_uring issues. With
+          # 6.11, everything is fine.
+          # TODO: Go back to LTS 6.12, once it is released!
+          withBleedingEdgeLinux = true;
           withDocker = false;
         };
       };
