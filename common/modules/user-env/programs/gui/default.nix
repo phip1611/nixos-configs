@@ -16,6 +16,8 @@ in
     ./vscode.nix
   ];
   config = lib.mkIf (cfg.enable && cfg.withGui) {
+    programs._1password-gui.enable = true;
+    programs._1password-gui.polkitPolicyOwners = [ cfg.username ];
     programs.firefox.enable = true;
 
     users.users."${cfg.username}".packages = (
@@ -35,7 +37,6 @@ in
       ]
     ) ++ (
       with pkgsUnstable; [
-        _1password-gui
         drawio
         gimp
         gparted
