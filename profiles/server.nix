@@ -24,6 +24,7 @@
         system = {
           enable = true;
           withAutoUpgrade = true;
+          withNixVerifyStoreService = true;
           # Originally I deactivated this with "security ftw!" in mind. But
           # in November I experienced that buildNpmPackage of the wambo-web
           # flake failed in Linux 6.6, probably due to io_uring issues. With
