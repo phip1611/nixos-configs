@@ -84,27 +84,4 @@ in
       };
     };
   };
-
-  # I once had a case on host asking-alexandria where the Nix store was
-  # corrupted due to a kernel panic during a Nix derivation build job, caused
-  # by a IO uring bug in Linux 6.6. Afterwards, a few items of the store were
-  # broken. Therefore, it is smart to run this service occationally. Especially,
-  # as I am a heavy NixOS user and I love bleeding edge stuff, the likelihood
-  # that something breaks is not zero.
-  systemd = cfg.withNixVerifyStoreService {
-    services.nix-verify-store = {
-      description = "Nix Store Verify & Repair";
-      serviceConfig = {
-        ExecStart = "${config.nix.package}/bin/nix-store --verify --check-contents --repair";
-        Type = "oneshot";
-      };
-    };
-    timers.nix-verify-store = {
-      timerConfig = {
-        Persistent = true;
-        RandomizedDelaySec = 1800;
-        OnCalendar = "Sun 03:00:00";
-      };
-    };
-  };
 }
