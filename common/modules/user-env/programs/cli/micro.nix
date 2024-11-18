@@ -1,10 +1,10 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
-  /* pkgsUnstable = import inputs.nixpkgs-unstable {
+  pkgsUnstable = import inputs.nixpkgs-unstable {
     system = pkgs.system;
-  }; */
+  };
 
   # TODO: Add dynamic configuration of plugins
   # https://github.com/nix-community/home-manager/pull/3224
@@ -18,8 +18,7 @@ in
         # https://github.com/10sr/editorconfig-micro
 
         programs.micro.enable = true;
-        # TODO only in  home-manager >= 24.11
-        #programs.micro.package = pkgsUnstable.micro;
+        programs.micro.package = pkgsUnstable.micro;
         programs.micro.settings = {
           colorcolumn = 80;
           colorscheme = "material-tc";
