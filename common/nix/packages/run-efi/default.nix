@@ -15,6 +15,9 @@ writeShellScriptBin "run-efi" ''
   # @arg efi-image!
   # Path to the x86_64 EFI image.
   #
+  # @arg files*
+  # Additional files to put into the volume.
+  #
   # @option --qemu-args
   # Additional arguments for QEMU as string. Provide like this:
   # --qemu-args='-debugcon stdio -display none'
@@ -45,8 +48,15 @@ writeShellScriptBin "run-efi" ''
   # Nix store.
   TMPDIR=$(mktemp -d)
 
+  # Volume: Add main file to boot
   mkdir -p "$TMPDIR/EFI/BOOT"
   install -m 0644 "''${argc_efi_image}" "$TMPDIR/EFI/BOOT/BOOTX64.EFI"
+
+  # Volume: Add additional files (such as startup.nsh)
+  for file in "''${argc_files[@]}"
+  do
+    cp -r $file $TMPDIR
+  done
 
   COMMON_ARGS=(
     -nodefaults
