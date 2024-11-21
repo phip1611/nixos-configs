@@ -48,15 +48,15 @@ writeShellScriptBin "run-efi" ''
   # Nix store.
   TMPDIR=$(mktemp -d)
 
-  # Volume: Add main file to boot
-  mkdir -p "$TMPDIR/EFI/BOOT"
-  install -m 0644 "''${argc_efi_image}" "$TMPDIR/EFI/BOOT/BOOTX64.EFI"
-
   # Volume: Add additional files (such as startup.nsh)
   for file in "''${argc_files[@]}"
   do
     cp -r $file $TMPDIR
   done
+
+  # Volume: Add main file to boot
+  mkdir -p "$TMPDIR/EFI/BOOT"
+  install -m 0644 "''${argc_efi_image}" "$TMPDIR/EFI/BOOT/BOOTX64.EFI"
 
   COMMON_ARGS=(
     -nodefaults
