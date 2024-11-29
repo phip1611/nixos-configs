@@ -69,6 +69,7 @@ in
           nix-shell-init
           normalize-file-permissions
           strace-with-colors
+          wait-host-online
         ] ++ (with pkgsUnstable; [
           ansi
           bat

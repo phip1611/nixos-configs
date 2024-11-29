@@ -18,3 +18,4 @@ This directory bundles some utility packages, such as
 - `qemu-uefi`
 - `run-efi`
 - `strace-with-colors`
+- `wait-host-online`
