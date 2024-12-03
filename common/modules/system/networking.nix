@@ -13,5 +13,8 @@ in
       5201 # iperf3
       8080 # typical http dev server
     ];
+
+    # Next gen networking backend. Probably the default soon. More
+    networking.useNetworkd = true;
   };
 }

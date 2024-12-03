@@ -31,6 +31,11 @@ in
       boot.loader.grub.configurationLimit = 7;
       boot.loader.systemd-boot.configurationLimit = 7;
 
+      # Less weird shell scripts in initrd. Probably the default soon.
+      # Nore more multiple initrds for different specialisations (that have
+      # specific networking options).
+      boot.initrd.systemd.enable = true;
+
       # Don't accumulate crap.
       boot.tmp.cleanOnBoot = true;
 
