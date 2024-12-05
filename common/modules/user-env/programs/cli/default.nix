@@ -18,10 +18,8 @@ in
     ./zsh.nix
   ];
   config = lib.mkIf cfg.enable {
-    programs.iftop.enable = true;
     programs.htop.enable = true;
-    # Additionally to adding traceroute to the path, this enables a few cases
-    # where route privileges are required.
+    programs.iftop.enable = true;
     programs.traceroute.enable = true;
 
     # Very size intensive and I don't really use it. But it's cool.
