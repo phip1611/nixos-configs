@@ -1,7 +1,10 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }@inputs:
 
 let
   cfg = config.phip1611.common.system;
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.system;
+  };
 in
 {
   imports = [
@@ -46,6 +49,16 @@ in
       # "${shell}rc"-files in the Nix store.
       environment.shellAliases = {
         list-generations = "nixos-rebuild list-generations";
+      };
+
+      environment.systemPackages = [
+        pkgsUnstable.micro
+      ];
+
+      environment.variables = {
+        # TUI editor for git, "virsh edit", and other stuff.
+        EDITOR = "micro";
+        VISUAL = "micro";
       };
 
       # When unpatched dynamically linked programs are executed, they fail with
