@@ -35,9 +35,7 @@ in
             # If a new command line being added to the history list duplicates
             # an older one, the older command is removed from the list (even if
             # it is not the previous event).
-            # TODO this is on home-manager master but not on release-23.05.
-            #  ADD ONCE it is stable.
-            # ignoreAllDups = true;
+            ignoreAllDups = true;
             ignoreDups = true; # TODO Reevaluate once the option above is used.
             # Do not enter command lines into the history list if the first
             # character is a space.
