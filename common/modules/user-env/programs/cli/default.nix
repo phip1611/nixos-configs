@@ -26,6 +26,8 @@ in
     programs.yazi.enable = cfg.withPkgsJ4F;
 
     home-manager.users."${cfg.username}" = {
+      # overload CTRL+R in shell with advanced search magic
+      programs.fzf.enable = true;
       programs.tmux.enable = true;
       programs.tmux.extraConfig = builtins.readFile ./tmux.cfg;
 
