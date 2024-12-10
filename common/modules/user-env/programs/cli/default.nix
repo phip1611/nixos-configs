@@ -96,7 +96,7 @@ in
           linux-scripts
           lshw
           lurk # cool strace alternative
-          magic-wormhole # e2e encrypted file transfer "wormhole"
+          magic-wormhole-rs # e2e encrypted file transfer CLI "wormhole-rs"
           micro
           minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
           nflz

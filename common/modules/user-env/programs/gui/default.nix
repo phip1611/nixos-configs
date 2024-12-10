@@ -44,6 +44,7 @@ in
         spotify
         telegram-desktop
         xournalpp
+        warp
       ]
     ) ++ (
       lib.optionals cfg.withDevCAndRust (
