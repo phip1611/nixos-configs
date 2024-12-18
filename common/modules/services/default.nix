@@ -12,7 +12,6 @@
 {
   imports = [
     ./ddns-update.nix
-    ./meshcommander.nix
     ./zsh-history-backup.nix
   ];
 }
