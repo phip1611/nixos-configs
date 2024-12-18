@@ -33,7 +33,6 @@ in
         git.email = "philipp.schuster@cyberus-technology.de";
       };
     };
-    services.meshcommander.enable = true;
   };
 
   fonts.packages = [
