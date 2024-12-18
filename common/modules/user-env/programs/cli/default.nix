@@ -24,9 +24,6 @@ in
     # where route privileges are required.
     programs.traceroute.enable = true;
 
-    # Very size intensive and I don't really use it. But it's cool.
-    programs.yazi.enable = cfg.withPkgsJ4F;
-
     home-manager.users."${cfg.username}" = {
       programs.tmux.enable = true;
       programs.tmux.extraConfig = builtins.readFile ./tmux.cfg;
