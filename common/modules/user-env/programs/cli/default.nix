@@ -98,7 +98,8 @@ in
           lurk # cool strace alternative
           magic-wormhole-rs # e2e encrypted file transfer CLI "wormhole-rs"
           micro
-          minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
+          # TODO: tmp until it builds again on upstream
+          pkgs.minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
           nflz
           nixfmt-rfc-style
           nodejs
@@ -140,7 +141,8 @@ in
           cmatrix
           cowsay
           fortune
-          hollywood
+          # TODO: tmp until it builds again on upstream
+          pkgs.hollywood
           lolcat
         ])
         # Especially QEMU comes with 1+ GiB of additional dependencies, so it is
