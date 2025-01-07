@@ -73,6 +73,7 @@ in
         ] ++ (with pkgsUnstable; [
           ansi
           bat
+          binsider
           bottom
           calc
           coreutils # default package; here only for completeness
