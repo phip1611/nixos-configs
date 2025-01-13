@@ -1,23 +1,9 @@
 #!/usr/bin/env bash
 
-# Script to locally test that all NixOS configs build successfully.
-# This is not used in GitHub CI as all the GUI apps result in "no space left"
-# errors in CI.
+# Script to verify that all NixOS system configurations build successfully.
 
 set -euo pipefail
 
-SYSTEMS=(
-	asking-alexandria
-	homepc
-	linkin-park
-)
-
-for SYSTEM in "${SYSTEMS[@]}"
-do
-  echo "Building nixos-config '$SYSTEM'"
-  nixos-rebuild build --flake ".#$SYSTEM"
-  # Delete early, so that IDEs won't start indexing.
-  rm -rf ./result
-done
+nix flake show --json 2>/dev/null | jq '.nixosConfigurations | keys[]' | xargs -I {} bash -c "echo 'building NixOS system {}:'; nix build .#nixosConfigurations.{}.config.system.build.toplevel"
 
 rm -rf ./result

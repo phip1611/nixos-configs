@@ -215,6 +215,7 @@
             devShells = {
               default = pkgs.mkShell {
                 packages = with pkgs; [
+                  jq
                   nixos-rebuild
                   nixpkgs-fmt
                 ] ++ builtins.attrValues commonNix.packages;
