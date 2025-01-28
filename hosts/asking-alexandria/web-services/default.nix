@@ -28,6 +28,16 @@
       };
     };
 
+    # Turn stuff on that is deactivated by the server profile. This is not
+    # a regular server but one where we want to have a fully populated nix store.
+    nix = {
+      # Keep nix store populated for no/little wait times during typical work
+      settings = {
+        keep-outputs = true;
+        keep-derivations = true;
+      };
+    };
+
     # My server obtains a IPv4 address by DHCP but not an IPv6 address. For IPv6,
     # Netcup provides me an IPv6 "/64" net. I picked the first possible IP.
     networking.interfaces."ens3" = {

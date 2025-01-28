@@ -19,7 +19,7 @@ in
 
   config = {
     # All but the Host hosting the cache itself should use it. Deactivate it.
-    phip1611.nix-binary-cache.enable = lib.mkForce false;
+    phip1611.nix-binary-cache.enable = false;
 
     services.nginx.virtualHosts."nix-binary-cache.phip1611.dev" = commonCfg // {
       locations."/".proxyPass = with config.services.nix-serve; "http://${bindAddress}:${toString port}";

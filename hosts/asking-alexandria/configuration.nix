@@ -16,16 +16,6 @@
     ./hardware-configuration.nix
   ];
 
-  # Turn stuff on that is deactivated by the server profile. This is not
-  # a regular server but one where we want to have a fully populated nix store.
-  nix = {
-    # Keep nix store populated for no/little wait times during typical work
-    settings = {
-      keep-outputs = true;
-      keep-derivations = true;
-    };
-  };
-
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

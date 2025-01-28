@@ -33,6 +33,7 @@
           withDocker = lib.mkDefault true;
         };
       };
+      nix-binary-cache.enable = lib.mkDefault true;
     };
 
     nix = {
