@@ -24,7 +24,7 @@ in
       programs.vscode = {
         enable = true;
         package = pkgsUnstable.vscode;
-        extensions = with pkgs.vscode-extensions; [
+        profiles.default.extensions = with pkgs.vscode-extensions; [
           bbenoist.nix
           tamasfe.even-better-toml
           editorconfig.editorconfig
