@@ -6,7 +6,12 @@
 # - are fully build and tested in CI in this repository
 # - are server(-like) environments that I rarely touch
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.phip1611.common.system;

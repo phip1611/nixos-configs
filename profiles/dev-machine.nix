@@ -3,7 +3,12 @@
 # Intended for my developer machines. NixOS updates are not performed
 # automatically.
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   config = {

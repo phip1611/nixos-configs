@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }@inputs:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
@@ -8,32 +13,31 @@ let
   python3Toolchain = import ./python3-toolchain.nix { pkgs = pkgsUnstable; };
 in
 {
-  config = lib.mkIf cfg.enable (lib.mkMerge [
-    (
-      lib.mkIf cfg.withDevJava {
+  config = lib.mkIf cfg.enable (
+    lib.mkMerge [
+      (lib.mkIf cfg.withDevJava {
         users.users."${cfg.username}".packages = (
-          with pkgsUnstable; [
+          with pkgsUnstable;
+          [
             jdk
             maven # TODO, JDK might be not needed, as the maven derivation
             # already comes with a JDK.
           ]
         );
-      }
-    )
-    (
-      lib.mkIf cfg.withDevJavascript {
+      })
+      (lib.mkIf cfg.withDevJavascript {
         users.users."${cfg.username}".packages = (
-          with pkgsUnstable; [
+          with pkgsUnstable;
+          [
             nodejs
             yarn
           ]
         );
-      }
-    )
-    (
-      lib.mkIf cfg.withDevNix {
+      })
+      (lib.mkIf cfg.withDevNix {
         users.users."${cfg.username}".packages = (
-          with pkgsUnstable; [
+          with pkgsUnstable;
+          [
             deadnix
             niv
             nixpkgs-fmt
@@ -42,12 +46,11 @@ in
             nixos-rebuild
           ]
         );
-      }
-    )
-    (
-      lib.mkIf cfg.withDevCAndRust {
+      })
+      (lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = (
-          with pkgsUnstable; [
+          with pkgsUnstable;
+          [
             gcc
             # already there automatically; here only for completeness
             binutils
@@ -60,12 +63,11 @@ in
             valgrind
           ]
         );
-      }
-    )
-    (
-      lib.mkIf cfg.withDevCAndRust {
+      })
+      (lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = (
-          with pkgsUnstable; [
+          with pkgsUnstable;
+          [
             cargo-careful
             cargo-deny
             cargo-expand
@@ -82,56 +84,55 @@ in
             rustup
           ]
         );
-      }
-    )
-    (
-      lib.mkIf cfg.withDevCAndRust {
+      })
+      (lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = [
           # A legacy env for development. For example, helpful to build Linux
           # out-of-tree modules right from the shell.
           (pkgs.buildFHSEnv {
             name = "legacy-env";
-            targetPkgs = _pkgs: with pkgsUnstable; [
-              acpica-tools
-              bc
-              binutils
-              bison
-              coreutils
-              cpio
-              curl
-              elfutils.dev
-              file
-              flex
-              gawk
-              gcc
-              git
-              global
-              gmp
-              gmp.dev
-              gnumake
-              libmpc
-              linux.dev
-              linux_latest.dev
-              m4
-              mpfr
-              mpfr.dev
-              ncurses.dev
-              nettools
-              openssl
-              openssl.dev
-              pahole
-              patch
-              perl
-              python3Toolchain
-              rsync
-              unzip
-              zlib
-              zlib.dev
-              zstd
-            ];
+            targetPkgs =
+              _pkgs: with pkgsUnstable; [
+                acpica-tools
+                bc
+                binutils
+                bison
+                coreutils
+                cpio
+                curl
+                elfutils.dev
+                file
+                flex
+                gawk
+                gcc
+                git
+                global
+                gmp
+                gmp.dev
+                gnumake
+                libmpc
+                linux.dev
+                linux_latest.dev
+                m4
+                mpfr
+                mpfr.dev
+                ncurses.dev
+                nettools
+                openssl
+                openssl.dev
+                pahole
+                patch
+                perl
+                python3Toolchain
+                rsync
+                unzip
+                zlib
+                zlib.dev
+                zstd
+              ];
           })
         ];
-      }
-    )
-  ]);
+      })
+    ]
+  );
 }

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.phip1611.common.system;
@@ -39,7 +44,10 @@ in
         keep-outputs = true;
         keep-derivations = true;
 
-        trusted-users = [ "root" "@wheel" ];
+        trusted-users = [
+          "root"
+          "@wheel"
+        ];
 
         substituters = map ({ url, ... }: url) trustedBinaryCaches;
         trusted-public-keys = map ({ key, ... }: key) trustedBinaryCaches;

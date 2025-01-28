@@ -6,10 +6,11 @@
 # The DNS server answers with an DHCP/BOOTP response containing the boot file
 # (such as ipxe.efi) that will be loaded via tftp.
 
-{ callPackage
-, ipxe
-, runCommand
-, writeScript
+{
+  callPackage,
+  ipxe,
+  runCommand,
+  writeScript,
 }:
 
 let
@@ -18,7 +19,8 @@ let
     dhcp
     chain tftp://''${next-server}/ipxe-default.cfg || shell
   '';
-  customIpxeBuilder = { ... }:
+  customIpxeBuilder =
+    { ... }:
     (ipxe.override {
       inherit embedScript;
     });

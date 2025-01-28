@@ -32,13 +32,14 @@
   };
 
   outputs =
-    { self
-    , flake-parts
-    , home-manager
-    , nixos-hardware
-    , nixpkgs
-    , nixpkgs-unstable
-    , ...
+    {
+      self,
+      flake-parts,
+      home-manager,
+      nixos-hardware,
+      nixpkgs,
+      nixpkgs-unstable,
+      ...
     }@inputs:
     let
       commonSrc = rec {
@@ -53,7 +54,8 @@
       };
 
       # Initializes nixpkgs with the provided overlays.
-      initNixpkgs = nixpkgsSrc: system: overlays:
+      initNixpkgs =
+        nixpkgsSrc: system: overlays:
         import nixpkgsSrc {
           inherit overlays system;
           config = { };
@@ -62,172 +64,177 @@
       # Helper function to build a NixOS system with my common modules,
       # relevant special args, and the host-specific configuration.
       buildNixosSystem =
-        { hostName # string
+        {
+          hostName, # string
           # One of the definitions of `pkgs.lib.systems.flakeExposed`:
-        , system
+          system,
           # Additional modules. This should only include modules that are
           # coming from a flake for consistency.
-        , additionalModules ? [ ]
+          additionalModules ? [ ],
         }:
-        (
-          nixpkgs.lib.nixosSystem {
-            inherit system;
-            # specialArgs are additional arguments passed to a NixOS module
-            # function. This should only include the flake inputs.
-            # Apart from that, it's an anti-pattern (according to Jacek (@tfc)).
-            specialArgs = inputs;
-            modules = builtins.attrValues self.nixosModules ++
-              [
-                # Other modules from Flake inputs:
-                home-manager.nixosModules.home-manager
+        (nixpkgs.lib.nixosSystem {
+          inherit system;
+          # specialArgs are additional arguments passed to a NixOS module
+          # function. This should only include the flake inputs.
+          # Apart from that, it's an anti-pattern (according to Jacek (@tfc)).
+          specialArgs = inputs;
+          modules =
+            builtins.attrValues self.nixosModules
+            ++ [
+              # Other modules from Flake inputs:
+              home-manager.nixosModules.home-manager
 
-                # The idea here is to only provide one `configuration.nix` per
-                # host as entry. This file then imports all other files of the
-                # configuration. This way, the NixOS system and the flake
-                # definitions can be better separated and the NixOS
-                # configurations are less dependent on flake.nix.
-                ./hosts/${hostName}/configuration.nix
+              # The idea here is to only provide one `configuration.nix` per
+              # host as entry. This file then imports all other files of the
+              # configuration. This way, the NixOS system and the flake
+              # definitions can be better separated and the NixOS
+              # configurations are less dependent on flake.nix.
+              ./hosts/${hostName}/configuration.nix
 
-                # Other defaults that apply to all systems.
-                {
-                  phip1611.nix-binary-cache.enable = true;
-                }
-              ] ++ additionalModules ++
+              # Other defaults that apply to all systems.
+              {
+                phip1611.nix-binary-cache.enable = true;
+              }
+            ]
+            ++ additionalModules
+            ++
               # Configurations that bind outer properties to the NixOS
               # configuration. This way, we can keep specialArgs small.
               [
-                (
-                  {
-                    networking.hostName = hostName;
-                  }
-                )
+                ({
+                  networking.hostName = hostName;
+                })
               ];
-          }
-        );
+        });
     in
-    flake-parts.lib.mkFlake { inherit inputs; }
-      {
-        flake = {
-          # Here I simply re-export the library files without initializing
-          # it with the nixpkgs input, i.e., this is no "per system" attribute.
-          #
-          # Use like this (nix repl example):
-          # ```nix
-          # :lf .
-          # pkgs = import <nixpkgs> {}
-          # libutil = import lib.libutil { inherit pkgs };
-          # ```
-          lib = {
-            bootitems = commonSrc.nix.bootitems;
-            libutil = commonSrc.nix.libutil;
-            packages = commonSrc.nix.packages;
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      flake = {
+        # Here I simply re-export the library files without initializing
+        # it with the nixpkgs input, i.e., this is no "per system" attribute.
+        #
+        # Use like this (nix repl example):
+        # ```nix
+        # :lf .
+        # pkgs = import <nixpkgs> {}
+        # libutil = import lib.libutil { inherit pkgs };
+        # ```
+        lib = {
+          bootitems = commonSrc.nix.bootitems;
+          libutil = commonSrc.nix.libutil;
+          packages = commonSrc.nix.packages;
+        };
+
+        nixosConfigurations = {
+          # My Netcup Root Server.
+          asking-alexandria = buildNixosSystem {
+            hostName = "asking-alexandria";
+            system = "x86_64-linux";
+            additionalModules = [
+              (nixos-hardware.nixosModules.common-cpu-amd)
+              (nixos-hardware.nixosModules.common-pc-ssd)
+            ];
           };
 
-          nixosConfigurations = {
-            # My Netcup Root Server.
-            asking-alexandria = buildNixosSystem {
-              hostName = "asking-alexandria";
-              system = "x86_64-linux";
-              additionalModules = [
-                (nixos-hardware.nixosModules.common-cpu-amd)
-                (nixos-hardware.nixosModules.common-pc-ssd)
-              ];
-            };
-
-            # My personal PC at home.
-            homepc = buildNixosSystem {
-              hostName = "homepc";
-              system = "x86_64-linux";
-              additionalModules = [
-                (nixos-hardware.nixosModules.common-cpu-intel)
-                (nixos-hardware.nixosModules.common-pc-ssd)
-              ];
-            };
-          };
-
-          nixosModules = {
-            bootitems = "${commonSrc.modules}/bootitems";
-            network-boot = "${commonSrc.modules}/network-boot";
-            nix-binary-cache = "${commonSrc.modules}/nix-binary-cache";
-            overlays = "${commonSrc.modules}/overlays";
-            services = "${commonSrc.modules}/services";
-            system = "${commonSrc.modules}/system";
-            user-env = "${commonSrc.modules}/user-env";
-          };
-
-          overlays = {
-            bootitems = import "${commonSrc.nix.bootitems}/overlay.nix";
-            libutil = import "${commonSrc.nix.libutil}/overlay.nix";
-            packages = import "${commonSrc.nix.packages}/overlay.nix";
+          # My personal PC at home.
+          homepc = buildNixosSystem {
+            hostName = "homepc";
+            system = "x86_64-linux";
+            additionalModules = [
+              (nixos-hardware.nixosModules.common-cpu-intel)
+              (nixos-hardware.nixosModules.common-pc-ssd)
+            ];
           };
         };
 
-        # Systems definition for dev shells and exported packages,
-        # independent of the NixOS configurations and modules defined here. We
-        # just use "every system" here to not restrict any user. However, it
-        # likely happens that certain packages don't build for/under certain
-        # systems.
-        systems = nixpkgs.lib.systems.flakeExposed;
+        nixosModules = {
+          bootitems = "${commonSrc.modules}/bootitems";
+          network-boot = "${commonSrc.modules}/network-boot";
+          nix-binary-cache = "${commonSrc.modules}/nix-binary-cache";
+          overlays = "${commonSrc.modules}/overlays";
+          services = "${commonSrc.modules}/services";
+          system = "${commonSrc.modules}/system";
+          user-env = "${commonSrc.modules}/user-env";
+        };
 
-        perSystem = { config, system, ... }:
-          let
-            # As long as flake-parts doesn't offer a convenient way to specify
-            # overlays, I drop the "pkgs" parameter of the perSystem function
-            # and initialize it manually.
-            pkgs = initNixpkgs inputs.nixpkgs system (builtins.attrValues self.overlays);
+        overlays = {
+          bootitems = import "${commonSrc.nix.bootitems}/overlay.nix";
+          libutil = import "${commonSrc.nix.libutil}/overlay.nix";
+          packages = import "${commonSrc.nix.packages}/overlay.nix";
+        };
+      };
 
-            commonNix = {
-              # All unit and integration tests as combined derivation.
-              allTests = (import commonSrc.nix.all { inherit pkgs; }).allTests;
-              bootitems = import commonSrc.nix.bootitems { inherit pkgs; };
-              libutil = import commonSrc.nix.libutil { inherit pkgs; };
-              packages = import commonSrc.nix.packages { inherit pkgs; };
-            };
-          in
-          {
-            # $ nix build .\#checks.x86_64-linux.<attribute-name> or
-            # `nix flake check` to run them all. But the latter also does more.
-            checks = rec {
-              inherit (commonNix) allTests;
+      # Systems definition for dev shells and exported packages,
+      # independent of the NixOS configurations and modules defined here. We
+      # just use "every system" here to not restrict any user. However, it
+      # likely happens that certain packages don't build for/under certain
+      # systems.
+      systems = nixpkgs.lib.systems.flakeExposed;
 
-              deadnix = pkgs.runCommand "deadnix-check"
+      perSystem =
+        { config, system, ... }:
+        let
+          # As long as flake-parts doesn't offer a convenient way to specify
+          # overlays, I drop the "pkgs" parameter of the perSystem function
+          # and initialize it manually.
+          pkgs = initNixpkgs inputs.nixpkgs system (builtins.attrValues self.overlays);
+
+          commonNix = {
+            # All unit and integration tests as combined derivation.
+            allTests = (import commonSrc.nix.all { inherit pkgs; }).allTests;
+            bootitems = import commonSrc.nix.bootitems { inherit pkgs; };
+            libutil = import commonSrc.nix.libutil { inherit pkgs; };
+            packages = import commonSrc.nix.packages { inherit pkgs; };
+          };
+        in
+        {
+          # $ nix build .\#checks.x86_64-linux.<attribute-name> or
+          # `nix flake check` to run them all. But the latter also does more.
+          checks = rec {
+            inherit (commonNix) allTests;
+
+            deadnix =
+              pkgs.runCommand "deadnix-check"
                 {
                   src = ./.;
                   nativeBuildInputs = [ pkgs.deadnix ];
-                } ''
-                set -euo pipefail
-                deadnix -f -L $src
-                touch $out
-              '';
-            };
+                }
+                ''
+                  set -euo pipefail
+                  deadnix -f -L $src
+                  touch $out
+                '';
+          };
 
-            devShells = {
-              default = pkgs.mkShell {
-                packages = with pkgs; [
+          devShells = {
+            default = pkgs.mkShell {
+              packages =
+                with pkgs;
+                [
                   jq
                   nixos-rebuild
-                  nixpkgs-fmt
-                ] ++ builtins.attrValues commonNix.packages;
+                  nixfmt-rfc-style
+                ]
+                ++ builtins.attrValues commonNix.packages;
 
-                shellHook = ''
-                  # I still like the convenience of Nix paths for quick
-                  # prototyping. This is also what my common NixOS module
-                  # sets globally.
-                  export NIX_PATH="nixpkgs=${nixpkgs}:nixpkgs-unstable=${nixpkgs-unstable}:$NIX_PATH"
-                '';
-              };
-            };
-
-            formatter = pkgs.nixpkgs-fmt;
-
-            # Everything under packages can also be run. So I don't quite get
-            # the difference. So, I do not provide the `apps` key for now.
-            #
-            # $ nix build .\#packages.x86_64-linux.<attribute-name>
-            # $ nix run .\#<attribute-name>
-            packages = commonNix.packages // {
-              listNixosOptions = pkgs.callPackage ./utils/list-nixos-options.nix inputs;
+              shellHook = ''
+                # I still like the convenience of Nix paths for quick
+                # prototyping. This is also what my common NixOS module
+                # sets globally.
+                export NIX_PATH="nixpkgs=${nixpkgs}:nixpkgs-unstable=${nixpkgs-unstable}:$NIX_PATH"
+              '';
             };
           };
-      };
+
+          formatter = pkgs.nixfmt-rfc-style;
+
+          # Everything under packages can also be run. So I don't quite get
+          # the difference. So, I do not provide the `apps` key for now.
+          #
+          # $ nix build .\#packages.x86_64-linux.<attribute-name>
+          # $ nix run .\#<attribute-name>
+          packages = commonNix.packages // {
+            listNixosOptions = pkgs.callPackage ./utils/list-nixos-options.nix inputs;
+          };
+        };
+    };
 }

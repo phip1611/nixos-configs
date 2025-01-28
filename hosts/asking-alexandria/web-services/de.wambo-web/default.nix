@@ -1,4 +1,10 @@
-{ config, lib, pkgs, wambo-web, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  wambo-web,
+  ...
+}:
 
 let
   commonCfg = import ../nginx-common-host-config.nix;

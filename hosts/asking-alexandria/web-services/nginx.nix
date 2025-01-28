@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }@inputs:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}@inputs:
 
 let
   pkgsUnstable = import inputs.nixpkgs-unstable {
@@ -8,7 +13,10 @@ in
 {
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 80 443 ];
+    allowedTCPPorts = [
+      80
+      443
+    ];
   };
 
   # /var/lib/acme/.challenges must be writable by the ACME user

@@ -1,9 +1,10 @@
-{ ansi
-, argc
-, lib
-, OVMF
-, qemu
-, writeShellScriptBin
+{
+  ansi,
+  argc,
+  lib,
+  OVMF,
+  qemu,
+  writeShellScriptBin,
 }:
 
 writeShellScriptBin "run-efi" ''
@@ -28,7 +29,8 @@ writeShellScriptBin "run-efi" ''
   # Bash strict mode.
   set -euo pipefail
 
-  export PATH="${lib.makeBinPath([
+  export PATH="${
+    lib.makeBinPath ([
       ansi
       argc
       qemu

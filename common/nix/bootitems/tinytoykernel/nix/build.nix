@@ -1,8 +1,9 @@
 # Build the kernel.
 
-{ grub2
-, nix-gitignore
-, stdenv
+{
+  grub2,
+  nix-gitignore,
+  stdenv,
 }:
 
 stdenv.mkDerivation {

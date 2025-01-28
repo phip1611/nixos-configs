@@ -9,33 +9,24 @@ let
   # The message is prefixed with the given string and the value to be traced
   # prettyfied.
   prettyWithPrefix =
-    prefix:
-    val:
-    ret:
-    builtins.trace
-      (
-        "${stylize prefix}${toPretty { } val}"
-      )
-      ret;
+    prefix: val: ret:
+    builtins.trace ("${stylize prefix}${toPretty { } val}") ret;
 
   # Wrapper around `tracePrettyWithPrefix` with no prefix.
-  pretty =
-    val:
-    ret:
-    prettyWithPrefix "" val ret;
+  pretty = val: ret: prettyWithPrefix "" val ret;
 
   # Wrapper around `tracePrettyWithPrefix` where the value to be traced is also
   # returned.
-  prettyValWithPrefix =
-    prefix:
-    val:
-    prettyWithPrefix prefix val val;
+  prettyValWithPrefix = prefix: val: prettyWithPrefix prefix val val;
 
   # Wrapper around `tracePrettyValWithPrefix` with no prefix.
-  prettyVal =
-    val:
-    prettyValWithPrefix "" val;
+  prettyVal = val: prettyValWithPrefix "" val;
 in
 {
-  inherit prettyWithPrefix pretty prettyValWithPrefix prettyVal;
+  inherit
+    prettyWithPrefix
+    pretty
+    prettyValWithPrefix
+    prettyVal
+    ;
 }

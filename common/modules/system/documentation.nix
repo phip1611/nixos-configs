@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.phip1611.common.system;
@@ -12,9 +17,12 @@ in
     documentation.man.enable = true;
     documentation.nixos.enable = true;
 
-    environment.systemPackages = (with pkgs; [
-      man-pages # enables for example to type `$ man 2 open`
-      man-pages-posix
-    ]);
+    environment.systemPackages = (
+      with pkgs;
+      [
+        man-pages # enables for example to type `$ man 2 open`
+        man-pages-posix
+      ]
+    );
   };
 }

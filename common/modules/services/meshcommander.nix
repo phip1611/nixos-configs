@@ -1,7 +1,12 @@
 # meshcommander systemd service
 # https://github.com/Ylianst/MeshCommander
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.phip1611.services.meshcommander;

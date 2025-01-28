@@ -27,9 +27,10 @@ let
     bg = builtins.mapAttrs (_name: value: "${esc}[4${toString value}m") colorCode;
   };
 
-  /* Stylizes a string with ANSI escape sequences.
+  /*
+    Stylizes a string with ANSI escape sequences.
 
-     Type: stylize :: [String] -> String -> String
+    Type: stylize :: [String] -> String -> String
   */
   stylize =
     # List of ANSI style attributes.
@@ -39,19 +40,19 @@ let
     let
       ansiBefore = builtins.concatStringsSep "" styles;
     in
-    if text == ""
-    then ""
-    else "${ansiBefore}${text}${reset}";
+    if text == "" then "" else "${ansiBefore}${text}${reset}";
 
-  /* Stylizes a string as bold and red.
+  /*
+    Stylizes a string as bold and red.
 
-     Type: stylizeError :: String -> String
+    Type: stylizeError :: String -> String
   */
   stylizeError = text: stylize [ style.bold color.fg.red ] text;
 
-  /* Stylizes a string as bold and yellow.
+  /*
+    Stylizes a string as bold and yellow.
 
-     Type: stylizeWarn :: String -> String
+    Type: stylizeWarn :: String -> String
   */
   stylizeWarn = text: stylize [ style.bold color.fg.yellow ] text;
 in

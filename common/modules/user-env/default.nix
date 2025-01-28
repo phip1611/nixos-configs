@@ -6,7 +6,12 @@
 # functionality that has a notable amount of impact in disk space or other
 # properties, when this functionality is not mandatory on all my systems.
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.phip1611.common.user-env;

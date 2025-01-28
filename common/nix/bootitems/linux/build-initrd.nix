@@ -9,15 +9,16 @@
 # The user sees a bash shell. Once the bash shell is exited with CTRL+D or
 # `exit`, the system is powered off.
 
-{ pkgs
-, bashInteractive
-, busybox
-, lib
-, makeInitrd
-, writeScript
-, writers
+{
+  pkgs,
+  bashInteractive,
+  busybox,
+  lib,
+  makeInitrd,
+  writeScript,
+  writers,
 
-, additionalPackages ? [ ]
+  additionalPackages ? [ ],
 }:
 
 let
@@ -58,11 +59,14 @@ makeInitrd {
     {
       symlink = "/etc/profile";
       object = writeScript "configure-shell-path" ''
-        export PATH=${lib.makeBinPath
-          (additionalPackages ++ (with pkgs; [
-             bashInteractive
-             busybox
-          ]))
+        export PATH=${
+          lib.makeBinPath (
+            additionalPackages
+            ++ (with pkgs; [
+              bashInteractive
+              busybox
+            ])
+          )
         }
       '';
     }

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -40,8 +45,7 @@
     # Switch Archer TX20U Nano from CDROM mode (default) to WiFi mode:
     ''
       ATTR{idVendor}=="0bda", ATTR{idProduct}=="1a2b", RUN+="${lib.getExe pkgs.usb-modeswitch} -K -v 0bda -p 1a2b"
-    ''
-  ;
+    '';
 
   # The required external driver (no upstream driver) does not (always)
   # compile for the latest kernel. Therefore, we use the freshest LTS kernel

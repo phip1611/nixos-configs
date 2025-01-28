@@ -18,15 +18,19 @@ rec {
       xorriso
       ;
   };
-  testing = (import ./testing {
-    inherit (pkgs)
-      ansi
-      runCommandLocal
-      ;
-  });
-  trace = (import ./trace {
-    inherit ansi;
-    inherit (pkgs.lib.generators) toPretty;
-  });
+  testing = (
+    import ./testing {
+      inherit (pkgs)
+        ansi
+        runCommandLocal
+        ;
+    }
+  );
+  trace = (
+    import ./trace {
+      inherit ansi;
+      inherit (pkgs.lib.generators) toPretty;
+    }
+  );
   writers = import ./writers { inherit (pkgs) callPackage; };
 }

@@ -1,9 +1,15 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.phip1611.common.user-env;
-  gnomeEnabled = config.services.xserver.displayManager.gdm.enable &&
-    config.services.xserver.desktopManager.gnome.enable;
+  gnomeEnabled =
+    config.services.xserver.displayManager.gdm.enable
+    && config.services.xserver.desktopManager.gnome.enable;
 in
 {
   config = lib.mkIf (cfg.enable && gnomeEnabled) {
@@ -30,15 +36,17 @@ in
       in
       [
         (_final: prev: {
-          gnome = prev.gnome.overrideScope (_gnomeFinal: gnomePrev: {
-            mutter = gnomePrev.mutter.overrideAttrs (_old: {
-              # See https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/1441
-              # to select a proper branch.
-              src = builtins.fetchTarball {
-                inherit url sha256;
-              };
-            });
-          });
+          gnome = prev.gnome.overrideScope (
+            _gnomeFinal: gnomePrev: {
+              mutter = gnomePrev.mutter.overrideAttrs (_old: {
+                # See https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/1441
+                # to select a proper branch.
+                src = builtins.fetchTarball {
+                  inherit url sha256;
+                };
+              });
+            }
+          );
         })
       ];
   };

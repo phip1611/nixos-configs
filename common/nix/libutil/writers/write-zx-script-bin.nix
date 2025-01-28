@@ -2,8 +2,9 @@
 # with the provided content. Similar to `writeShellScriptBin`, it consumes the name of
 # the script and the NodeJS/ZX-script content as parameters.
 
-{ writeTextFile
-, zx
+{
+  writeTextFile,
+  zx,
 }:
 
 name: text:
