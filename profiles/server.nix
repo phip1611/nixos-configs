@@ -14,42 +14,33 @@
     phip1611 = {
       common = {
         user-env = {
-          enable = true;
-          withDevCAndRust = false;
-          withDevJava = false;
-          withDevJavascript = false;
-          withDevNix = false;
-          withGui = false;
-          withMedia = false;
-          withPerf = true;
-          withPkgsJ4F = false;
-          withVmms = false;
+          # Only basics, no bloat in PATH.
+          enable = lib.mkDefault true;
         };
 
         system = {
-          enable = true;
-          withAutoUpgrade = true;
-          withNixVerifyStoreService = true;
+          enable = lib.mkDefault true;
+          withAutoUpgrade = lib.mkDefault true;
+          withNixVerifyStoreService = lib.mkDefault true;
           # Originally I deactivated this with "security ftw!" in mind. But
           # in November I experienced that buildNpmPackage of the wambo-web
           # flake failed in Linux 6.6, probably due to io_uring issues. With
           # 6.11, everything is fine.
           # TODO: Go back to LTS 6.12, once it is released!
-          withBleedingEdgeLinux = true;
-          withDocker = false;
+          withBleedingEdgeLinux = lib.mkDefault true;
         };
       };
-      nix-binary-cache.enable = true;
+      nix-binary-cache.enable = lib.mkDefault true;
     };
 
     # Comes with a pre-configured configuration for ssh.
-    services.fail2ban.enable = true;
+    services.fail2ban.enable = lib.mkDefault true;
 
     nix = {
-      # Safe some disk space.
+      # Save some disk space.
       settings = {
-        keep-outputs = lib.mkForce false;
-        keep-derivations = lib.mkForce false;
+        keep-outputs = lib.mkDefault false;
+        keep-derivations = lib.mkDefault false;
       };
     };
   };

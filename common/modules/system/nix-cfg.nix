@@ -40,9 +40,9 @@ in
         # by replacing identical files in the store by hard links.
         auto-optimise-store = true;
 
-        # These two options are activated for multiple reasons
-        keep-outputs = true;
-        keep-derivations = true;
+        # These options are set in the profile modules
+        # keep-outputs = true;
+        # keep-derivations = true;
 
         trusted-users = [
           "root"

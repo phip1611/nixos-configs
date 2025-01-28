@@ -7,8 +7,6 @@
 
 {
   imports = [
-    ../../../profiles/server.nix
-
     ./nginx.nix
 
     # Hosted web projects

@@ -9,6 +9,7 @@
 
 {
   imports = [
+    ../../profiles/dev-machine.nix
     ./custom.nix
     ./hardware-configuration.nix
   ];
