@@ -7,8 +7,6 @@
 
 {
   imports = [
-    ../../../profiles/server.nix
-
     ./nginx.nix
 
     # Hosted web projects
@@ -27,6 +25,16 @@
           git.username = "Philipp Schuster";
           git.email = "phip1611@gmail.com";
         };
+      };
+    };
+
+    # Turn stuff on that is deactivated by the server profile. This is not
+    # a regular server but one where we want to have a fully populated nix store.
+    nix = {
+      # Keep nix store populated for no/little wait times during typical work
+      settings = {
+        keep-outputs = true;
+        keep-derivations = true;
       };
     };
 

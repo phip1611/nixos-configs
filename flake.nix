@@ -84,27 +84,19 @@
               # Other modules from Flake inputs:
               home-manager.nixosModules.home-manager
 
+              # Enforce consistent host name.
+              {
+                networking.hostName = hostName;
+              }
+
               # The idea here is to only provide one `configuration.nix` per
               # host as entry. This file then imports all other files of the
               # configuration. This way, the NixOS system and the flake
               # definitions can be better separated and the NixOS
               # configurations are less dependent on flake.nix.
               ./hosts/${hostName}/configuration.nix
-
-              # Other defaults that apply to all systems.
-              {
-                phip1611.nix-binary-cache.enable = true;
-              }
             ]
-            ++ additionalModules
-            ++
-              # Configurations that bind outer properties to the NixOS
-              # configuration. This way, we can keep specialArgs small.
-              [
-                ({
-                  networking.hostName = hostName;
-                })
-              ];
+            ++ additionalModules;
         });
     in
     flake-parts.lib.mkFlake { inherit inputs; } {

@@ -6,10 +6,6 @@
 }:
 
 {
-  imports = [
-    ../../profiles/dev-machine.nix
-  ];
-
   phip1611 = {
     common = {
       user-env = {

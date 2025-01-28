@@ -26,7 +26,7 @@ in
   ];
 
   options.phip1611.common.user-env = {
-    enable = lib.mkEnableOption "Enable all user sub-modules at once";
+    enable = lib.mkEnableOption "Enable basic settings, such as ZSH as default shell, shell aliases, and more";
     username = lib.mkOption {
       description = "User for that all enabled configurations apply";
       example = "phip1611";
@@ -44,14 +44,5 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    phip1611.common.user-env.withDevCAndRust = lib.mkDefault true;
-    phip1611.common.user-env.withDevJava = lib.mkDefault true;
-    phip1611.common.user-env.withDevJavascript = lib.mkDefault true;
-    phip1611.common.user-env.withDevNix = lib.mkDefault true;
-    phip1611.common.user-env.withGui = lib.mkDefault true;
-    phip1611.common.user-env.withMedia = lib.mkDefault true;
-    phip1611.common.user-env.withPerf = lib.mkDefault true;
-    phip1611.common.user-env.withPkgsJ4F = lib.mkDefault true;
-    phip1611.common.user-env.withVmms = lib.mkDefault true;
   };
 }

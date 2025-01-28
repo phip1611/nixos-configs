@@ -13,17 +13,34 @@
 {
   config = {
     phip1611 = {
-      bootitems.enable = true;
+      bootitems.enable = lib.mkDefault true;
       common = {
         user-env = {
-          enable = true;
+          enable = lib.mkDefault true;
+          withDevCAndRust = lib.mkDefault true;
+          withDevJava = lib.mkDefault true;
+          withDevJavascript = lib.mkDefault true;
+          withDevNix = lib.mkDefault true;
+          withGui = lib.mkDefault true;
+          withMedia = lib.mkDefault true;
+          withPerf = lib.mkDefault true;
+          withPkgsJ4F = lib.mkDefault true;
+          withVmms = lib.mkDefault true;
         };
         system = {
-          enable = true;
-          withAutoUpgrade = false;
-          withBleedingEdgeLinux = true;
-          withDocker = true;
+          enable = lib.mkDefault true;
+          withBleedingEdgeLinux = lib.mkDefault true;
+          withDocker = lib.mkDefault true;
         };
+      };
+      nix-binary-cache.enable = lib.mkDefault true;
+    };
+
+    nix = {
+      # Keep nix store populated for no/little wait times during typical work
+      settings = {
+        keep-outputs = true;
+        keep-derivations = true;
       };
     };
   };

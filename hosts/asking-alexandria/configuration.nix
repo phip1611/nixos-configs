@@ -10,6 +10,7 @@
 
 {
   imports = [
+    ../../profiles/server.nix
     ./web-services
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
