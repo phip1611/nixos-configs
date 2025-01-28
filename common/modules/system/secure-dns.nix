@@ -56,12 +56,6 @@ in
           # Switzern entity, (some?) servers in Germany
           "quad9-doh-ip4-port443-nofilter-pri"
           "quad9-doh-ip6-port443-nofilter-pri"
-
-          "cloudflare"
-          "cloudflare-ipv6"
-
-          "google"
-          "google-ipv6"
         ];
       };
     };
