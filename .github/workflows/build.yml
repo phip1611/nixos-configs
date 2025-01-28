@@ -128,11 +128,6 @@ jobs:
         timeout-minutes: 60
         with:
           hostname: homepc
-      - uses: ./.github/actions/build-nixos
-        name: Build 'linkin-park'
-        timeout-minutes: 60
-        with:
-          hostname: linkin-park
       - name: Cleanup on Remote Builder
         timeout-minutes: 1
         run: |

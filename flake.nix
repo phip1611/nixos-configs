@@ -143,17 +143,6 @@
                 (nixos-hardware.nixosModules.common-pc-ssd)
               ];
             };
-
-            # Dell XPS 13 Laptop.
-            linkin-park = buildNixosSystem {
-              hostName = "linkin-park";
-              system = "x86_64-linux";
-              additionalModules = [
-                # Transitively comes with common-intel, common-ssd, and other
-                # modules. Actually I have a 9305, but it's not available.
-                (nixos-hardware.nixosModules.dell-xps-13-9310)
-              ];
-            };
           };
 
           nixosModules = {
