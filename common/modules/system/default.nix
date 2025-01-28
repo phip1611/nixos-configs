@@ -20,6 +20,7 @@ in
     ./networking.nix
     ./nix-cfg.nix
     ./nix-path-from-flake.nix
+    ./secure-dns.nix
   ];
 
   options = {
@@ -29,6 +30,7 @@ in
       withAutoUpgrade = lib.mkEnableOption "Enable automatic system upgrades from this flake on GitHub";
       withBleedingEdgeLinux = lib.mkEnableOption "Enable bleeding edge Linux version and configs";
       withDocker = lib.mkEnableOption "Enable (rootless) docker";
+      withSecureDns = lib.mkEnableOption "Enable secure DNS (DNSSec, DoH, DoT)";
     };
   };
 
