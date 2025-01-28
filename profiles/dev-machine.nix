@@ -31,6 +31,7 @@
           enable = lib.mkDefault true;
           withBleedingEdgeLinux = lib.mkDefault true;
           withDocker = lib.mkDefault true;
+          withSecureDns = lib.mkDefault true;
         };
       };
       nix-binary-cache.enable = lib.mkDefault true;

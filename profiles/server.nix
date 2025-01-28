@@ -28,6 +28,7 @@
           # 6.11, everything is fine.
           # TODO: Go back to LTS 6.12, once it is released!
           withBleedingEdgeLinux = lib.mkDefault true;
+          withSecureDns = lib.mkDefault true;
         };
       };
       nix-binary-cache.enable = lib.mkDefault true;
