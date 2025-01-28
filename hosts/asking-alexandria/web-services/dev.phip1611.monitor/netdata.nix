@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   # https://learn.netdata.cloud/docs/netdata-agent/securing-netdata-agents/web-server

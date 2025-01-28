@@ -1,21 +1,23 @@
 # Lists all NixOS options of the common NixOS modules.
 
-{ home-manager
-, nixpkgs
-, self
+{
+  home-manager,
+  nixpkgs,
+  self,
 
-, ansi
-, lib
-, nixos-option
-, writeShellScriptBin
-, writeText
-, ...
+  ansi,
+  lib,
+  nixos-option,
+  writeShellScriptBin,
+  writeText,
+  ...
 }:
 
 let
   selfModules = builtins.attrValues self.nixosModules;
   # This add structure is caused by flake-parts.
-  extractModulePath = module: builtins.head (builtins.head (builtins.head module.imports).imports).imports;
+  extractModulePath =
+    module: builtins.head (builtins.head (builtins.head module.imports).imports).imports;
   toModuleImportLine = module: "(import ${extractModulePath module})";
   combinedConfig = writeText "combined-config" ''
     {
@@ -41,7 +43,12 @@ let
   '';
 in
 writeShellScriptBin "list-common-nixos-options" ''
-  export PATH="${lib.makeBinPath [ansi nixos-option]}:$PATH"
+  export PATH="${
+    lib.makeBinPath [
+      ansi
+      nixos-option
+    ]
+  }:$PATH"
   export NIX_PATH="nixpkgs=${nixpkgs}"
   export NIXOS_CONFIG=${combinedConfig}
 

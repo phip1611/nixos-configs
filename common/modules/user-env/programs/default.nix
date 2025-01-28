@@ -9,7 +9,12 @@
 # - this makes man pages accessible right away
 # - I can keep track of all awesome tooling that exists and that I like
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [

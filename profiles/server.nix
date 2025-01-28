@@ -2,7 +2,12 @@
 #
 # Intended for auto-update and rare active activity from myself.
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   config = {

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }@inputs:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}@inputs:
 
 let
   cfg = config.phip1611.common.user-env;
@@ -6,14 +11,15 @@ let
     system = pkgs.system;
   };
 
-  # TODO: Add dynamic configuration of plugins
-  # https://github.com/nix-community/home-manager/pull/3224
 in
+# TODO: Add dynamic configuration of plugins
+# https://github.com/nix-community/home-manager/pull/3224
 {
   config = lib.mkIf cfg.enable {
     home-manager.users."${cfg.username}" =
       # Module variables from home-manager, not NixOS.
-      { config, lib, ... }: {
+      { config, lib, ... }:
+      {
         # TODO somehow add the ".editorconfig" plugin:
         # https://github.com/10sr/editorconfig-micro
 

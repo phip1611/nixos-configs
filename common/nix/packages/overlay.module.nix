@@ -1,6 +1,11 @@
 # NixOS Module that adds `./overlay.nix` to a NixOS configuration.
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.phip1611.packages-overlay;

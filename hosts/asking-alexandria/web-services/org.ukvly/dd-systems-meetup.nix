@@ -1,4 +1,10 @@
-{ config, lib, pkgs, dd-systems-meetup-website, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  dd-systems-meetup-website,
+  ...
+}:
 
 let
   nginxConf = {

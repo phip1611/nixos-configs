@@ -1,6 +1,11 @@
 # Activates the Nix binary cache with the artifacts for this project.
 
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   cfg = config.phip1611.nix-binary-cache;
@@ -13,7 +18,9 @@ in
       settings = {
         # Additive, so the default substituters are not replaced.
         substituters = [ "https://nix-binary-cache.phip1611.dev" ];
-        trusted-public-keys = [ "nix-binary-cache.phip1611.dev:LOpIoU+QQRaKhUTbIU6k5+5BU3Ff0Y4rViXfgRarEvk=" ];
+        trusted-public-keys = [
+          "nix-binary-cache.phip1611.dev:LOpIoU+QQRaKhUTbIU6k5+5BU3Ff0Y4rViXfgRarEvk="
+        ];
       };
     };
   };

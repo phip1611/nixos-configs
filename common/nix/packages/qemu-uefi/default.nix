@@ -1,4 +1,8 @@
-{ writeShellScriptBin, qemu, OVMF }:
+{
+  writeShellScriptBin,
+  qemu,
+  OVMF,
+}:
 
 # Wrapper around "qemu-system-x86_64" that uses OVMF as UEFI firmware.
 writeShellScriptBin "qemu-uefi" ''

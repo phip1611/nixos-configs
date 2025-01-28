@@ -1,5 +1,7 @@
 # nixpkgs fallback is only here for quick prototyping. See README.md.
-{ pkgs ? builtins.trace "WARN: Using nixpkgs from ./nixpkgs.nix" (import ./nixpkgs.nix) }:
+{
+  pkgs ? builtins.trace "WARN: Using nixpkgs from ./nixpkgs.nix" (import ./nixpkgs.nix),
+}:
 
 let
   tests = {
@@ -38,10 +40,12 @@ in
   };
 
   # Useful for quick prototyping.
-  /* iso = libutil.images.x86.createMultibootIso {
-    kernel = (libutil.builders.flattenDrv {
-      drv = bootitems.tinytoykernel;
-      artifactPath = "kernel.elf64";
-    }).overrideAttrs { name = "tinytoykernel"; };
-  }; */
+  /*
+    iso = libutil.images.x86.createMultibootIso {
+      kernel = (libutil.builders.flattenDrv {
+        drv = bootitems.tinytoykernel;
+        artifactPath = "kernel.elf64";
+      }).overrideAttrs { name = "tinytoykernel"; };
+    };
+  */
 }

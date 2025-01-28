@@ -1,7 +1,9 @@
 # Development shell for Linux. Focused to build the minimal kernel
 # configuration.
 
-{ pkgs ? import <nixpkgs> { } }:
+{
+  pkgs ? import <nixpkgs> { },
+}:
 
 pkgs.mkShell {
   packages = with pkgs; [

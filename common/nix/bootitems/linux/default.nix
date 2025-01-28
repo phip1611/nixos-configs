@@ -13,20 +13,18 @@
       # in a Nix repl for example still work.
       # - no "."
       # - don't start with a digit
-      kernelPkgVersionToAttrFriendlyName = kernelPkg:
-        "linux-${builtins.replaceStrings ["."] ["-"] kernelPkg.version}";
+      kernelPkgVersionToAttrFriendlyName =
+        kernelPkg: "linux-${builtins.replaceStrings [ "." ] [ "-" ] kernelPkg.version}";
     in
-    builtins.foldl'
-      (acc: kernelPkg: acc //
-        {
-          ${kernelPkgVersionToAttrFriendlyName kernelPkg} = pkgs.callPackage ./build-kernel.nix {
-            inherit kernelPkg;
-          };
-        }
-      )
-      { }
-      kernelSourceTrees
-  ;
+    builtins.foldl' (
+      acc: kernelPkg:
+      acc
+      // {
+        ${kernelPkgVersionToAttrFriendlyName kernelPkg} = pkgs.callPackage ./build-kernel.nix {
+          inherit kernelPkg;
+        };
+      }
+    ) { } kernelSourceTrees;
   initrds = {
     minimal = pkgs.callPackage ./build-initrd.nix { };
     default = pkgs.callPackage ./build-initrd.nix {

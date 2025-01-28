@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }@inputs:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}@inputs:
 
 let
   cfg = config.phip1611.common.user-env;

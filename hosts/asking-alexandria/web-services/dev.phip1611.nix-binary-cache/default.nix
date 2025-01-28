@@ -2,7 +2,12 @@
 #
 # Reference: https://nixos.wiki/wiki/Binary_Cache
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   commonCfg = import ../nginx-common-host-config.nix;

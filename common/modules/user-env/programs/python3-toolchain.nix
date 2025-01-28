@@ -2,10 +2,11 @@
 # in the global scope so that CLion and other IDEs (that do not get their
 # context easily from a nix-shell), can find Python properly.
 
-
 { pkgs }:
 
-pkgs.python3.withPackages (ps: with ps; [
-  pip
-  setuptools
-])
+pkgs.python3.withPackages (
+  ps: with ps; [
+    pip
+    setuptools
+  ]
+)

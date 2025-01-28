@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.phip1611.network-boot;
@@ -14,21 +19,18 @@ let
   # Default ipxe config.
   ipxeDefaultCfg = ./ipxe-default.cfg;
 
-
   # Folds the provided list with the provided callback to an attribute set.
   # The mapEntry function must map a list entry to an attribute set.
   fold =
     # mapEntry :: any(list-item) -> attrset
-    mapEntry:
-    list:
-    builtins.foldl'
-      (acc: item: (mapEntry item) // acc)
-      { } # accumulator
-      list
-  ;
+    mapEntry: list:
+    builtins.foldl' (acc: item: (mapEntry item) // acc) { } # accumulator
+      list;
 
   # List with `cfg.interfaces` entries, which have a hostnameAlias set
-  interfacesWithHost = builtins.filter (interface: builtins.hasAttr "hostnameAlias" interface) cfg.interfaces;
+  interfacesWithHost = builtins.filter (
+    interface: builtins.hasAttr "hostnameAlias" interface
+  ) cfg.interfaces;
   # List with just interface names from the `cfg.interfaces` entries.
   interfaceNames = map (interface: interface.interface) cfg.interfaces;
   # List with host IPs.
@@ -112,19 +114,18 @@ in
         # Function -> attribute set
         baseConfig = interface: {
           useDHCP = false;
-          ipv4.addresses = [{
-            address = interface.hostIp;
-            # 24: 255.255.255.0
-            prefixLength = 24;
-          }];
+          ipv4.addresses = [
+            {
+              address = interface.hostIp;
+              # 24: 255.255.255.0
+              prefixLength = 24;
+            }
+          ];
         };
       in
-      fold
-        (interface: ({
-          "${interface.interface}" = baseConfig interface;
-        }))
-        cfg.interfaces;
-
+      fold (interface: ({
+        "${interface.interface}" = baseConfig interface;
+      })) cfg.interfaces;
 
     # Allow all relevant ports for convenient network boot setups.
     networking.firewall.interfaces =
@@ -143,11 +144,9 @@ in
           ];
         };
       in
-      fold
-        (interface: {
-          "${interface.interface}" = baseConfig;
-        })
-        cfg.interfaces;
+      fold (interface: {
+        "${interface.interface}" = baseConfig;
+      }) cfg.interfaces;
 
     # Additional dnsmasq setup. Prepare the tftproot directory.
     systemd.services.dnsmasq = lib.mkIf (cfg.username != null) {
@@ -175,7 +174,6 @@ in
       '';
     };
 
-
     # dnsmasq is used for DHCP and TFTP-Boot over the specified interfaces.
     # The testboxes must be configured to perform network boot, which results
     # in a DHCP/BOOTP request. dnsmasq will answer their replies.
@@ -185,15 +183,12 @@ in
         # Tells the network-boot client: load "ipxe.efi" via TFTP from the
         # TFTP server behind the specified IP.
         dhcpBootLines =
-          map
-            (hostIp: "tag:efi-x86_64,${ipxeEfi},${hostIp}")
-            hostIPs
-          ++
-          map
-            (hostIp: "tag:legacy-x86,${ipxeBios},${hostIp}")
-            hostIPs;
+          map (hostIp: "tag:efi-x86_64,${ipxeEfi},${hostIp}") hostIPs
+          ++ map (hostIp: "tag:legacy-x86,${ipxeBios},${hostIp}") hostIPs;
 
-        dhcpRangeLines = map (interface: "${interface.interface},${interface.testboxIp},${interface.testboxIp},infinite") cfg.interfaces;
+        dhcpRangeLines = map (
+          interface: "${interface.interface},${interface.testboxIp},${interface.testboxIp},infinite"
+        ) cfg.interfaces;
 
         tftpRootLines = map (interfaceName: "${cfg.tftpRoot},${interfaceName}") interfaceNames;
       in

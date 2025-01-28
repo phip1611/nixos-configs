@@ -1,4 +1,10 @@
-{ config, lib, pkgs, img-to-webp-service, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  img-to-webp-service,
+  ...
+}:
 
 {
   imports = [
@@ -12,7 +18,8 @@
         port = toString config.services.img-to-webp-service.port;
         commonCfg = import ../nginx-common-host-config.nix;
       in
-      commonCfg // {
+      commonCfg
+      // {
         locations."/".proxyPass = "http://localhost:${port}";
       };
   };

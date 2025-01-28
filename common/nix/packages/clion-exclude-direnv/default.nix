@@ -18,7 +18,16 @@ pkgs.writeShellScriptBin "clion-exclude-direnv" ''
 
   set -euo pipefail
 
-  export PATH="${lib.makeBinPath (with pkgs; [argc fd python3Minimal]) }:$PATH"
+  export PATH="${
+    lib.makeBinPath (
+      with pkgs;
+      [
+        argc
+        fd
+        python3Minimal
+      ]
+    )
+  }:$PATH"
 
   # Do the "argc" magic. Reference: https://github.com/sigoden/argc
   eval "$(argc --argc-eval "$0" "$@")"

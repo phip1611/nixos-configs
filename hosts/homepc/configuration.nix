@@ -1,13 +1,17 @@
 # Almost identical to the initial configuration.nix when I installed NixOS on this machine with GNOME.
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
-  imports =
-    [
-      ./custom.nix
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    ./custom.nix
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -83,7 +87,10 @@
   users.users.phip1611 = {
     isNormalUser = true;
     description = "Philipp Schuster";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
       # firefox
       #  thunderbird

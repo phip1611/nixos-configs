@@ -2,7 +2,12 @@
 # dotfiles) and corresponding home-manager settings for the given user. This is
 # intended as a big "all-in-one" module with no further enable sub-options.
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   stateVersion = config.system.stateVersion;

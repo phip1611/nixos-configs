@@ -1,7 +1,12 @@
 # Creates a non-privileged user that CI instances can use, such as the GitHub
 # CI, to fill the Nix cache of this host.
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   username = "ci-builder";
