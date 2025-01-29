@@ -36,16 +36,19 @@ in
         ipv4_servers = true;
         ipv6_servers = true;
         require_dnssec = true;
-
+        # Maximum log files size in MB
+        log_files_max_size = 10;
+        # Helpful to check if dnscrypt-proxy is actually used
+        query_log.file = "/var/log/dnscrypt-proxy/query.log";
         sources.public-resolvers = {
           urls = [
             "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md"
             "https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md"
           ];
-          cache_file = "/var/lib/dnscrypt-proxy2/public-resolvers.md";
+          cache_file = "/var/cache/dnscrypt-proxy/public-resolvers.md";
           minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
         };
-        # List chosen from. dnscrypt-proxy2 will sort this by latency but also
+        # List chosen from. dnscrypt-proxy will sort this by latency but also
         # rotate the DNS servers to improve privacy.
         # https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
         server_names =
@@ -71,7 +74,7 @@ in
     };
 
     # Set some security options for `resolved`. These are only used, if the
-    # `dnscrypt-proxy2` DNS server doesn't resolve a DNS request.
+    # `dnscrypt-proxy` DNS server doesn't resolve a DNS request.
 
     # The fallback servers (Google and Cloudflare, compiled-in) support DNSSEC.
     # Prevent downgrade attacks.
