@@ -48,9 +48,9 @@ in
           cache_file = "/var/cache/dnscrypt-proxy/public-resolvers.md";
           minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
         };
-        # List chosen from. dnscrypt-proxy will sort this by latency but also
+        # List chosen from [0]. dnscrypt-proxy will sort this by latency but also
         # rotate the DNS servers to improve privacy.
-        # https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
+        # [0] https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
         server_names =
           [
             # German entity
