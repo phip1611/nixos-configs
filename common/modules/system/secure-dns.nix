@@ -48,16 +48,40 @@ in
         # List chosen from. dnscrypt-proxy2 will sort this by latency but also
         # rotate the DNS servers to improve privacy.
         # https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
-        server_names = [
-          # German entity
-          "artikel10-doh-ipv4"
-          "artikel10-doh-ipv6"
+        server_names =
+          [
+            # German entity
+            "artikel10-doh-ipv4"
+            "artikel10-doh-ipv6"
 
-          # Switzern entity, (some?) servers in Germany
-          "quad9-doh-ip4-port443-nofilter-pri"
-          "quad9-doh-ip6-port443-nofilter-pri"
-        ];
+            # Switzern entity, (some?) servers in Germany
+            "quad9-doh-ip4-port443-nofilter-pri"
+            "quad9-doh-ip6-port443-nofilter-pri"
+          ]
+          ++
+          # Specify those as additional backup, when we don't use systemd-resolved.
+          # These servers are already baked into systemd-resolved as fallback.
+          lib.optionals (!config.services.resolved.enable) [
+            "cloudflare"
+            "cloudflare-ipv6"
+            "google"
+            "google-ipv6"
+          ];
       };
     };
+
+    # Set some security options for `resolved`. These are only used, if the
+    # `dnscrypt-proxy2` DNS server doesn't resolve a DNS request.
+
+    # The fallback servers (Google and Cloudflare, compiled-in) support DNSSEC.
+    # Prevent downgrade attacks.
+    services.resolved.dnssec = "true";
+    # Use DNS over TLS when the fallback servers are used. We only use
+    # opportunistic as some shitty ISPs and WiFis might block the DoT port.
+    services.resolved.dnsovertls = "opportunistic";
+    # DNS over HTTPS not yet supported by systemd-resolved.
+    # Wait for https://github.com/systemd/systemd/pull/31537 and corresponding
+    # support in NixOS
+    # services.resolved.dnsoverhttps = "true";
   };
 }
