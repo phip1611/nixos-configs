@@ -17,9 +17,9 @@ let
   cfg = config.phip1611.common.system;
 in
 {
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && cfg.withAutoUpgrade) {
     system.autoUpgrade = {
-      enable = cfg.withAutoUpgrade;
+      enable = true;
       flake = "github:phip1611/nixos-configs";
       flags = [
         "--no-write-lock-file"

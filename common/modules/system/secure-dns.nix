@@ -1,5 +1,9 @@
 # Secure DNS: System-wide DNSSEC + DNS over HTTPS (DOH)
 # Reference: https://nixos.wiki/wiki/Encrypted_DNS
+#
+# On mobile devices (laptops), I recommend the "captive-browser" [0] to get
+# access to shitty login portals, such as in airports and airplanes.
+# [0] https://search.nixos.org/options?channel=unstable&show=programs.captive-browser&type=packages
 
 {
   config,
@@ -12,7 +16,7 @@ let
   cfg = config.phip1611.common.system;
 in
 {
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && cfg.withSecureDns) {
     # Wait for https://github.com/NixOS/nixpkgs/pull/377577 to be resolved
     networking.nameservers = lib.mkForce [ "127.0.0.1" ];
 
@@ -48,16 +52,25 @@ in
           cache_file = "/var/cache/dnscrypt-proxy/public-resolvers.md";
           minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
         };
-        # List chosen from [0]. dnscrypt-proxy will sort this by latency but also
-        # rotate the DNS servers to improve privacy.
+        # List chosen from [0]. I only include servers/providers that:
+        # - provide DNSSEC and DoH
+        # - do no filtering and no logging (at least claim so)
+        # - have servers in Europe
+        #
+        # dnscrypt-proxy will sort this by latency but also rotate the DNS
+        # servers to improve privacy.
         # [0] https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
         server_names =
           [
-            # German entity
             "artikel10-doh-ipv4"
             "artikel10-doh-ipv6"
 
-            # Switzern entity, (some?) servers in Germany
+            "dns4all-ipv4"
+            "dns4all-ipv6"
+
+            "dnscry.pt-frankfurt-ipv4"
+            "dnscry.pt-frankfurt-ipv6"
+
             "quad9-doh-ip4-port443-nofilter-pri"
             "quad9-doh-ip6-port443-nofilter-pri"
           ]
