@@ -1,5 +1,9 @@
 # Secure DNS: System-wide DNSSEC + DNS over HTTPS (DOH)
 # Reference: https://nixos.wiki/wiki/Encrypted_DNS
+#
+# On mobile devices (laptops), I recommend the "captive-browser" [0] to get
+# access to shitty login portals, such as in airports and airplanes.
+# [0] https://search.nixos.org/options?channel=unstable&show=programs.captive-browser&type=packages
 
 {
   config,
