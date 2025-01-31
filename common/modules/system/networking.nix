@@ -19,7 +19,13 @@ in
       8080 # typical http dev server
     ];
 
-    # Next gen networking backend. Probably the default soon. More
+    # Recommended by the docs. Also, I had so often trouble with a failing
+    # wait-online service, although everything was operating properly.
+    # Therefore, lets deactivate it.
+    systemd.network.wait-online.enable = !config.networking.networkmanager.enable;
+
+    # Apply the `networking.*` options to systemd-networkd.
+    # This is a more modern implementation and likely soon the default.
     networking.useNetworkd = true;
   };
 }

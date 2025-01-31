@@ -12,7 +12,7 @@ let
   cfg = config.phip1611.common.system;
 in
 {
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && cfg.withSecureDns) {
     # Wait for https://github.com/NixOS/nixpkgs/pull/377577 to be resolved
     networking.nameservers = lib.mkForce [ "127.0.0.1" ];
 
