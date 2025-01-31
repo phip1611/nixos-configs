@@ -11,12 +11,12 @@ let
   cfg = config.phip1611.common.system;
 in
 {
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && cfg.withDocker) {
     # This has some limitations but for my limited use-case, this is fine.
     # I can build and run most basic docker containers.
     # More info: https://docs.docker.com/engine/security/rootless/
     virtualisation.docker.rootless = {
-      enable = cfg.withDocker;
+      enable = true;
       # Sets SOCKER_HOST variable to the rootless Docker instance for normal
       # users by default.
       setSocketVariable = true;
