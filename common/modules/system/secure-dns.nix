@@ -1,9 +1,7 @@
 # Secure DNS: System-wide DNSSEC + DNS over HTTPS (DOH)
 # Reference: https://nixos.wiki/wiki/Encrypted_DNS
 #
-# On mobile devices, to get the login page of captive portals (e.g. WiFis in
-# airports), try to open one of the specified connectivity portals in
-# captive-portals.txt. Otherwise, I recommend the "captive-browser" [0] to get
+# On mobile devices (laptops), I recommend the "captive-browser" [0] to get
 # access to shitty login portals, such as in airports and airplanes.
 # [0] https://search.nixos.org/options?channel=unstable&show=programs.captive-browser&type=packages
 
@@ -46,9 +44,6 @@ in
         log_files_max_size = 10;
         # Helpful to check if dnscrypt-proxy is actually used
         query_log.file = "/var/log/dnscrypt-proxy/query.log";
-        # With that, I have a set of URLs with that I can get the login page
-        # of captive portals.
-        captive_portals.map_file = ./captive-portals.txt;
         sources.public-resolvers = {
           urls = [
             "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md"
