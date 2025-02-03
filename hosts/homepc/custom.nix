@@ -16,6 +16,10 @@
     };
   };
 
+  # This machine also runs Windows. Windows uses the local time. To prevent
+  # frequent time mismatches, let's align the behaviour.
+  time.hardwareClockInLocalTime = true;
+
   # Make my USB WiFi dongles work:
   # - TP-Link Archer T3U Nano:
   #   Needs the driver "88x2bu" to be loaded, then it works.
