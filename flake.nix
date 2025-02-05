@@ -55,10 +55,11 @@
 
       # Initializes nixpkgs with the provided overlays.
       initNixpkgs =
-        nixpkgsSrc: system: overlays:
+        nixpkgsSrc: system:
         import nixpkgsSrc {
-          inherit overlays system;
+          inherit system;
           config = { };
+          overlays = builtins.attrValues self.overlays;
         };
 
       # Helper function to build a NixOS system with my common modules,
@@ -168,8 +169,8 @@
           # As long as flake-parts doesn't offer a convenient way to specify
           # overlays, I drop the "pkgs" parameter of the perSystem function
           # and initialize it manually.
-          pkgs = initNixpkgs inputs.nixpkgs system (builtins.attrValues self.overlays);
-          pkgsUnstable = initNixpkgs inputs.nixpkgs-unstable system (builtins.attrValues self.overlays);
+          pkgs = initNixpkgs inputs.nixpkgs system;
+          pkgsUnstable = initNixpkgs inputs.nixpkgs-unstable system;
 
           commonNix = {
             # All unit and integration tests as combined derivation.
