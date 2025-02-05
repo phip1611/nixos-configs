@@ -44,6 +44,7 @@ in
       interfaces = lib.mkOption {
         type = lib.types.listOf (lib.types.attrsOf lib.types.str);
         description = "Network interface configurations";
+        default = [ ];
         example = [
           {
             interface = "enp4s0";
@@ -58,7 +59,7 @@ in
       };
 
       username = lib.mkOption {
-        type = lib.types.str;
+        type = lib.types.nullOr lib.types.str;
         description = "Username that is the owner of all files in the tftproot directory";
         example = "myuser";
         default = null;

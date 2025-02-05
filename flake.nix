@@ -169,6 +169,7 @@
           # overlays, I drop the "pkgs" parameter of the perSystem function
           # and initialize it manually.
           pkgs = initNixpkgs inputs.nixpkgs system (builtins.attrValues self.overlays);
+          pkgsUnstable = initNixpkgs inputs.nixpkgs-unstable system (builtins.attrValues self.overlays);
 
           commonNix = {
             # All unit and integration tests as combined derivation.
@@ -219,14 +220,21 @@
 
           formatter = pkgs.nixfmt-rfc-style;
 
-          # Everything under packages can also be run. So I don't quite get
-          # the difference. So, I do not provide the `apps` key for now.
+          # Exported (and runnable) packages.
           #
-          # $ nix build .\#packages.x86_64-linux.<attribute-name>
-          # $ nix run .\#<attribute-name>
-          packages = commonNix.packages // {
-            listNixosOptions = pkgs.callPackage ./utils/list-nixos-options.nix inputs;
-          };
+          # $ nix build|run .\#packages.x86_64-linux.<attribute-name>
+          # $ nix build|run .\#<attribute-name>
+          packages =
+            let
+              listNixosOptions = pkgs.callPackage ./utils/list-nixos-options.nix {
+                inherit (inputs) self;
+                inherit (pkgsUnstable) nixos-option;
+              };
+            in
+            commonNix.packages
+            // {
+              inherit listNixosOptions;
+            };
         };
     };
 }
