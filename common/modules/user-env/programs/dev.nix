@@ -39,8 +39,6 @@ in
           with pkgsUnstable;
           [
             deadnix
-            niv
-            nixpkgs-fmt
             nixos-option
             # already there by default, here only for completeness
             nixos-rebuild
