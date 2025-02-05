@@ -175,7 +175,6 @@
           # overlays, I drop the "pkgs" parameter of the perSystem function
           # and initialize it manually.
           pkgs = initNixpkgs inputs.nixpkgs system;
-          pkgsUnstable = initNixpkgs inputs.nixpkgs-unstable system;
 
           commonNix = {
             # All unit and integration tests as combined derivation.
@@ -234,7 +233,6 @@
             let
               listNixosOptions = pkgs.callPackage ./utils/list-nixos-options.nix {
                 inherit (inputs) self;
-                inherit (pkgsUnstable) nixos-option;
               };
             in
             commonNix.packages
