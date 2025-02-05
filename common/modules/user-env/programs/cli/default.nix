@@ -27,9 +27,6 @@ in
     programs.iftop.enable = true;
     programs.traceroute.enable = true;
 
-    # Very size intensive and I don't really use it. But it's cool.
-    programs.yazi.enable = cfg.withPkgsJ4F;
-
     home-manager.users."${cfg.username}" = {
       # Overload CTRL+R in shell with advanced search magic
       programs.fzf.enable = true;

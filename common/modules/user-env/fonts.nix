@@ -17,9 +17,6 @@ in
       packages = with pkgs; [
         corefonts # Arial, Times New Roman, etc.
         dancing-script
-        # Used/Prefered by many applications, such as "yazi". Comes with
-        # powerline symbols.
-        nerdfonts
         open-sans
         roboto
         roboto-mono
