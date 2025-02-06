@@ -69,6 +69,12 @@ in
           VISUAL = "micro";
         };
 
+        # Always make the source of the flake from that the system was build
+        # locally available. This is especially useful if I do remote
+        # deployments, mess something up, and need to apply the changes directly
+        # on the system to get it back online.
+        environment.etc.nixos-current-system-flake-src.source = inputs.self;
+
         # When unpatched dynamically linked programs are executed, they fail with
         # file not found. Usually, the file "/lib64/ld-linux-x86-x64.so.2" is not
         # found. This NixOS package adds a compatibility layer for that case.
