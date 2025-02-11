@@ -10,11 +10,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1738591762,
-        "narHash": "sha256-TLmwl9H5PZGCyWjhZunhsjgtcucfHk+SuqOgLDB3sjA=",
+        "lastModified": 1739286590,
+        "narHash": "sha256-ymgn5VcrUtk8f0CfuyBjIfexE+eUK1928DwqV8c9ke0=",
         "owner": "phip1611",
         "repo": "dd-systems-meetup-website",
-        "rev": "efd4a2398f5358264c063bfd8b6290f48cf22acf",
+        "rev": "892c779b87c168ae239954986354a636afa24318",
         "type": "github"
       },
       "original": {
