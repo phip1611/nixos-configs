@@ -43,6 +43,7 @@ in
         ])
       ++ (with pkgsUnstable; [
         drawio
+        element-desktop
         gimp
         gparted
         signal-desktop
