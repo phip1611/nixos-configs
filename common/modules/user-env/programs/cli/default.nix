@@ -106,8 +106,7 @@ in
         lurk # cool strace alternative
         magic-wormhole-rs # e2e encrypted file transfer CLI "wormhole-rs"
         micro
-        # TODO: tmp until it builds again on upstream
-        pkgs.minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
+        minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
         nflz
         nixfmt-rfc-style
         nodejs
@@ -151,8 +150,7 @@ in
           cmatrix
           cowsay
           fortune
-          # TODO: tmp until it builds again on upstream
-          pkgs.hollywood
+          hollywood
           lolcat
         ]
       )
