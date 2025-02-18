@@ -2,7 +2,12 @@
 # pi. It is based on this guide:
 # https://nix.dev/tutorials/nixos/installing-nixos-on-a-raspberry-pi.html
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   user = "phip1611";
@@ -33,13 +38,12 @@ in
     };
   };
 
-  environment.systemPackages = with pkgs;
-    [
-      libraspberrypi
-      raspberrypi-eeprom
+  environment.systemPackages = with pkgs; [
+    libraspberrypi
+    raspberrypi-eeprom
 
-      micro
-    ];
+    micro
+  ];
 
   services.openssh.enable = true;
   services.openssh.ports = lib.mkForce [ 7331 ];
@@ -47,7 +51,10 @@ in
   users = {
     users."${user}" = {
       isNormalUser = true;
-      extraGroups = [ "wheel" "gpio" ];
+      extraGroups = [
+        "wheel"
+        "gpio"
+      ];
     };
   };
 
@@ -55,4 +62,3 @@ in
   system.stateVersion = "23.11"; # Did you read the comment?
 
 }
-
