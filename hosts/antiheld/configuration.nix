@@ -30,6 +30,9 @@ in
     };
   };
 
+  # https://github.com/NixOS/nixpkgs/issues/344963
+  boot.initrd.systemd.tpm2.enable = false;
+
   fileSystems = {
     "/" = {
       device = "/dev/disk/by-label/NIXOS_SD";
