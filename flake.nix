@@ -122,6 +122,9 @@
           antiheld = buildNixosSystem {
             hostName = "antiheld";
             system = "aarch64-linux";
+            additionalModules = [
+              (nixos-hardware.nixosModules.raspberry-pi-4)
+            ];
           };
 
           # My Netcup Root Server.
