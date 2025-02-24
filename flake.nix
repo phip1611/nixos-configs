@@ -204,7 +204,6 @@
               packages =
                 with pkgs;
                 [
-                  argc
                   jq
                   nixos-rebuild
                   nixfmt-rfc-style
