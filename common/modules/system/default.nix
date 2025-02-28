@@ -20,6 +20,7 @@ in
     ./networking.nix
     ./nix-cfg.nix
     ./nix-path-from-flake.nix
+    ./printing.nix
     ./secure-dns.nix
   ];
 
