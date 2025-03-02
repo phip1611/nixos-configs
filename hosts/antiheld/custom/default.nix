@@ -9,6 +9,7 @@
   imports = [
     ../../../profiles/server.nix
     ./nginx.nix
+    ./host-hello-celine.nix
   ];
 
   config = {
