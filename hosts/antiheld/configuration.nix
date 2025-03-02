@@ -61,6 +61,7 @@ in
         openssh.authorizedKeys.keys = [
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGZ1CsDfB8Bsg8H82oIgVjv8bu5KEh4UX5iqEfC+4hzF pschuster@xps13-pschuster"
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIByFlysjuSdICGBaDUYOq5wPSPQgPWOenBwal2PhBtd pschuster@phips-framework13"
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGNxAVKUnHxu8yL1MNUeIJkeuPyJqg89++A+rOydyZJi phip1611@homepc"
         ];
     };
   };
