@@ -16,8 +16,7 @@ in
     isNormalUser = true;
     createHome = true;
     description = username;
-    # TODO prevent password login via SSH for this single user?
-    # initialPassword = username;
+    initialPassword = username;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINmacK8ivbooOAUjJgK3Nu4C8pjo8BS13cPcyDvjoQx6 ci-builder@nix-binary-cache.phip1611.dev"
     ];
