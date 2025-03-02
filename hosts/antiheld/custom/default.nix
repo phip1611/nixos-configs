@@ -8,6 +8,7 @@
 {
   imports = [
     ../../../profiles/server.nix
+    ./nginx.nix
   ];
 
   config = {
