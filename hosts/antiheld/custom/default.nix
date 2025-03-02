@@ -22,5 +22,14 @@
       # This file should only be root-readable!
       services.ddns-update.configPath = "/home/phip1611/ddns-config.json";
     };
+
+    networking.firewall.allowedTCPPorts = [
+      80 # http
+      443 # https
+      5201 # iperf3
+    ];
+    networking.firewall.allowedUDPPorts = [
+      443 # http 3 / QUIC
+    ];
   };
 }
