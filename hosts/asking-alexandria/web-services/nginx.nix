@@ -17,6 +17,9 @@ in
       80
       443
     ];
+    allowedUDPPorts = [
+      443 # http3 / quic
+    ];
   };
 
   # /var/lib/acme/.challenges must be writable by the ACME user
