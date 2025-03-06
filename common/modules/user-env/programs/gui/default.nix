@@ -46,11 +46,13 @@ in
         element-desktop
         gimp
         gparted
+        libreoffice-fresh
+        onlyoffice-desktopeditors
         signal-desktop
         spotify
         telegram-desktop
-        xournalpp
         warp
+        xournalpp
       ])
       ++ (lib.optionals cfg.withDevCAndRust (
         with pkgsUnstable;
