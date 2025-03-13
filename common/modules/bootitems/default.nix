@@ -10,10 +10,6 @@ let
   bootitems = pkgs.phip1611.bootitems;
   libutil = pkgs.phip1611.libutil;
 
-  # Transforms a version string from "1.2.3" to "1.2".
-  stripMinorVersion =
-    version: builtins.concatStringsSep "." (lib.take 2 (builtins.splitVersion version));
-
   tinyToyKernelElf64 = libutil.builders.flattenDrv {
     drv = bootitems.tinytoykernel;
     artifactPath = "kernel.elf64";
@@ -46,40 +42,19 @@ in
       //
       # Maḱe the linux kernels accessible in "/etc/bootitems" as vmlinux (ELF)
       # and bzImage with a path reflecting the version number (x.y and x.y.z).
-      (builtins.foldl' (
-        acc: kernel:
-        acc
-        // (
-          let
-            bzImage = "${kernel}/bzImage";
-            vmlinux = "${libutil.builders.extractVmlinux kernel}/vmlinux";
-
-            prefix = "bootitems/linux/kernel_minimal";
-            longVerName = "${prefix}_${kernel.version}";
-            shortVerName = "${prefix}_${stripMinorVersion kernel.version}";
-
-            # For versions such as "6.11", this list contains one element,
-            # for versions such as "6.11.4", this list contains two elements.
-            verNames = lib.unique [
-              longVerName
-              shortVerName
-            ];
-          in
-          (
-            # This either returns
-            # - "6.11.<classifier>" or
-            # - "6.11.<classifier>" and "6.11.x.<classifier>" per kernel,
-            # depending whether ${kernel.version} has a third component.
-            builtins.foldl' (
-              acc: verName:
-              acc
-              // {
-                "${verName}.bzImage".source = bzImage;
-                "${verName}.vmlinux".source = vmlinux;
-              }
-            ) { } verNames
-          )
-        )
-      ) { } (builtins.attrValues bootitems.linux.kernels));
+      #
+      # The attribute name corresponds to the symlink name.
+      (lib.concatMapAttrs (
+        name: kernel:
+        let
+          bzImage = "${kernel}/bzImage";
+          vmlinux = "${libutil.builders.extractVmlinux kernel}/vmlinux";
+          prefix = "bootitems/linux/kernel_minimal";
+        in
+        {
+          "${prefix}/${name}.bzImage".source = bzImage;
+          "${prefix}/${name}.vmlinux".source = vmlinux;
+        }
+      ) bootitems.linux.kernels);
   };
 }
