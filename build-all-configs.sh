@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-binary_cache_host=phip1611.dev
+binary_cache_host=nix-binary-cache.phip1611.dev
 binary_cache_user=phip1611
 binary_cache_ssh_port=7331
 
@@ -17,7 +17,7 @@ _fn_build_nixos_system() {
   echo "✔️ Successfully built NixOS system $system"
 
   echo "Populating the Nix binary cache at $binary_cache_host"
-  NIX_SSHOPTS="-p $binary_cache_ssh_port" nix-copy-closure --to $binary_cache_user@$binary_cache_host result
+  NIX_SSHOPTS="-p $binary_cache_ssh_port" nix copy --to ssh://$binary_cache_user@$binary_cache_host --substitute-on-destination ./result
   echo "✔️ Populated the Nix binary cache at $binary_cache_host"
 }
 
