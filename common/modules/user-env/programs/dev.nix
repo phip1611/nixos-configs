@@ -11,22 +11,6 @@ let
     system = pkgs.system;
   };
   python3Toolchain = import ./python3-toolchain.nix { pkgs = pkgsUnstable; };
-
-  # Not yet in nixpkgs
-  fcntl-tool =
-    let
-      pname = "fcntl-tool";
-      version = "0.1.0";
-    in
-    pkgs.rustPlatform.buildRustPackage {
-      name = pname;
-      pname = "fcntl-tool";
-      src = pkgs.fetchCrate {
-        inherit pname version;
-        hash = "sha256-Kq5GfUryhsL3fwZ/CVp35nAML46yDHM9wu1h0ukJ6yY=";
-      };
-      cargoHash = "sha256-eIEFhYvQVWOXwQj41vkwhVgDukMy+i0uED4Xpni2s2E=";
-    };
 in
 {
   config = lib.mkIf cfg.enable (
@@ -65,13 +49,12 @@ in
         users.users."${cfg.username}".packages = (
           with pkgsUnstable;
           [
+            gcc
             # already there automatically; here only for completeness
             binutils
             clang-tools # clang-format
             cmake
             cmake-format
-            fcntl-tool
-            gcc
             gdb
             gnumake
             ninja
