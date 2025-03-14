@@ -4,7 +4,7 @@
   stdenv,
 
   # Linux kernel package (from `pkgs.linux_*`) to get the source from.
-  kernelPkg,
+  kernelSrc,
 }:
 
 let
@@ -24,4 +24,4 @@ let
       # allowImportFromDerivation = true;
     };
 in
-buildKernel kernelPkg
+buildKernel kernelSrc
