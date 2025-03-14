@@ -4,7 +4,7 @@
   stdenv,
 
   # Linux kernel package (from `pkgs.linux_*`) to get the source from.
-  kernelPkg,
+  kernelSrc,
 }:
 
 let
@@ -18,10 +18,10 @@ let
       src = kernelSrc.src;
       configfile = ./minimal-kernel.config;
 
-      version = "${kernelSrc.version}";
+      version = kernelSrc.version;
       modDirVersion = "${kernelSrc.modDirVersion}-minimal";
 
       # allowImportFromDerivation = true;
     };
 in
-buildKernel kernelPkg
+buildKernel kernelSrc

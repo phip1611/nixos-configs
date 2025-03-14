@@ -11,7 +11,7 @@ in
       kernelSourcesList = lib.lists.unique [
         # Current stable kernel
         ({
-          kernel = pkgs.linux;
+          kernelSrc = pkgs.linux;
           aliases = [
             "stable"
             "lts"
@@ -19,7 +19,7 @@ in
         })
         # Latest kernel
         ({
-          kernel = pkgs.linux_latest;
+          kernelSrc = pkgs.linux_latest;
           aliases = [
             "latest"
           ];
@@ -57,7 +57,21 @@ in
         lib.unique allAliases;
 
       # Map from alias/name to kernel derivation.
-      kernelSourcesAttrs = lib.pipe kernelSourcesList [
+      aliasesToMinimalKernelAttrs = lib.pipe kernelSourcesList [
+        # Build the minimal kernel
+        (map (
+          {
+            kernelSrc,
+            aliases ? [ ],
+          }:
+          {
+            inherit aliases;
+            kernel = import ./build-kernel.nix {
+              inherit (pkgs) lib linuxKernel stdenv;
+              inherit kernelSrc;
+            };
+          }
+        ))
         # Populate the aliases
         (map (
           {
@@ -84,17 +98,22 @@ in
         (lib.foldl' (acc: elem: acc // elem) { })
       ];
     in
-    kernelSourcesAttrs;
+    aliasesToMinimalKernelAttrs;
 
-  initrds = {
-    minimal = pkgs.callPackage ./build-initrd.nix { };
-    default = pkgs.callPackage ./build-initrd.nix {
-      additionalPackages = with pkgs; [
-        curl
-        pciutils
-        usbutils
-        util-linux # lsblk and more
-      ];
+  initrds =
+    let
+      buildInitrd = pkgs.callPackage ./build-initrd.nix;
+    in
+    {
+      minimal = buildInitrd { };
+      default = buildInitrd {
+        additionalPackages = with pkgs; [
+          curl
+          pciutils
+          usbutils
+          # TODO currently breaks the init shell: cannot open shared object file: No such file or directory
+          # util-linux # lsblk and more
+        ];
+      };
     };
-  };
 }
