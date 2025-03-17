@@ -19,6 +19,54 @@ export LIB=$(nix eval github:phip1611/nixos-configs#lib.bootitems)
 # Lets start by getting and building kernel and initrd.
 # The build might take a few minutes.
 
+# Select kernel version
+export KERNEL="stable"
+export KERNEL=$(nix-build -E "
+  let
+    pkgs = import <nixpkgs> {};
+    lib = import $LIB { inherit pkgs; };
+  in
+  lib.linux.kernels.$KERNEL
+")
+export KERNEL="$KERNEL/bzImage"
+
+
+# Select initrd
+export INITRD="default"
+export INITRD=$(nix-build -E "
+  let
+    pkgs = import <nixpkgs> {};
+    lib = import $LIB { inherit pkgs; };
+  in
+  lib.linux.initrds.$INITRD
+")
+export INITRD="$INITRD/initrd"
+
+echo "Booting kernel=$KERNEL, initrd=$INITRD"
+cloud-hypervisor \
+  --kernel "$KERNEL" \
+  --cmdline "console=ttyS0" \
+  --initramfs "$INITRD" \
+  --serial "tty" \
+  --console "off"
+```
+
+Or a similar command line for QEMU:
+
+```bash
+qemu-system-x86_64 \
+  -kernel "$KERNEL" \
+  -append "console=ttyS0" \
+  -initrd "$INITRD" \
+  -machine q35,accel=kvm \
+  -m 1G \
+  -serial stdio \
+  -nodefaults
+```
+
+## Print Available Kernels and Initrds
+
+```bash
 echo "Printing available kernels"
 nix-instantiate --eval --expr "
   let
@@ -29,17 +77,6 @@ nix-instantiate --eval --expr "
 "
 echo
 
-# Select kernel version
-export KERNEL_VERSION="stable"
-export KERNEL=$(nix-build -E "
-  let
-    pkgs = import <nixpkgs> {};
-    lib = import $LIB { inherit pkgs; };
-  in
-  lib.linux.kernels.${KERNEL_VERSION}
-")
-export KERNEL="$KERNEL/bzImage"
-
 echo "Printing available initrds"
 nix-instantiate --eval --expr "
   let
@@ -49,22 +86,5 @@ nix-instantiate --eval --expr "
   builtins.attrNames lib.linux.initrds
 "
 echo
-
-# Select initrd
-export INITRD=$(nix-build -E "
-  let
-    pkgs = import <nixpkgs> {};
-    lib = import $LIB { inherit pkgs; };
-  in
-  lib.linux.initrds.minimal
-")
-export INITRD="$INITRD/initrd"
-
-echo "Booting kernel=$KERNEL, initrd=$INITRd"
-cloud-hypervisor \
-  --kernel $KERNEL \
-  --cmdline console=ttyS0 \
-  --initramfs $INITRD \
-  --serial tty \
-  --console off
 ```
+
