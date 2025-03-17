@@ -27,6 +27,9 @@ in
   };
   config = lib.mkIf cfg.enable {
     nix = {
+      # Not needed
+      channel.enable = false;
+
       # Reference: https://nixos.org/manual/nix/stable/command-ref/conf-file
       settings = {
         connect-timeout = 3;
