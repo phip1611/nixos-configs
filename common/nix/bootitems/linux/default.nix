@@ -103,16 +103,33 @@ in
   initrds =
     let
       buildInitrd = pkgs.callPackage ./build-initrd.nix;
+      # Something overloads packages from busybox and break the init shell.
+      # Therefore, we use a reduced set.
+      linux-util-reduced =
+        let
+          components = [
+            "lsblk"
+            "lscpu"
+          ];
+          pkg = pkgs.util-linux;
+          cpLines = lib.pipe components [
+            (map (component: "cp ${pkg}/bin/${component} $out/bin"))
+            (lib.concatStringsSep "\n")
+          ];
+        in
+        pkgs.runCommandLocal "${pkg.name}-reduced" { } ''
+          mkdir -p $out/bin
+          ${cpLines}
+        '';
     in
     {
       minimal = buildInitrd { };
       default = buildInitrd {
         additionalPackages = with pkgs; [
           curl
+          linux-util-reduced
           pciutils
           usbutils
-          # TODO currently breaks the init shell: cannot open shared object file: No such file or directory
-          # util-linux # lsblk and more
         ];
       };
     };
