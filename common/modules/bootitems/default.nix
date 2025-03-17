@@ -37,24 +37,36 @@ in
         "bootitems/tinytoykernel.iso".source = "${libutil.images.x86.createMultibootIso {
           kernel = tinyToyKernelElf64;
         }}";
-        "bootitems/linux/initrd_minimal".source = "${bootitems.linux.initrds.default}/initrd";
       }
       //
-      # Maḱe the linux kernels accessible in "/etc/bootitems" as vmlinux (ELF)
-      # and bzImage with a path reflecting the version number (x.y and x.y.z).
-      #
-      # The attribute name corresponds to the symlink name.
-      (lib.concatMapAttrs (
-        name: kernel:
-        let
-          bzImage = "${kernel}/bzImage";
-          vmlinux = "${libutil.builders.extractVmlinux kernel}/vmlinux";
-          prefix = "bootitems/linux/kernel_minimal";
-        in
-        {
-          "${prefix}/${name}.bzImage".source = bzImage;
-          "${prefix}/${name}.vmlinux".source = vmlinux;
-        }
-      ) bootitems.linux.kernels);
+        # Maḱe the linux kernels accessible in "/etc/bootitems" as vmlinux (ELF)
+        # and bzImage with a path reflecting the version number (x.y and x.y.z).
+        #
+        # The attribute name corresponds to the symlink name.
+        (lib.concatMapAttrs (
+          name: kernel:
+          let
+            bzImage = "${kernel}/bzImage";
+            vmlinux = "${libutil.builders.extractVmlinux kernel}/vmlinux";
+            prefix = "bootitems/linux/kernel_minimal";
+          in
+          {
+            "${prefix}/${name}.bzImage".source = bzImage;
+            "${prefix}/${name}.vmlinux".source = vmlinux;
+          }
+        ) bootitems.linux.kernels)
+      //
+        # Maḱe the initrds accessible.
+        #
+        # The attribute name corresponds to the symlink name.
+        (lib.concatMapAttrs (
+          name: initrd:
+          let
+            prefix = "bootitems/linux/initrd_minimal";
+          in
+          {
+            "${prefix}/${name}".source = "${initrd}/initrd";
+          }
+        ) bootitems.linux.initrds);
   };
 }
