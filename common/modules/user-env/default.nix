@@ -21,7 +21,6 @@ in
     ./env
     ./programs
     ./fonts.nix
-    ./nix.nix
     ./gnome.nix
   ];
 
@@ -29,14 +28,15 @@ in
     enable = lib.mkEnableOption "Enable basic settings, such as ZSH as default shell, shell aliases, and more";
     username = lib.mkOption {
       description = "User for that all enabled configurations apply";
+      type = lib.types.nullOr lib.types.nonEmptyStr;
       example = "phip1611";
+      default = null;
     };
     withDevCAndRust = lib.mkEnableOption "Include a C++ and Rust toolchain and convenient helper tools for development";
     withDevJava = lib.mkEnableOption "Include a Java toolchain and convenient helper tools for development";
     withDevJavascript = lib.mkEnableOption "Include developer tools for JavaScript (Node, yarn, ...)";
     withDevNix = lib.mkEnableOption "Include developer tools for Nix (formatter, deadnix, ...)";
-    # withGui also means "with desktop environment"
-    withGui = lib.mkEnableOption "Include GUI-based applications";
+    withGui = lib.mkEnableOption "Include GUI-based applications (desktop environment enabled)";
     withMedia = lib.mkEnableOption "Include tools to enable media (images, videos, ...)";
     withPerf = lib.mkEnableOption "Include perf tooling for the current kernel";
     withPkgsJ4F = lib.mkEnableOption "Include just-for-fun packages (cowsay, lolcat, hollywood, ...)";
@@ -44,5 +44,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    nix.settings.trusted-users = [ cfg.username ];
   };
 }
