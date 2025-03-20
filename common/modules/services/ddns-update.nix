@@ -35,7 +35,7 @@ in
       description = "ddns-update service";
       script =
         let
-          ddns-update = pkgs.phip1611.pkgs.ddns-update;
+          ddns-update = pkgs.phip1611.packages.ddns-update;
         in
         ''
           set -euo pipefail
