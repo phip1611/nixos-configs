@@ -2,8 +2,14 @@
   description = "phip1611's common libraries, modules, and configurations for Nix and NixOS";
 
   inputs = {
+    ###################
+    # Util
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+
+    ###################
+    # NixOS modules and nixpkgs
 
     # TODO use "release-25.05"
     home-manager.url = "github:nix-community/home-manager/master";
@@ -18,6 +24,7 @@
     # See https://discourse.nixos.org/t/differences-between-nix-channels/13998
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
+    ###################
     # Web Projects
 
     dd-systems-meetup-website.url = "github:phip1611/dd-systems-meetup-website";
