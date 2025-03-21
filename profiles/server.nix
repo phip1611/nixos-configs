@@ -30,7 +30,7 @@
       nix-binary-cache.enable = lib.mkDefault true;
     };
 
-     # Latest LTS kernel
+    # Latest LTS kernel
     boot.kernelPackages = pkgs.linuxPackages_6_12;
 
     # Comes with a pre-configured configuration for ssh.
