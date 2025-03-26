@@ -1,9 +1,11 @@
 {
-  ansi,
-  argc,
+
   lib,
   makeWrapper,
-  runCommandLocal,
+  runCommand,
+  # runtime deps
+  ansi,
+  argc,
 }:
 
 let
@@ -13,18 +15,14 @@ let
     argc
   ];
 in
-runCommandLocal "link-to-copy"
+runCommand "link-to-copy"
   {
     nativeBuildInputs = [ makeWrapper ];
   }
   ''
-    set -euo pipefail
-
     mkdir -p $out/bin
+    install -m +x ${src}/link-to-copy.sh $out/bin/link-to-copy
 
-    cp ${src}/link-to-copy.sh $out/bin/link-to-copy
-
-    chmod +x $out/bin/link-to-copy
     wrapProgram $out/bin/link-to-copy \
       --inherit-argv0 \
       --prefix PATH : ${lib.makeBinPath deps}

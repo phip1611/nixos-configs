@@ -1,20 +1,25 @@
-{ pkgs }:
+{
+  makeWrapper,
+  runCommand,
+  lib,
+
+  # runtime deps
+  argc,
+}:
 
 let
-  lib = pkgs.lib;
-  script = builtins.readFile ./normalize-file-permissions.sh;
+  src = ./.;
+  deps = [ argc ];
 in
-pkgs.writeShellScriptBin "normalize-file-permissions" ''
-  set -euo pipefail
-  export PATH="${
-    lib.makeBinPath (
-      with pkgs;
-      [
-        argc
-        ansi
-        fd
-      ]
-    )
-  }:$PATH"
-  ${script}
-''
+runCommand "normalize-file-permissions"
+  {
+    nativeBuildInputs = [ makeWrapper ];
+  }
+  ''
+    mkdir -p $out/bin
+    install -m +x ${src}/normalize-file-permissions.sh $out/bin/normalize-file-permissions
+
+    wrapProgram $out/bin/normalize-file-permissions \
+      --inherit-argv0 \
+      --prefix PATH : ${lib.makeBinPath deps}
+  ''
