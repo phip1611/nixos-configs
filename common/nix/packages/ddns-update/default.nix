@@ -1,22 +1,33 @@
-{ pkgs }:
+{
+  lib,
+  makeWrapper,
+  runCommand,
+
+  # runtime deps
+  argc,
+  ansi,
+  curl,
+  jq,
+}:
 
 let
-  lib = pkgs.lib;
-  script = builtins.readFile ./ddns-update.sh;
+  src = ./.;
+  deps = [
+    argc
+    ansi
+    curl
+    jq
+  ];
 in
-# script = lib.writeFile "ddns-update-script" (builtins.readFile ./ddns-update.sh);
-pkgs.writeShellScriptBin "ddns-update" ''
-  set -euo pipefail
-  export PATH="${
-    lib.makeBinPath (
-      with pkgs;
-      [
-        argc
-        ansi
-        curl
-        jq
-      ]
-    )
-  }:$PATH"
-  ${script}
-''
+runCommand "ddns-update"
+  {
+    nativeBuildInputs = [ makeWrapper ];
+  }
+  ''
+    mkdir -p $out/bin
+    install -m +x ${src}/ddns-update.sh $out/bin/ddns-update
+
+    wrapProgram $out/bin/ddns-update \
+      --inherit-argv0 \
+      --prefix PATH : ${lib.makeBinPath deps}
+  ''
