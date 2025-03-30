@@ -77,69 +77,75 @@ in
         strace-with-colors
         wait-host-online
       ]
-      ++ (with pkgsUnstable; [
-        ansi
-        bat
-        binsider
-        bottom
-        calc
-        coreutils # default package; here only for completeness
-        cpu-x # TUI-like equivalent to CPU-Z on Windows
-        curlFull # Curl with HTTP3 support and more
-        dig # dig and nslookup
-        du-dust
-        eza # used to be exa
-        fd # better find
-        file
-        git
-        gitlab-timelogs
-        grub2 # for grub-file
-        hexyl # hex viewer
-        httpie
-        iperf3
-        jq # pretty-print JSON
-        killall
-        less
-        lftp
-        linux-scripts
-        lshw
-        lurk # cool strace alternative
-        magic-wormhole-rs # e2e encrypted file transfer CLI "wormhole-rs"
-        micro
-        minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
-        nflz
-        nixfmt-rfc-style
-        nodejs
-        ookla-speedtest
-        ouch # cool convenient (de)compression tool
-        paging-calculator
-        pciutils # lspci
-        poppler_utils # for pdfunite
-        python3Toolchain
-        ripgrep
-        screen-message
-        strace
-        tcpdump
-        tldr
-        tmux
-        tokei
-        traceroute
-        tree
-        ttfb
-        typos
-        unzip
-        usbutils # lsusb
-        util-linux # lsblk and more
-        vim
-        wambo
-        wget
-        whois
-        xclip # for copy & paste in several tools, such as micro
-        yamlfmt
-        zip
-        zsh
-        zx
-      ])
+      ++ (
+        with pkgsUnstable;
+        [
+          ansi
+          bat
+          binsider
+          bottom
+          calc
+          coreutils # default package; here only for completeness
+          curlFull # Curl with HTTP3 support and more
+          dig # dig and nslookup
+          du-dust
+          eza # used to be exa
+          fd # better find
+          file
+          git
+          gitlab-timelogs
+          grub2 # for grub-file
+          hexyl # hex viewer
+          httpie
+          iperf3
+          jq # pretty-print JSON
+          killall
+          less
+          lftp
+          linux-scripts
+          lshw
+          lurk # cool strace alternative
+          magic-wormhole-rs # e2e encrypted file transfer CLI "wormhole-rs"
+          micro
+          minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
+          nflz
+          nixfmt-rfc-style
+          nodejs
+          ookla-speedtest
+          ouch # cool convenient (de)compression tool
+          paging-calculator
+          pciutils # lspci
+          poppler_utils # for pdfunite
+          python3Toolchain
+          ripgrep
+          screen-message
+          strace
+          tcpdump
+          tldr
+          tmux
+          tokei
+          traceroute
+          tree
+          ttfb
+          typos
+          unzip
+          usbutils # lsusb
+          util-linux # lsblk and more
+          vim
+          wambo
+          wget
+          whois
+          xclip # for copy & paste in several tools, such as micro
+          yamlfmt
+          zip
+          zsh
+          zx
+        ]
+        ++ lib.optionals (pkgs.system == "x86_64-linux") [
+          # TUI-like equivalent to CPU-Z on Windows
+          cpu-x
+        ]
+      )
       # Dedicated feature-gate as sometimes, build problems with fresh
       # (or old) kernels occur.
       ++ lib.optional cfg.withPerf config.boot.kernelPackages.perf
