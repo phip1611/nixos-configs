@@ -3,12 +3,17 @@
 # [0] https://youtrack.jetbrains.com/issue/CPP-39605/CLion-Always-allow-Mark-Directory-as-Excluded-not-a-CMake-Project
 # [1] https://youtrack.jetbrains.com/issue/CPP-13494/Mark-Directory-as-Excluded-should-be-available-even-when-CMake-is-not-loaded
 
-{ pkgs }:
+{
+  lib,
+  writeShellScriptBin,
 
-let
-  lib = pkgs.lib;
-in
-pkgs.writeShellScriptBin "clion-exclude-direnv" ''
+  # runtime deps
+  argc,
+  fd,
+  python3Minimal,
+}:
+
+writeShellScriptBin "clion-exclude-direnv" ''
   # The following @-annotations belong to https://github.com/sigoden/argc
   #
   # @describe
@@ -19,14 +24,11 @@ pkgs.writeShellScriptBin "clion-exclude-direnv" ''
   set -euo pipefail
 
   export PATH="${
-    lib.makeBinPath (
-      with pkgs;
-      [
-        argc
-        fd
-        python3Minimal
-      ]
-    )
+    lib.makeBinPath ([
+      argc
+      fd
+      python3Minimal
+    ])
   }:$PATH"
 
   # Do the "argc" magic. Reference: https://github.com/sigoden/argc

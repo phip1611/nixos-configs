@@ -2,11 +2,12 @@
 # nix develop --command bash -c 'rm -rf dir1 dir2 && mkdir dir1 && echo "hello" > dir1/hello.txt && echo "hello2" > dir1/hello2.txt && cp -r dir1 dir2 && cp dir2/hello.txt dir2/hello3.txt && echo "foobar" > dir2/hello.txt && keep-directory-diff dir1 dir2'
 
 {
+  lib,
+  writeShellScriptBin,
+  # runtime deps
   ansi,
   argc,
   fd,
-  lib,
-  writeShellScriptBin,
 }:
 
 writeShellScriptBin "keep-directory-diff" ''

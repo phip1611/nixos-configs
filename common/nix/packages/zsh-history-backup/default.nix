@@ -2,35 +2,30 @@
   lib,
   makeWrapper,
   runCommand,
-
   # runtime deps
-  argc,
-  ansi,
   bash,
-  curl,
-  jq,
+  zsh,
+  zstd,
 }:
 
 let
   deps = [
-    argc
-    ansi
     bash
-    curl
-    jq
+    zsh
+    zstd
   ];
 in
-runCommand "ddns-update"
+runCommand "zsh-history-backup"
   {
     nativeBuildInputs = [ makeWrapper ];
     meta = {
-      mainProgram = "ddns-update";
+      mainProgram = "zsh-history-backup";
     };
   }
   ''
     mkdir -p $out/bin
-    install -m +x ${./ddns-update.sh} $out/bin/ddns-update
+    install -m +x ${./zsh-history-backup.sh} $out/bin/zsh-history-backup
 
-    wrapProgram $out/bin/ddns-update \
+    wrapProgram $out/bin/zsh-history-backup \
       --prefix PATH : ${lib.makeBinPath deps}
   ''

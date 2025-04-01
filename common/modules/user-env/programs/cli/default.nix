@@ -76,6 +76,7 @@ in
         normalize-file-permissions
         strace-with-colors
         wait-host-online
+        zsh-history-backup
       ]
       ++ (with pkgsUnstable; [
         ansi

@@ -9,6 +9,8 @@
 
 let
   cfg = config.phip1611.services.ddns-update;
+  # Get package from overlay.
+  pkg = pkgs.phip1611.packages.ddns-update;
 in
 {
   options.phip1611.services.ddns-update = {
@@ -29,22 +31,13 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable ({
+  config = lib.mkIf cfg.enable {
     systemd.services.ddns-update = {
       enable = true;
       description = "ddns-update service";
-      script =
-        let
-          ddns-update = pkgs.phip1611.packages.ddns-update;
-        in
-        ''
-          set -euo pipefail
-          # Yes, this could be a single "curl -u user:pass host" but I don't want
-          # to leak any credentials into the Nix store.
-          ${ddns-update}/bin/ddns-update --config ${cfg.configPath}
-        '';
       serviceConfig = {
         Type = "oneshot";
+        ExecStart = "${lib.getExe pkg} --config ${cfg.configPath}";
       };
     };
     systemd.timers.ddns-update = {
@@ -55,6 +48,6 @@ in
         Unit = "ddns-update.service";
       };
     };
-  });
+  };
 
 }

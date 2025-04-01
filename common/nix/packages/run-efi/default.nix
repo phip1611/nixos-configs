@@ -1,10 +1,11 @@
 {
+  lib,
+  writeShellScriptBin,
+  OVMF,
+  # runtime deps
   ansi,
   argc,
-  lib,
-  OVMF,
   qemu,
-  writeShellScriptBin,
 }:
 
 writeShellScriptBin "run-efi" ''

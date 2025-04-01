@@ -7,6 +7,7 @@
   # runtime deps
   ansi,
   argc,
+  bash,
   gnutar,
   lftp,
   zstd,
@@ -17,6 +18,7 @@ let
   shellScriptDeps = [
     ansi
     argc
+    bash
     gnutar
     lftp
     zstd
@@ -25,13 +27,15 @@ let
     runCommand "ftp-backup"
       {
         nativeBuildInputs = [ makeWrapper ];
+        meta = {
+          mainProgram = "ftp-backup";
+        };
       }
       ''
         mkdir -p $out/bin
         install -m +x ${./ftp-backup.sh} $out/bin/ftp-backup
 
         wrapProgram $out/bin/ftp-backup \
-          --inherit-argv0 \
           --prefix PATH : ${lib.makeBinPath shellScriptDeps}
       '';
 
@@ -43,13 +47,15 @@ let
     runCommand "ftp-backup-from-config"
       {
         nativeBuildInputs = [ makeWrapper ];
+        meta = {
+          mainProgram = "ftp-backup-from-config";
+        };
       }
       ''
         mkdir -p $out/bin
         install -m +x ${./ftp-backup-from-config.py} $out/bin/ftp-backup-from-config
 
         wrapProgram $out/bin/ftp-backup-from-config \
-          --inherit-argv0 \
           --prefix PATH : ${lib.makeBinPath pythonScriptDeps}
       '';
 in

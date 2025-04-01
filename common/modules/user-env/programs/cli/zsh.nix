@@ -15,6 +15,9 @@ in
   config = lib.mkIf cfg.enable {
     # Adds zsh to PATH and to /etc/shells and link /share/zsh for completions.
     programs.zsh.enable = true;
+    programs.zsh.shellAliases = {
+      save-zsh-history = "fc -W";
+    };
 
     home-manager.users."${cfg.username}" = {
       home.sessionVariables = {
@@ -29,26 +32,34 @@ in
         # Context:
         # - https://www.soberkoder.com/better-zsh-history/
         # - https://zsh.sourceforge.io/Doc/Release/Options.html
+        # - https://zsh.sourceforge.io/Doc/Release/Parameters.html
         history =
           let
             # Default is 10000.
             saveLines = 200000; # This results in roughly 1-6 MiB memory usage.
           in
           {
+            # EXTENDED_HISTORY
             # Save timestamp into the history file.
             extended = true;
-            # If a new command line being added to the history list duplicates
-            # an older one, the older command is removed from the list (even if
-            # it is not the previous event).
-            ignoreAllDups = true;
-            ignoreDups = true; # TODO Reevaluate once the option above is used.
+            # HIST_IGNORE_DUPS
+            # Don't push commands to the history if they are a duplicate of the
+            # previous command.
+            ignoreDups = true;
+            # HIST_IGNORE_ALL_DUPS
+            # Don't remove old duplicates (not previous command) from history.
+            ignoreAllDups = false;
+            # HIST_IGNORE_SPACE
             # Do not enter command lines into the history list if the first
             # character is a space.
             ignoreSpace = true;
-            # Number of history lines to save.
+            # SAVEHIST
+            # Number of history lines to save on disk.
             save = saveLines;
+            # HISTSIZE
             # Number of history lines to load into memory.
             size = saveLines;
+            # SHARE_HISTORY
             # Share command history between zsh sessions. This also adds new
             # commands to the history as they are typed. Hence, this is more
             # powerful than INC_APPEND_HISTORY.
