@@ -18,14 +18,14 @@ in
     intervalMinutes = lib.mkOption {
       type = lib.types.int;
       description = "Interval in minutes for the service to run.";
-      default = 60 # once per hour
-      ;
-      example = 60 # once per hour
-      ;
+      # once per hour
+      default = 60;
+      # once per hour
+      example = 60;
     };
   };
 
-  config = lib.mkIf cfg.enable ({
+  config = lib.mkIf cfg.enable {
     systemd.user.services.zsh-history-backup = {
       enable = true;
       description = "zsh-history-backup (per-user) service";
@@ -42,6 +42,6 @@ in
         Unit = "zsh-history-backup.service";
       };
     };
-  });
+  };
 
 }

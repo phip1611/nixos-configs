@@ -31,7 +31,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable ({
+  config = lib.mkIf cfg.enable {
     systemd.services.ddns-update = {
       enable = true;
       description = "ddns-update service";
@@ -48,6 +48,6 @@ in
         Unit = "ddns-update.service";
       };
     };
-  });
+  };
 
 }
