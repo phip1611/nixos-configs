@@ -23,9 +23,12 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Check Nix formatting
         run: |
+          echo "nix fmt version:"
+          nix fmt -- --version
+
           set +e
-          # "nixfmt" doesn't has a nice diff output for its `--check` command, therefore
-          # we use `git diff`
+          # "nixfmt" doesn't has a nice diff output for its `--check` command,
+          # therefore we use `git diff`
           find . -name "*.nix" -type f -exec nix fmt {} \+
 
           # Show format diff

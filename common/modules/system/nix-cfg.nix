@@ -47,7 +47,8 @@ in
         # keep-outputs = true;
         # keep-derivations = true;
 
-        download-buffer-size = 268435456 /* 256 MiB */;
+        # 256 MiB
+        download-buffer-size = 268435456;
 
         trusted-users = [
           "root"
