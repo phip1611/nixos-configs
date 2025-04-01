@@ -35,6 +35,7 @@
         };
       };
       nix-binary-cache.enable = lib.mkDefault true;
+      services.zsh-history-backup.enable = lib.mkDefault true;
     };
 
     nix = {
