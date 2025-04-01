@@ -9,10 +9,24 @@
 
 {
   imports = [
-    ../../profiles/dev-machine.nix
-    ./custom.nix
     ./hardware-configuration.nix
+    ./wifi-hardware.nix
   ];
+
+  phip1611 = {
+    common = {
+      user-env = {
+        username = "phip1611";
+        git.username = "Philipp Schuster";
+        git.email = "phip1611@gmail.com";
+      };
+    };
+  };
+
+  # The required external driver (no upstream driver) does not (always)
+  # compile for the latest kernel. Therefore, we use the freshest LTS kernel
+  # that works.
+  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_12;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -30,6 +44,10 @@
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
+
+  # This machine also runs Windows. Windows uses the local time. To prevent
+  # frequent time mismatches, let's align the behaviour.
+  time.hardwareClockInLocalTime = true;
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";

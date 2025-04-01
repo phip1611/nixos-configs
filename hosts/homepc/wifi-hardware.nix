@@ -6,20 +6,6 @@
 }:
 
 {
-  phip1611 = {
-    common = {
-      user-env = {
-        username = "phip1611";
-        git.username = "Philipp Schuster";
-        git.email = "phip1611@gmail.com";
-      };
-    };
-  };
-
-  # This machine also runs Windows. Windows uses the local time. To prevent
-  # frequent time mismatches, let's align the behaviour.
-  time.hardwareClockInLocalTime = true;
-
   # Make my USB WiFi dongles work:
   # - TP-Link Archer T3U Nano:
   #   Needs the driver "88x2bu" to be loaded, then it works.
@@ -46,9 +32,4 @@
     ''
       ATTR{idVendor}=="0bda", ATTR{idProduct}=="1a2b", RUN+="${lib.getExe pkgs.usb-modeswitch} -K -v 0bda -p 1a2b"
     '';
-
-  # The required external driver (no upstream driver) does not (always)
-  # compile for the latest kernel. Therefore, we use the freshest LTS kernel
-  # that works.
-  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_12;
 }

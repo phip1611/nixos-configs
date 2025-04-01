@@ -123,8 +123,9 @@
             hostName = "asking-alexandria";
             system = "x86_64-linux";
             additionalModules = [
-              (nixos-hardware.nixosModules.common-cpu-amd)
-              (nixos-hardware.nixosModules.common-pc-ssd)
+              nixos-hardware.nixosModules.common-cpu-amd
+              nixos-hardware.nixosModules.common-pc-ssd
+              ./profiles/server.nix
             ];
           };
 
@@ -133,8 +134,9 @@
             hostName = "homepc";
             system = "x86_64-linux";
             additionalModules = [
-              (nixos-hardware.nixosModules.common-cpu-intel)
-              (nixos-hardware.nixosModules.common-pc-ssd)
+              nixos-hardware.nixosModules.common-cpu-intel
+              nixos-hardware.nixosModules.common-pc-ssd
+              ./profiles/dev-machine.nix
             ];
           };
         };
