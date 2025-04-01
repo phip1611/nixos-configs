@@ -15,9 +15,6 @@ in
   config = lib.mkIf cfg.enable {
     # Adds zsh to PATH and to /etc/shells and link /share/zsh for completions.
     programs.zsh.enable = true;
-    programs.zsh.shellAliases = {
-      save-zsh-history = "fc -W";
-    };
 
     home-manager.users."${cfg.username}" = {
       home.sessionVariables = {
