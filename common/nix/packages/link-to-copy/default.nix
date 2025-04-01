@@ -6,12 +6,14 @@
   # runtime deps
   ansi,
   argc,
+  bash,
 }:
 
 let
   deps = [
     ansi
     argc
+    bash
   ];
 in
 runCommand "link-to-copy"

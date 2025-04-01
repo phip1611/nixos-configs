@@ -3,12 +3,14 @@
   makeWrapper,
   runCommand,
   # runtime deps
+  bash,
   zsh,
   zstd,
 }:
 
 let
   deps = [
+    bash
     zsh
     zstd
   ];

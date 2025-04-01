@@ -1,12 +1,17 @@
 {
-  argc,
   lib,
   makeWrapper,
   runCommand,
+  # runtime deps
+  argc,
+  bash,
 }:
 
 let
-  deps = [ argc ];
+  deps = [
+    argc
+    bash
+  ];
 in
 runCommand "wait-host-online"
   {

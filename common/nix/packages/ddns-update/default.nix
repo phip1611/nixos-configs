@@ -6,6 +6,7 @@
   # runtime deps
   argc,
   ansi,
+  bash,
   curl,
   jq,
 }:
@@ -14,6 +15,7 @@ let
   deps = [
     argc
     ansi
+    bash
     curl
     jq
   ];

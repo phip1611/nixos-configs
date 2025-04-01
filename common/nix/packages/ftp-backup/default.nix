@@ -7,6 +7,7 @@
   # runtime deps
   ansi,
   argc,
+  bash,
   gnutar,
   lftp,
   zstd,
@@ -17,6 +18,7 @@ let
   shellScriptDeps = [
     ansi
     argc
+    bash
     gnutar
     lftp
     zstd

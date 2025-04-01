@@ -5,10 +5,14 @@
 
   # runtime deps
   argc,
+  bash,
 }:
 
 let
-  deps = [ argc ];
+  deps = [
+    argc
+    bash
+  ];
 in
 runCommand "normalize-file-permissions"
   {
