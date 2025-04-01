@@ -9,7 +9,6 @@
 }:
 
 let
-  src = ./.;
   deps = [
     ansi
     argc
@@ -18,12 +17,14 @@ in
 runCommand "link-to-copy"
   {
     nativeBuildInputs = [ makeWrapper ];
+    meta = {
+      mainProgram = "link-to-copy";
+    };
   }
   ''
     mkdir -p $out/bin
-    install -m +x ${src}/link-to-copy.sh $out/bin/link-to-copy
+    install -m +x ${./link-to-copy.sh} $out/bin/link-to-copy
 
     wrapProgram $out/bin/link-to-copy \
-      --inherit-argv0 \
       --prefix PATH : ${lib.makeBinPath deps}
   ''

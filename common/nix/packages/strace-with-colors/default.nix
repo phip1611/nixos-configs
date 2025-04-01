@@ -5,8 +5,6 @@ let
     sha256 = "sha256:1rgghm9knxhiw1m8sw0nim7x3qdd476d6sx83x0p3s6pc7fns3y4";
   };
   straceWithPatch = strace.overrideAttrs {
-    # TODO remove once https://github.com/NixOS/nixpkgs/pull/345436 is merged
-    enableParallelBuilding = true;
     patches = [
       ("${colorPatchSrc}/strace-with-colors.patch")
     ];
