@@ -47,6 +47,8 @@ in
         # keep-outputs = true;
         # keep-derivations = true;
 
+        download-buffer-size = 268435456 /* 256 MiB */;
+
         trusted-users = [
           "root"
           "@wheel"
