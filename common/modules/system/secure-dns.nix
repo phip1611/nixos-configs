@@ -89,9 +89,10 @@ in
     # Set some security options for `resolved`. These are only used, if the
     # `dnscrypt-proxy` DNS server doesn't resolve a DNS request.
 
-    # The fallback servers (Google and Cloudflare, compiled-in) support DNSSEC.
-    # Prevent downgrade attacks.
-    services.resolved.dnssec = "true";
+    # At first I wanted to use "true", then "allow-downgrade"; none can
+    # resolve "x86.lol". This is the first time I encountered a problem with
+    # my "secure DNS" setup since I started using it 3 months ago.
+    services.resolved.dnssec = "false";
     # Use DNS over TLS when the fallback servers are used. We only use
     # opportunistic as some shitty ISPs and WiFis might block the DoT port.
     services.resolved.dnsovertls = "opportunistic";
