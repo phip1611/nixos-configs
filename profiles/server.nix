@@ -40,6 +40,10 @@
     # Shrink system closure size. Don't require perl.
     programs.command-not-found.enable = false;
 
+    # We typically have fixed interface names in server-like setups.
+    # Removing NetworkManager reduces the closure size by more than one GiB.
+    networking.networkmanager.enable = false;
+
     nix = {
       # Save some disk space.
       settings = {
