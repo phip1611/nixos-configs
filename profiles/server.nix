@@ -37,6 +37,9 @@
     # Comes with a pre-configured configuration for ssh.
     services.fail2ban.enable = lib.mkDefault true;
 
+    # Shrink system closure size. Don't require perl.
+    programs.command-not-found.enable = false;
+
     nix = {
       # Save some disk space.
       settings = {
