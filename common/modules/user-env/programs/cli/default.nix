@@ -85,7 +85,6 @@ in
         bottom
         calc
         coreutils # default package; here only for completeness
-        cpu-x # TUI-like equivalent to CPU-Z on Windows
         curlFull # Curl with HTTP3 support and more
         dig # dig and nslookup
         du-dust
