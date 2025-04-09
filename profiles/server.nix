@@ -44,6 +44,13 @@
     # Removing NetworkManager reduces the closure size by more than one GiB.
     networking.networkmanager.enable = false;
 
+    xdg = {
+      autostart.enable = false;
+      icons.enable = false;
+      mime.enable = false;
+      sounds.enable = false;
+    };
+
     nix = {
       # Save some disk space.
       settings = {
