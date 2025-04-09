@@ -1,33 +1,42 @@
 #!/usr/bin/env bash
 
-# This script backups `~/.zsh_history` to `~/.zsh_history.backup` or restores it
-# from there, if necessary.
+# This script backups `~/.zsh_history` to `~/.local/share/zsh-history-backup` or
+# restores it from there, if necessary.
 #
 # It does so on every invocation. This helps to workaround cases where ZSH
-# suddenly truncates the history file, which I experiences once every ~4-6
-# months.
+# suddenly truncates the history file, which I experiences once every ~3 months.
 #
-# Only new zsh sessions will read the history from the new file, or the history
-# needs to be explicitly imported using the shell built-in `fc`.
+# After restoring, only new zsh sessions will read the history from the new
+# file, or the history needs to be explicitly imported using the shell built-in
+# `fc`.
 
 set -euo pipefail
 
 # TODO switch to `$(zsh -ic 'echo $HISTFILE')`?
 HIST_FILE="$HOME/.zsh_history"
-BACKUP_FILE="$HIST_FILE.backup"
+BACKUP_DIR="$HOME/.local/share/zsh-history-backup/backups"
+BACKUP_FILE_LATEST="$BACKUP_DIR/.zsh_history.latest"
+TIMESTAMP="$(date --iso-8601=seconds)"
 
 # Creates a backup file.
 fn_backup_file() {
-  if [ -f "$BACKUP_FILE" ]; then
-    mv "$BACKUP_FILE" "$BACKUP_FILE.old"
+  mkdir -p "$BACKUP_DIR"
+  if [ -f "$BACKUP_FILE_LATEST" ]; then
+    mv "$BACKUP_FILE_LATEST" "$BACKUP_FILE_LATEST.old"
   fi
-  cp "$HIST_FILE" "$BACKUP_FILE"
-  rm -f "$BACKUP_FILE.old"
+  # Keep freshest file in clear text
+  cp "$HIST_FILE" "$BACKUP_FILE_LATEST"
+  chmod -w "$BACKUP_FILE_LATEST"
+  # Also archive it (compressed)
+  zstd  "$BACKUP_FILE_LATEST" --compress -17 -o "$BACKUP_DIR/$TIMESTAMP-zsh-history.zstd" 2>/dev/null
+  chmod -w "$BACKUP_DIR/$TIMESTAMP-zsh-history.zstd"
+  rm -f "$BACKUP_FILE_LATEST.old"
 }
 
 fn_restore_backup() {
   rm -f "$HIST_FILE"
-  cp "$BACKUP_FILE" "$HIST_FILE"
+  cp "$BACKUP_FILE_LATEST" "$HIST_FILE"
+  chmod u+w "$HIST_FILE"
 }
 
 # Checks if we need to restore the backup.
@@ -49,8 +58,8 @@ fn_need_restore() {
   fi
 
   # Check that backup file exists.
-  if [ -f "$BACKUP_FILE" ]; then
-    backup_size=$(wc -l < "$BACKUP_FILE")
+  if [ -f "$BACKUP_FILE_LATEST" ]; then
+    backup_size=$(wc -l < "$BACKUP_FILE_LATEST")
   fi
 
   # We only need to restore the file when the file was truncated.
@@ -65,11 +74,11 @@ fn_need_restore() {
 
 fn_main() {
   if fn_need_restore; then
-    echo "⚠️ The history files seems to have been truncated; restoring backup"
+    echo "⚠️ The ZSH history file seems to have been truncated; restoring backup"
     fn_restore_backup
-    echo "✅ Backup restored in '$HIST_FILE'"
+    echo "✅ Backup restored in '$HIST_FILE'. Please reload/restart your ZSH shells"
   else
-    echo "✅ Backing up history file '$HIST_FILE' to '$BACKUP_FILE'"
+    echo "✅ Backing up history file '$HIST_FILE' to '$BACKUP_DIR'"
     if [ -f "$HIST_FILE" ]; then
       fn_backup_file
     fi
