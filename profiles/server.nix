@@ -15,27 +15,27 @@
       common = {
         user-env = {
           # Only basics, no bloat in PATH.
-          enable = lib.mkDefault true;
+          enable = true;
         };
 
         system = {
-          enable = lib.mkDefault true;
-          withAutoUpgrade = lib.mkDefault true;
-          withNixVerifyStoreService = lib.mkDefault true;
+          enable = true;
+          withAutoUpgrade = true;
+          withNixVerifyStoreService = true;
           # Stability is king
           withBleedingEdgeLinux = false;
-          withSecureDns = lib.mkDefault true;
+          withSecureDns = true;
         };
       };
-      nix-binary-cache.enable = lib.mkDefault true;
-      services.zsh-history-backup.enable = lib.mkDefault true;
+      nix-binary-cache.enable = true;
+      services.zsh-history-backup.enable = true;
     };
 
     # Latest LTS kernel
     boot.kernelPackages = pkgs.linuxPackages_6_12;
 
     # Comes with a pre-configured configuration for ssh.
-    services.fail2ban.enable = lib.mkDefault true;
+    services.fail2ban.enable = true;
 
     # Shrink system closure size. Don't require perl.
     programs.command-not-found.enable = false;
@@ -54,8 +54,8 @@
     nix = {
       # Save some disk space.
       settings = {
-        keep-outputs = lib.mkDefault false;
-        keep-derivations = lib.mkDefault false;
+        keep-outputs = false;
+        keep-derivations = false;
       };
     };
   };

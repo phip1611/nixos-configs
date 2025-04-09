@@ -29,12 +29,12 @@
     };
 
     # Turn stuff on that is deactivated by the server profile. This is not
-    # a regular server but one where we want to have a fully populated nix store.
+    # a regular server but one where we want to have a fully populated Nix
+    # store.
     nix = {
-      # Keep nix store populated for no/little wait times during typical work
       settings = {
-        keep-outputs = true;
-        keep-derivations = true;
+        keep-outputs = lib.mkForce true;
+        keep-derivations = lib.mkForce true;
       };
     };
 
