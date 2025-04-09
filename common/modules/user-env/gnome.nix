@@ -22,6 +22,29 @@ in
       gnomeExtensions.dash-to-dock
     ];
 
+    environment.gnome.excludePackages = with pkgs; [
+      baobab
+      epiphany
+      geary
+      gnome-calculator
+      gnome-characters
+      gnome-connections
+      gnome-console
+      gnome-contacts
+      gnome-logs
+      gnome-maps
+      gnome-software
+      gnome-system-monitor
+      gnome-text-editor
+      gnome-tour
+      gnome-user-docs
+      orca
+      simple-scan
+      snapshot
+      totem
+      yelp
+    ];
+
     # GNOME 46: triple-buffering
     # See https://nixos.wiki/wiki/GNOME
     #

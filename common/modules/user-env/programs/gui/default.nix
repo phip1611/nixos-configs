@@ -42,6 +42,7 @@ in
           })
         ])
       ++ (with pkgsUnstable; [
+        cpu-x
         drawio
         element-desktop
         gimp
