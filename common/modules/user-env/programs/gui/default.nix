@@ -49,7 +49,7 @@ in
         gparted
         libreoffice-fresh
         onlyoffice-desktopeditors
-        signal-desktop
+        signal-desktop-source
         spotify
         telegram-desktop
         warp
