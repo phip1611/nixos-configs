@@ -49,6 +49,7 @@ in
         gparted
         libreoffice-fresh
         onlyoffice-desktopeditors
+        screen-message
         signal-desktop-source
         spotify
         telegram-desktop

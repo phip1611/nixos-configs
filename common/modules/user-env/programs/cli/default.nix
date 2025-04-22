@@ -118,7 +118,6 @@ in
         poppler_utils # for pdfunite
         python3Toolchain
         ripgrep
-        screen-message
         strace
         tcpdump
         tldr
