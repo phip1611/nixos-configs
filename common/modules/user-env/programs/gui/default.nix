@@ -50,7 +50,7 @@ in
         libreoffice-fresh
         onlyoffice-desktopeditors
         screen-message
-        signal-desktop-source
+        signal-desktop
         spotify
         telegram-desktop
         warp
