@@ -18,7 +18,16 @@
   writeScript,
   writers,
 
+  # Additional packages in PATH.
   additionalPackages ? [ ],
+  # Additional files in initrd.
+  # ```
+  # {
+  #   symlink = "/location";
+  #   object = some_derivation;
+  # }
+  # ```
+  additionalFiles ? [ ],
 }:
 
 let
@@ -58,7 +67,7 @@ makeInitrd {
     # Common shell configuration/source.
     {
       symlink = "/etc/profile";
-      object = writeScript "configure-shell-path" ''
+      object = writeScript "configure-shell-env" ''
         export PATH=${
           lib.makeBinPath (
             additionalPackages
@@ -93,10 +102,11 @@ makeInitrd {
         mdev -s
       '';
     }
-    # The shell that is used after the initial "ENTER" user prompt by "init".
+    # The shell that is invoked after the initial "ENTER" user prompt by
+    # busybox's "init".
     {
       symlink = "/bin/sh";
       object = initBashShell;
     }
-  ];
+  ] ++ additionalFiles;
 }

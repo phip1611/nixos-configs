@@ -2,8 +2,7 @@
 
 let
   lib = pkgs.lib;
-in
-{
+
   # Attribute set with minimal Linux kernel in different versions.
   kernels =
     let
@@ -128,9 +127,49 @@ in
         additionalPackages = with pkgs; [
           curl
           linux-util-reduced
+          msr-tools
           pciutils
+          strace
+          stress
           usbutils
         ];
       };
     };
+in
+{
+  inherit kernels;
+  # initrds enriched with embedded kernels and initrds.
+  initrds = initrds // {
+    # initrd with VMMs and bootfiles for nested virtualization.
+    vmms = initrds.default.override (old: {
+      additionalPackages =
+        (old.additionalPackages or [ ])
+        ++ (with pkgs; [
+          cloud-hypervisor
+          # Very big; long build process and unpacking during runtime
+          # qemu
+        ]);
+
+      # Add some ready to use bootfiles for Cloud Hypervisor.
+      # They can be used like this:
+      #
+      # $ cloud-hypervisor \
+      #     --kernel "/etc/bootitems/kernel/bzImage" \
+      #     --cmdline "console=ttyS0" \
+      #     --initramfs "/etc/bootitems/initrd/initrd" \
+      #     --serial "tty" \
+      #     --console "off" \
+      #     --memory size=1G
+      additionalFiles = (old.additionalFiles or [ ]) ++ [
+        {
+          symlink = "/etc/bootitems/initrd";
+          object = initrds.default;
+        }
+        {
+          symlink = "/etc/bootitems/kernel";
+          object = kernels.stable;
+        }
+      ];
+    });
+  };
 }

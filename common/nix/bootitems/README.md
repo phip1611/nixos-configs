@@ -15,6 +15,7 @@ KVM.
 ```bash
 # Get Nix store path to bootitems library.
 export LIB=$(nix eval github:phip1611/nixos-configs#lib.bootitems)
+# export LIB=$(nix eval .#lib.bootitems) # local checkout
 
 # Lets start by getting and building kernel and initrd.
 # The build might take a few minutes.
