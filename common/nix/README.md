@@ -7,7 +7,7 @@ some depend on others.
 
 - [bootitems](./bootitems/README.md)
 - [libutil](./libutil/README.md)
-- [pkgs](./pkgs/README.md)
+- [packages](./packages/README.md)
 
 ## Overlays
 
