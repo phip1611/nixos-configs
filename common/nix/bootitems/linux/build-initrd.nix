@@ -28,6 +28,8 @@
   # }
   # ```
   additionalFiles ? [ ],
+  # Additional initialization bash script.
+  initScript ? "",
 }:
 
 let
@@ -77,6 +79,9 @@ makeInitrd {
             ])
           )
         }
+
+        # Additional aliases, variables, etc.
+        ${initScript}
       '';
     }
     # Set up some typical file-system nodes, create device-nodes.
