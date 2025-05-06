@@ -38,6 +38,21 @@ jobs:
           set -e
           git --no-pager diff --quiet
 
+  # Nix flake checks. This runs on GitHub infrastructure and not by remote
+  # builder (hosted by Netcup), as there is no nested virtualization available.
+  #
+  # TODO make more fine-grained once https://github.com/NixOS/nix/issues/9629 is
+  # solved.
+  check:
+    name: nix flake check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+        # Performs some basic checks of the NixOS system configurations and runs
+        # all checks.
+      - run: nix flake check
+
   # Builds all Nix packages, shells, and NixOS systems of the flake. This uses
   # my host at nix-binary-cache.phip1611.dev as CI remote builder as:
   # 1) The GitHub CI is relatively slow
@@ -150,16 +165,17 @@ jobs:
 
             nix develop . --command bash -c "echo it works"
           EOF
-      - name: "Flake: Check"
-        timeout-minutes: 60
-        run: |
-          echo "[GitHub CI] Building Flake Checks on remote ..."
-          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
-            set -euo pipefail
-            cd $REMOTE_CI_PWD || exit 1
-
-            nix flake check
-          EOF
+      # TODO reintroduce once there is nested virtualization support
+      # - name: "Flake: Check"
+      #  timeout-minutes: 60
+      #  run: |
+      #    echo "[GitHub CI] Building Flake Checks on remote ..."
+      #    ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+      #      set -euo pipefail
+      #      cd $REMOTE_CI_PWD || exit 1
+      #
+      #      nix flake check
+      #    EOF
       - uses: ./.github/actions/build-nixos
         name: Build 'asking-alexandria'
         timeout-minutes: 60
