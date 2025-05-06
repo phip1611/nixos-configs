@@ -1,4 +1,4 @@
-name: Build Nix Unit Tests and NixOS System Configurations
+name: Build
 
 on: [ push, pull_request, merge_group ]
 
@@ -16,7 +16,7 @@ jobs:
       - run: nix run .\#listNixosOptions
 
   nix-fmt:
-    name: check nix fmt
+    name: Check Nix formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +38,9 @@ jobs:
           set -e
           git --no-pager diff --quiet
 
+  # Nix flake checks. This runs on GitHub infrastructure and not by remote
+  # builder (hosted by Netcup), as there is no nested virtualization available.
+  #
   # TODO make more fine-grained once https://github.com/NixOS/nix/issues/9629 is
   # solved.
   check:
@@ -50,14 +53,13 @@ jobs:
         # all checks.
       - run: nix flake check
 
-  # Builds all NixOS systems from the flake, thus transitively also all custom
-  # packages. This uses my host at nix-binary-cache.phip1611.dev as CI remote
-  # builder.
-  # 1) The GitHub CI is slow for such large builds
+  # Builds all Nix packages, shells, and NixOS systems of the flake. This uses
+  # my host at nix-binary-cache.phip1611.dev as CI remote builder as:
+  # 1) The GitHub CI is relatively slow
   # 2) The volume quickly runs out of space in GitHub CI for large systems
-  # 3) This way, the binary cache gets filled: CI builder <=> Nix binary cache.
+  # 3) This way, the binary cache gets populated: CI builder <=> Nix binary cache.
   build_nixos:
-    name: Build all NixOS systems
+    name: Checks, Shell, Packages, and Systems
     runs-on: ubuntu-latest
     env:
       # SSH port on asking-alexandria
@@ -67,7 +69,7 @@ jobs:
       CI_BUILDER_PRIV_KEY: ${{ secrets.CI_BUILDER_PRIV_KEY }}
       REMOTE_CI_PWD: /tmp/github-ci-run--${{ github.EVENT_NAME }}--${{ github.REF_TYPE }}--${{ github.RUN_ID }}--${{ github.RUN_ATTEMPT }}
     steps:
-      - uses: actions/checkout@v4 # Required to reuse the local action.
+      - uses: actions/checkout@v4
         # Utilize the GitHub-specific local git repository so we do not have to
         # replicate any implementation details for the remote CI builder's
         # project checkout.
@@ -121,11 +123,59 @@ jobs:
 
           echo "[GitHub CI] Unpack zip at destination directory"
           ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+            set -euo pipefail
             cd $REMOTE_CI_PWD || exit 1
+
             nix-shell -p unzip --run "unzip checkout.zip"
             test -d .git
             test -f flake.nix
           EOF
+      # Build all packages
+      - name: "Flake: Build Packages"
+        timeout-minutes: 60
+        run: |
+          echo "[GitHub CI] Building Packages on remote ..."
+          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+            set -euo pipefail
+            cd $REMOTE_CI_PWD || exit 1
+
+            nix shell nixpkgs#jq --command bash -c "
+              nix flake show --json 2>/dev/null \
+                | jq -r '.packages.\"x86_64-linux\" | keys[]' \
+                | xargs -I {} bash -c 'echo \"Building Package: {}\" && nix build .#{}'
+            "
+          EOF
+      - name: "Flake: Build Bootitems"
+        timeout-minutes: 60
+        run: |
+          echo "[GitHub CI] Building Bootitems on remote ..."
+          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+           set -euo pipefail
+           cd $REMOTE_CI_PWD || exit 1
+
+           nix shell nixpkgs#jq --command bash -c "./build-all-bootitems.sh --ci"
+          EOF
+      - name: "Flake: Open Dev Shell"
+        timeout-minutes: 60
+        run: |
+          echo "[GitHub CI] Building Dev Shell on remote ..."
+          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+            set -euo pipefail
+            cd $REMOTE_CI_PWD || exit 1
+
+            nix develop . --command bash -c "echo it works"
+          EOF
+      # TODO reintroduce once there is nested virtualization support
+      # - name: "Flake: Check"
+      #  timeout-minutes: 60
+      #  run: |
+      #    echo "[GitHub CI] Building Flake Checks on remote ..."
+      #    ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+      #      set -euo pipefail
+      #      cd $REMOTE_CI_PWD || exit 1
+      #
+      #      nix flake check
+      #    EOF
       - uses: ./.github/actions/build-nixos
         name: Build 'asking-alexandria'
         timeout-minutes: 60

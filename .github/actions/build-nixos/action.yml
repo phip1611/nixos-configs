@@ -1,5 +1,5 @@
 name: Build NixOS
-description: Builds NixOS system
+description: Builds a NixOS system on the remote builder
 inputs:
   hostname:
     required: true
@@ -10,8 +10,9 @@ runs:
     - name: "NixOS: build ${{inputs.hostname}}"
       shell: bash
       run: |
-        echo "[GitHub CI] Building ${{inputs.hostname}} on remote"
+        echo "[GitHub CI] Building ${{inputs.hostname}} on remote ..."
         ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+          set -euo pipefail
           cd "$REMOTE_CI_PWD" || exit 1
           echo "[Remote Builder] Building ${{inputs.hostname}}"
           echo "[Remote Builder] pwd = $REMOTE_CI_PWD"
