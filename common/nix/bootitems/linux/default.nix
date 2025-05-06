@@ -175,15 +175,6 @@ let
           source = kernels.stable;
         }
       ];
-      initScript = (old.initScript or "") + ''
-        alias run_chv='cloud-hypervisor \
-          --kernel "/etc/bootitems/kernel/bzImage" \
-          --cmdline "console=ttyS0" \
-          --initramfs "/etc/bootitems/initrd/initrd" \
-          --serial "tty" \
-          --console "off" \
-          --memory size=1G'
-      '';
     });
   };
 
