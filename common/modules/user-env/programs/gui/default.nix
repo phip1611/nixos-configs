@@ -42,7 +42,6 @@ in
           })
         ])
       ++ (with pkgsUnstable; [
-        cpu-x
         drawio
         element-desktop
         gimp
@@ -56,6 +55,12 @@ in
         warp
         xournalpp
       ])
+      ++ (lib.optionals (pkgs.system == "x86_64-linux") (
+        with pkgs;
+        [
+          cpu-x
+        ]
+      ))
       ++ (lib.optionals cfg.withDevCAndRust (
         with pkgsUnstable;
         [
