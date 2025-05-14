@@ -15,7 +15,7 @@ KVM.
 ```bash
 # Get Nix store path to bootitems library.
 export LIB=$(nix eval github:phip1611/nixos-configs#lib.bootitems)
-# export LIB=$(nix eval .#lib.bootitems) # local checkout
+# export LIB=<local-repo>/common/nix/bootitems # local checkout
 # You can also get the nixpkgs version from the flake, in case you do not want
 # to use `<nixpkgs>` below.
 # export PKGS=$(nix eval .#inputs.nixpkgs.outPath --raw)
