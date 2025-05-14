@@ -3,12 +3,16 @@
   lib,
   pkgs,
   ...
-}:
+}@inputs:
 
 let
   cfg = config.phip1611.bootitems;
   bootitems = pkgs.phip1611.bootitems;
   libutil = pkgs.phip1611.libutil;
+
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.system;
+  };
 
   tinyToyKernelElf64 = libutil.builders.flattenDrv {
     drv = bootitems.tinytoykernel;
@@ -26,9 +30,11 @@ in
 
     environment.etc =
       {
-        "bootitems/edk2-uefi-shell.efi".source = "${pkgs.edk2-uefi-shell}/shell.efi";
-        "bootitems/OVMF_CODE.fd".source = "${pkgs.OVMF.fd}/FV/OVMF_CODE.fd";
-        "bootitems/OVMF.fd".source = "${pkgs.OVMF.fd}/FV/OVMF.fd";
+        # Not yet in Hydra / NixOS Cache
+        # "bootitems/rust-hypervisor-firmware".source = "${pkgsUnstable.rust-hypervisor-firmware}/shell.efi";
+        "bootitems/edk2-uefi-shell.efi".source = "${pkgsUnstable.edk2-uefi-shell}/shell.efi";
+        "bootitems/OVMF_CODE.fd".source = "${pkgsUnstable.OVMF.fd}/FV/OVMF_CODE.fd";
+        "bootitems/OVMF.fd".source = "${pkgsUnstable.OVMF.fd}/FV/OVMF.fd";
         "bootitems/tinytoykernel.elf32".source = "${bootitems.tinytoykernel}/kernel.elf32";
         "bootitems/tinytoykernel.elf64".source = "${bootitems.tinytoykernel}/kernel.elf64";
         "bootitems/tinytoykernel.efi".source = "${libutil.images.x86.createMultibootEfi {
