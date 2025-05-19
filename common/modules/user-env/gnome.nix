@@ -44,33 +44,5 @@ in
       totem
       yelp
     ];
-
-    # GNOME 46: triple-buffering
-    # See https://nixos.wiki/wiki/GNOME
-    #
-    # TODO Is this upstremed to GNOME 47/nixpkgs yet?
-    nixpkgs.overlays =
-      let
-        # Picked a recent commit from the "triple-buffering-v4-46" branch:
-        # https://gitlab.gnome.org/vanvugt/mutter/-/commits/triple-buffering-v4-46?ref_type=heads
-        rev = "94f500589efe6b04aa478b3df8322eb81307d89f";
-        sha256 = "sha256:14ln7rgizqg89gdfv6pxjsxjwhfxbd28zwnyxbs1ag23zq3y6hvy";
-        url = "https://gitlab.gnome.org/vanvugt/mutter/-/archive/${rev}/mutter-${rev}.tar.gz";
-      in
-      [
-        (_final: prev: {
-          gnome = prev.gnome.overrideScope (
-            _gnomeFinal: gnomePrev: {
-              mutter = gnomePrev.mutter.overrideAttrs (_old: {
-                # See https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/1441
-                # to select a proper branch.
-                src = builtins.fetchTarball {
-                  inherit url sha256;
-                };
-              });
-            }
-          );
-        })
-      ];
   };
 }

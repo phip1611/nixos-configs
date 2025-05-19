@@ -2,27 +2,34 @@
   description = "phip1611's common libraries, modules, and configurations for Nix and NixOS";
 
   inputs = {
+    ###################
+    # Util
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
-    home-manager.url = "github:nix-community/home-manager/release-24.11";
+    ###################
+    # NixOS modules and nixpkgs
+
+    home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     # Use nixpkgs-unstable instead of master so that packages are more likely
     # to be cached already while still being as fresh as possible.
     # See https://discourse.nixos.org/t/differences-between-nix-channels/13998
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
+    ###################
     # Web Projects
 
     dd-systems-meetup-website.url = "github:phip1611/dd-systems-meetup-website";
     dd-systems-meetup-website.inputs.flake-parts.follows = "flake-parts";
     dd-systems-meetup-website.inputs.nixpkgs.follows = "nixpkgs";
 
-    img-to-webp-service.url = "github:phip1611/img-to-webp-spring-service/main";
+    img-to-webp-service.url = "github:phip1611/img-to-webp-spring-service";
     img-to-webp-service.inputs.flake-parts.follows = "flake-parts";
     img-to-webp-service.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -175,7 +182,6 @@
           # overlays, I drop the "pkgs" parameter of the perSystem function
           # and initialize it manually.
           pkgs = initNixpkgs inputs.nixpkgs system;
-          pkgsUnstable = initNixpkgs inputs.nixpkgs-unstable system;
 
           commonNix = {
             # All unit and integration tests as combined derivation.
@@ -234,7 +240,6 @@
             let
               listNixosOptions = pkgs.callPackage ./utils/list-nixos-options.nix {
                 inherit (inputs) self;
-                inherit (pkgsUnstable) nixos-option;
               };
             in
             commonNix.packages

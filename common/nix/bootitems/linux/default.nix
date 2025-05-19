@@ -134,6 +134,17 @@ let
           usbutils
         ];
       };
+      vmms = buildInitrd {
+        additionalPackages = with pkgs; [
+          curl
+          linux-util-reduced
+          pciutils
+          usbutils
+
+          cloud-hypervisor
+          qemu
+        ];
+      };
     };
 in
 {
