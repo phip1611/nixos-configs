@@ -49,14 +49,18 @@ in
         users.users."${cfg.username}".packages = (
           with pkgsUnstable;
           [
-            gcc
             # already there automatically; here only for completeness
             binutils
             clang-tools # clang-format
             cmake
             cmake-format
+            gcc
             gdb
+            git
+            gitlab-timelogs
+            gitui
             gnumake
+            grub2 # for grub-file
             ninja
             valgrind
           ]

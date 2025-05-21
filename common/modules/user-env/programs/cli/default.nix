@@ -91,9 +91,6 @@ in
         eza # used to be exa
         fd # better find
         file
-        git
-        gitlab-timelogs
-        grub2 # for grub-file
         hexyl # hex viewer
         httpie
         iperf3
@@ -138,7 +135,6 @@ in
         yamlfmt
         zip
         zsh
-        zx
       ])
       # Dedicated feature-gate as sometimes, build problems with fresh
       # (or old) kernels occur.
