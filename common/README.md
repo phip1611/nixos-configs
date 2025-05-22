@@ -96,7 +96,7 @@ To consume the minimal version of these modules, do something like this
       system = {
         enable = true;
         withAutoUpgrade = false;
-        withDocker = false;
+        withDockerRootless = false;
       };
     };
   };

@@ -30,7 +30,7 @@
         system = {
           enable = true;
           withBleedingEdgeLinux = true;
-          withDocker = true;
+          withDockerRootless = true;
           withSecureDns = true;
         };
       };

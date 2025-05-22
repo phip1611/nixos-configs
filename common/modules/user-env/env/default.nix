@@ -21,16 +21,10 @@ in
 
   # Set some aliases and environment variables, plus other misc stuff.
   config = lib.mkIf cfg.enable {
-    users.users."${cfg.username}" =
-      let
-        systemCfg = config.phip1611.common.system;
-      in
-      {
-        # ZSH as default shell for my user.
-        shell = pkgs.zsh;
-        # Add user to docker group.
-        extraGroups = lib.optional (systemCfg.enable && systemCfg.withDocker) "docker";
-      };
+    users.users."${cfg.username}" = {
+      # ZSH as default shell for my user.
+      shell = pkgs.zsh;
+    };
 
     # https://nix-community.github.io/home-manager/options.xhtml
     home-manager.useGlobalPkgs = true;
