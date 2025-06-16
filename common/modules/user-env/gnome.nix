@@ -41,7 +41,6 @@ in
       orca
       simple-scan
       snapshot
-      totem
       yelp
     ];
   };
