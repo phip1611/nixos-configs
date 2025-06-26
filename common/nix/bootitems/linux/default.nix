@@ -120,30 +120,30 @@ let
           mkdir -p $out/bin
           ${cpLines}
         '';
+
+      commonConveniencePackages = with pkgs; [
+        curl
+        htop
+        linux-util-reduced
+        msr-tools
+        pciutils
+        strace
+        stress
+        usbutils
+      ];
     in
     {
       minimal = buildInitrd { };
       default = buildInitrd {
-        additionalPackages = with pkgs; [
-          curl
-          linux-util-reduced
-          msr-tools
-          pciutils
-          strace
-          stress
-          usbutils
-        ];
+        additionalPackages = commonConveniencePackages;
       };
       vmms = buildInitrd {
-        additionalPackages = with pkgs; [
-          curl
-          linux-util-reduced
-          pciutils
-          usbutils
-
-          cloud-hypervisor
-          qemu
-        ];
+        additionalPackages =
+          commonConveniencePackages
+          ++ (with pkgs; [
+            cloud-hypervisor
+            qemu
+          ]);
       };
     };
 in
