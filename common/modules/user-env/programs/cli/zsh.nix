@@ -26,16 +26,28 @@ in
         enable = true;
         package = pkgsUnstable.zsh;
 
+        # TODO wait for https://github.com/nix-community/home-manager/pull/7333
+        initContent = ''
+          setopt INC_APPEND_HISTORY
+        '';
+
         # Context:
         # - https://www.soberkoder.com/better-zsh-history/
         # - https://zsh.sourceforge.io/Doc/Release/Options.html
         # - https://zsh.sourceforge.io/Doc/Release/Parameters.html
+        #
+        # Home Manager Options:
+        # <https://nix-community.github.io/home-manager/options.xhtml>
         history =
           let
             # Default is 10000.
             saveLines = 200000; # This results in roughly 1-6 MiB memory usage.
           in
           {
+            # INC_APPEND_HISTORY
+            # Append new commands immediately to the hist file.
+            # TODO wait for https://github.com/nix-community/home-manager/pull/7333
+            # appendInc = true;
             # EXTENDED_HISTORY
             # Save timestamp into the history file.
             extended = true;
@@ -57,10 +69,8 @@ in
             # Number of history lines to load into memory.
             size = saveLines;
             # SHARE_HISTORY
-            # Share command history between zsh sessions. This also adds new
-            # commands to the history as they are typed. Hence, this is more
-            # powerful than INC_APPEND_HISTORY.
-            share = true;
+            # I'm using the mutually exclusive alternative INC_APPEND_HISTORY.
+            share = false;
           };
 
         oh-my-zsh = {
