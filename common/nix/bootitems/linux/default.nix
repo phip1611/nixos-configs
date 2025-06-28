@@ -128,7 +128,7 @@ let
         msr-tools
         pciutils
         strace
-        stress
+        stress-ng
         usbutils
       ];
     in
