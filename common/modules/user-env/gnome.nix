@@ -7,9 +7,7 @@
 
 let
   cfg = config.phip1611.common.user-env;
-  gnomeEnabled =
-    config.services.xserver.displayManager.gdm.enable
-    && config.services.xserver.desktopManager.gnome.enable;
+  gnomeEnabled = with config.services; displayManager.gdm.enable && desktopManager.gnome.enable;
 in
 {
   config = lib.mkIf (cfg.enable && gnomeEnabled) {
