@@ -32,7 +32,7 @@ in
     # Some interesting technical background info about DNS resolving on todays
     # Linux systems can be found here:
     # https://tailscale.com/blog/sisyphean-dns-client-linux
-    services.dnscrypt-proxy2 = {
+    services.dnscrypt-proxy = {
       enable = true;
       # Settings reference:
       # https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/example-dnscrypt-proxy.toml
