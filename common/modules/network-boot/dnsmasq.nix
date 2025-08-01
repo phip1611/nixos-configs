@@ -83,40 +83,39 @@ in
         #
         # nixpkgs automatically creates multiple lines from an array, as
         # expected by dnsmasq.
-        settings =
-          {
-            # 0 => disable DNS; we only need DHCP and TFTP
-            port = 0;
-            domain-needed = true;
-            bogus-priv = true;
+        settings = {
+          # 0 => disable DNS; we only need DHCP and TFTP
+          port = 0;
+          domain-needed = true;
+          bogus-priv = true;
 
-            # Prevent reading dnsmasq /etc/resolv.conf, as we do not use the DNS
-            # functionality at all.
-            no-resolv = true;
+          # Prevent reading dnsmasq /etc/resolv.conf, as we do not use the DNS
+          # functionality at all.
+          no-resolv = true;
 
-            # Listen for DHCP/BOOTP requests on these interfaces.
-            interface = interfaceNames;
+          # Listen for DHCP/BOOTP requests on these interfaces.
+          interface = interfaceNames;
 
-            # The interface might not be always connected and only only available
-            # eventually, e.g., when connecting a docking station.
-            # => Don't "bind-interface = true"
-            bind-dynamic = true;
+          # The interface might not be always connected and only only available
+          # eventually, e.g., when connecting a docking station.
+          # => Don't "bind-interface = true"
+          bind-dynamic = true;
 
-            # Don't cache nothing.
-            cache-size = 0;
+          # Don't cache nothing.
+          cache-size = 0;
 
-            # TODO match also non efi etc
-            dhcp-match = "set:efi-x86_64,option:client-arch,7";
-            dhcp-boot = dhcpBootLines;
+          # TODO match also non efi etc
+          dhcp-match = "set:efi-x86_64,option:client-arch,7";
+          dhcp-boot = dhcpBootLines;
 
-            # Answer DHCP requests with given IPv4 addresses:
-            dhcp-range = dhcpRangeLines;
-          }
-          // lib.attrsets.optionalAttrs (lib.lists.length tftpRootLines > 0) {
-            # Serve network boot files.
-            enable-tftp = true;
-            tftp-root = tftpRootLines;
-          };
+          # Answer DHCP requests with given IPv4 addresses:
+          dhcp-range = dhcpRangeLines;
+        }
+        // lib.attrsets.optionalAttrs (lib.lists.length tftpRootLines > 0) {
+          # Serve network boot files.
+          enable-tftp = true;
+          tftp-root = tftpRootLines;
+        };
       };
   };
 }

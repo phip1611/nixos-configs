@@ -49,7 +49,8 @@ let
           allAliases = [
             version_long
             version_short
-          ] ++ aliases;
+          ]
+          ++ aliases;
         in
         # New releases have a "6.13" name instead of "6.13.0". Therefore, we
         # remove duplicated entries!

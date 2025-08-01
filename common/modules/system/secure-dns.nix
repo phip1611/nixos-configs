@@ -60,21 +60,20 @@ in
         # dnscrypt-proxy will sort this by latency but also rotate the DNS
         # servers to improve privacy.
         # [0] https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
-        server_names =
-          [
-            "artikel10-doh-ipv4"
-            "artikel10-doh-ipv6"
+        server_names = [
+          "artikel10-doh-ipv4"
+          "artikel10-doh-ipv6"
 
-            "dns4all-ipv4"
-            "dns4all-ipv6"
+          "dns4all-ipv4"
+          "dns4all-ipv6"
 
-            "dnscry.pt-frankfurt-ipv4"
-            "dnscry.pt-frankfurt-ipv6"
+          "dnscry.pt-frankfurt-ipv4"
+          "dnscry.pt-frankfurt-ipv6"
 
-            "quad9-doh-ip4-port443-nofilter-pri"
-            "quad9-doh-ip6-port443-nofilter-pri"
-          ]
-          ++
+          "quad9-doh-ip4-port443-nofilter-pri"
+          "quad9-doh-ip6-port443-nofilter-pri"
+        ]
+        ++
           # Specify those as additional backup, when we don't use systemd-resolved.
           # These servers are already baked into systemd-resolved as fallback.
           lib.optionals (!config.services.resolved.enable) [

@@ -108,5 +108,6 @@ makeInitrd {
       symlink = "/bin/sh";
       object = initBashShell;
     }
-  ] ++ additionalFiles;
+  ]
+  ++ additionalFiles;
 }
