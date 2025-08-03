@@ -230,7 +230,8 @@
             };
           };
 
-          formatter = pkgs.nixfmt-rfc-style;
+          # `$ nix fmt` or `$ fd --extension=nix --exec nixfmt`
+          formatter = pkgs.nixfmt-tree;
 
           # Exported (and runnable) packages.
           #

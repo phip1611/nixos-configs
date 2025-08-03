@@ -1,0 +1,49 @@
+name: Update Nix Flake
+on:
+  schedule:
+    - cron: '0 0 * * *' # Daily at Midnight
+  workflow_dispatch: # Allow manual dispatch for testing
+
+jobs:
+  flake-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Nix
+        uses: cachix/install-nix-action@v25
+      - name: Run `nix flake update`
+        run: nix flake update
+      - name: Check for changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes from `nix flake update`."
+            echo "skip=true" >> $GITHUB_ENV
+          else
+            echo "Changes detected."
+          fi
+      - name: Commit changes
+        if: env.skip != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B flake-update
+          git add flake.lock
+          git commit -m "flake: automatic update"
+          git push -f origin flake-update
+      - name: Create or update PR
+        if: env.skip != 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: flake-update
+          title: "flake: automatic update"
+          body: "Daily update via `nix flake update`"
+          commit-message: "flake: automatic update"
+          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          delete-branch: true
+          labels: |
+            auto-update
