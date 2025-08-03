@@ -31,19 +31,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git checkout -B flake-update
+          git checkout -B automatic-flake-update
           git add flake.lock
           git commit -m "flake: automatic update"
-          git push -f origin flake-update
+          git push -f origin automatic-flake-update
       - name: Create or update PR
         if: env.skip != 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: flake-update
-          title: "flake: automatic update"
-          body: "Daily update via `nix flake update`"
-          commit-message: "flake: automatic update"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          delete-branch: true
+          base: main
+          body: "Daily update via `nix flake update`"
+          branch: automatic-flake-update
+          commit-message: "flake: automatic update"
+          delete-branch: false
           labels: |
-            auto-update
+            dependencies
+            github_actions
+          title: "flake: automatic update"
