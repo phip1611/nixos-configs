@@ -25,16 +25,6 @@ jobs:
           else
             echo "Changes detected."
           fi
-      - name: Commit changes
-        if: env.skip != 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git checkout -B automatic-flake-update
-          git add flake.lock
-          git commit -m "flake: automatic update"
-          git push -f origin automatic-flake-update
       - name: Create or update PR
         if: env.skip != 'true'
         uses: peter-evans/create-pull-request@v6
