@@ -25,25 +25,24 @@ jobs:
           else
             echo "Changes detected."
           fi
-      - name: Commit changes
-        if: env.skip != 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git checkout -B flake-update
-          git add flake.lock
-          git commit -m "flake: automatic update"
-          git push -f origin flake-update
       - name: Create or update PR
+        id: cpr
         if: env.skip != 'true'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
-          branch: flake-update
-          title: "flake: automatic update"
-          body: "Daily update via `nix flake update`"
-          commit-message: "flake: automatic update"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          delete-branch: true
+          base: main
+          body: "Daily update via `nix flake update`"
+          branch: automatic-flake-update
+          commit-message: "flake: automatic update"
+          delete-branch: false
           labels: |
-            auto-update
+            dependencies
+            github_actions
+          title: "flake: automatic update"
+          token: '${{ secrets.FLAKE_AUTOUPDATE_GITHUB_TOKEN }}'
+      - uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          merge-method: 'merge'
+          token: '${{ secrets.FLAKE_AUTOUPDATE_GITHUB_TOKEN }}'
+          pull-request-number: '${{ steps.cpr.outputs.pull-request-number }}'
