@@ -10,11 +10,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1754914252,
-        "narHash": "sha256-vOpqaag7SkIKJwR2Ez44fsJZBJmSEI3IByy3qPm01BU=",
+        "lastModified": 1754916638,
+        "narHash": "sha256-D7mjw/Ef3esIxIWREK6RA0Y/JXMnhT04e6yrM0kdwTc=",
         "owner": "phip1611",
         "repo": "dd-systems-meetup-website",
-        "rev": "a173677ccffbba56e14a6a87e2fbc7c3d16dfe85",
+        "rev": "4b7b921e2bff338cbb481f2c5478fe0b6b50c8ef",
         "type": "github"
       },
       "original": {
@@ -125,11 +125,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1754689972,
-        "narHash": "sha256-eogqv6FqZXHgqrbZzHnq43GalnRbLTkbBbFtEfm1RSc=",
+        "lastModified": 1754767907,
+        "narHash": "sha256-8OnUzRQZkqtUol9vuUuQC30hzpMreKptNyET2T9lB6g=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "fc756aa6f5d3e2e5666efcf865d190701fef150a",
+        "rev": "c5f08b62ed75415439d48152c2a784e36909b1bc",
         "type": "github"
       },
       "original": {
@@ -141,11 +141,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1754800730,
-        "narHash": "sha256-HfVZCXic9XLBgybP0318ym3cDnGwBs/+H5MgxFVYF4I=",
+        "lastModified": 1754895929,
+        "narHash": "sha256-cHSg9CMqEx0e06UkWJLRuLlolRCgPE8zwdEp3JwYRGI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "641d909c4a7538f1539da9240dedb1755c907e40",
+        "rev": "9585e9192aadc13ec3e49f33f8333bd3cda524df",
         "type": "github"
       },
       "original": {
