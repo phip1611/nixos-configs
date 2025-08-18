@@ -41,6 +41,7 @@ jobs:
           title: "flake: automatic update"
           token: '${{ secrets.FLAKE_AUTOUPDATE_GITHUB_TOKEN }}'
       - name: Mark PR as auto-merge
+        if: env.skip != 'true'
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           merge-method: 'merge'
