@@ -23,15 +23,14 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Check Nix formatting
         run: |
-          echo "nix fmt version:"
-          nix fmt -- --version
+          echo "nix version: $(nix --version)"
+          echo "nix fmt version: $(nix fmt -- --version)"
 
           set +e
-          # "nixfmt" doesn't has a nice diff output for its `--check` command,
-          # therefore we use `git diff`
-          find . -name "*.nix" -type f -exec nix fmt {} \+
+          nix fmt
 
-          # Show format diff
+          # "nix fmt" doesn't has a convenient `--check` option, therefore we
+          # use `git diff`
           git --no-pager diff
 
           # Report error, fail pipeline job
