@@ -41,11 +41,6 @@
   outputs =
     {
       self,
-      flake-parts,
-      home-manager,
-      nixos-hardware,
-      nixpkgs,
-      nixpkgs-unstable,
       ...
     }@inputs:
     let
@@ -80,7 +75,7 @@
           # coming from a flake for consistency.
           additionalModules ? [ ],
         }:
-        (nixpkgs.lib.nixosSystem {
+        (inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           # specialArgs are additional arguments passed to a NixOS module
           # function. This should only include the flake inputs.
@@ -90,7 +85,7 @@
             builtins.attrValues self.nixosModules
             ++ [
               # Other modules from Flake inputs:
-              home-manager.nixosModules.home-manager
+              inputs.home-manager.nixosModules.home-manager
 
               # Enforce consistent host name.
               {
@@ -107,7 +102,7 @@
             ++ additionalModules;
         });
     in
-    flake-parts.lib.mkFlake { inherit inputs; } {
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       flake = {
         # Here I simply re-export the library files without initializing
         # it with the nixpkgs input, i.e., this is no "per system" attribute.
@@ -130,8 +125,8 @@
             hostName = "asking-alexandria";
             system = "x86_64-linux";
             additionalModules = [
-              nixos-hardware.nixosModules.common-cpu-amd
-              nixos-hardware.nixosModules.common-pc-ssd
+              inputs.nixos-hardware.nixosModules.common-cpu-amd
+              inputs.nixos-hardware.nixosModules.common-pc-ssd
               ./profiles/server.nix
             ];
           };
@@ -141,8 +136,8 @@
             hostName = "homepc";
             system = "x86_64-linux";
             additionalModules = [
-              nixos-hardware.nixosModules.common-cpu-intel
-              nixos-hardware.nixosModules.common-pc-ssd
+              inputs.nixos-hardware.nixosModules.common-cpu-intel
+              inputs.nixos-hardware.nixosModules.common-pc-ssd
               ./profiles/dev-machine.nix
             ];
           };
@@ -170,7 +165,7 @@
       # just use "every system" here to not restrict any user. However, it
       # likely happens that certain packages don't build for/under certain
       # systems.
-      systems = nixpkgs.lib.systems.flakeExposed;
+      systems = inputs.nixpkgs.lib.systems.flakeExposed;
 
       perSystem =
         { config, system, ... }:
@@ -228,7 +223,7 @@
                 # I still like the convenience of Nix paths for quick
                 # prototyping. This is also what my common NixOS module
                 # sets globally.
-                export NIX_PATH="nixpkgs=${nixpkgs}:nixpkgs-unstable=${nixpkgs-unstable}:$NIX_PATH"
+                export NIX_PATH="nixpkgs=${inputs.nixpkgs}:nixpkgs-unstable=${inputs.nixpkgs-unstable}:$NIX_PATH"
               '';
             };
           };
