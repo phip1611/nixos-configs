@@ -165,7 +165,7 @@ let
       additionalFiles = (old.additionalFiles or [ ]) ++ [
         {
           symlink = "/etc/bootitems/initrd";
-          object = initrds.default;
+          object = initrds.minimal;
         }
         {
           symlink = "/etc/bootitems/kernel";
