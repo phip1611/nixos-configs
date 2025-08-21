@@ -10,12 +10,12 @@ let
     libutilTests = import ./libutil/tests.nix { inherit pkgs; };
     # packagesTests = import ./packages/tests.nix { inherit pkgs; };
   };
+  libutil = import ./libutil { inherit pkgs; };
+  bootitems = import ./bootitems { inherit libutil pkgs; };
+  packages = import ./packages { inherit pkgs; };
 in
 {
-  bootitems = import ./bootitems { inherit pkgs; };
-  libutil = import ./libutil { inherit pkgs; };
-  packages = import ./packages { inherit pkgs; };
-
+  inherit bootitems libutil packages;
   allTests = pkgs.symlinkJoin {
     name = "all-tests";
     paths = [
