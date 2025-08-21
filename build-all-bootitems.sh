@@ -7,7 +7,7 @@ set -euo pipefail
 ARG=${1:-}
 
 # Nix sources
-PKGS=$(nix eval .#inputs.nixpkgs.outPath --raw)
+PKGS=$(nix flake archive --json | jq -r '.inputs."nixpkgs".path')
 LIB=$(nix eval .#lib.bootitems)
 
 binary_cache_host=nix-binary-cache.phip1611.dev
