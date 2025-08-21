@@ -8,6 +8,19 @@ For example:
 
 ## Usage Example: Linux kernel and initrd
 
+### Build Everything (May Take a Couple of Minutes)
+
+You can build all bootitems that are exported with just one invocation. This
+takes longer than building individual items, but requires fewer commands:
+
+`$ nix build .\#bootitems-combined`
+
+respectively
+
+`$ nix build github:phip1611/nixos-configs#bootitems-combined`
+
+### Build Specific Bootitems
+
 The following bash script shows how to boot a Linux kernel and an initrd
 provided by the Nix-packaged bootitems in `cloud-hypervisor`, a VMM leveraging
 KVM.

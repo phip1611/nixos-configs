@@ -252,6 +252,14 @@
             commonNix.packages
             // {
               inherit listNixosOptions;
+              bootitems-combined = pkgs.symlinkJoin {
+                name = "bootitems-combined";
+                paths = [
+                  commonNix.bootitems.linux.kernelsCombined
+                  commonNix.bootitems.linux.initrdsCombined
+                  commonNix.bootitems.tinytoykernel
+                ];
+              };
             };
         };
     };
