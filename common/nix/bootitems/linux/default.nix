@@ -1,6 +1,7 @@
 {
   pkgs,
   libutil,
+  inputs,
 }:
 
 let
@@ -134,6 +135,7 @@ let
         strace
         stress-ng
         usbutils
+        inputs.memtouch.packages.${pkgs.system}.default
       ];
     in
     {
