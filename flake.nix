@@ -36,6 +36,9 @@
     wambo-web.url = "github:phip1611/wambo-web";
     wambo-web.inputs.nixpkgs.follows = "nixpkgs";
     wambo-web.inputs.flake-parts.follows = "flake-parts";
+
+    memtouch.url = "git+ssh://git@github.com/cobaltcore-dev/memtouch?ref=main";
+    memtouch.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -183,9 +186,10 @@
           # and initialize it manually.
           pkgs = initNixpkgs inputs.nixpkgs system;
 
+          # Instantiated libs from ./common/nix
           commonNix =
             let
-              commonAll = (import commonSrc.nix.all { inherit pkgs; });
+              commonAll = (import commonSrc.nix.all { inherit inputs pkgs; });
             in
             {
               inherit (commonAll)

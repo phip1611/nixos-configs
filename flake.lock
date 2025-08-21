@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "argparse": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1726837382,
+        "narHash": "sha256-LKbcLX4rrhqNhcJE7/y12GUYa9rRLVt61YfhfeP8x+Q=",
+        "owner": "p-ranav",
+        "repo": "argparse",
+        "rev": "84c02050ea8bd1bf99de0a4943db40235e9fd5e7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "p-ranav",
+        "ref": "master",
+        "repo": "argparse",
+        "type": "github"
+      }
+    },
     "dd-systems-meetup-website": {
       "inputs": {
         "flake-parts": [
@@ -108,6 +125,28 @@
         "type": "github"
       }
     },
+    "memtouch": {
+      "inputs": {
+        "argparse": "argparse",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1751634093,
+        "narHash": "sha256-mFNGTdoaBo5vnq0uDbtD5ofvcXogffSZ6bihnQNnq9w=",
+        "ref": "main",
+        "rev": "34c13bf20755b087eb04e2bb1214988f812c72d2",
+        "revCount": 28,
+        "type": "git",
+        "url": "ssh://git@github.com/cobaltcore-dev/memtouch"
+      },
+      "original": {
+        "ref": "main",
+        "type": "git",
+        "url": "ssh://git@github.com/cobaltcore-dev/memtouch"
+      }
+    },
     "nixos-hardware": {
       "locked": {
         "lastModified": 1755330281,
@@ -161,6 +200,7 @@
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "img-to-webp-service": "img-to-webp-service",
+        "memtouch": "memtouch",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
