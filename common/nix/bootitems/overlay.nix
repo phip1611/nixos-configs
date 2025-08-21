@@ -6,6 +6,7 @@ final: prev:
   phip1611 = (prev.phip1611 or { }) // {
     bootitems = import ./default.nix {
       pkgs = final;
+      libutil = final.phip1611.libutil;
     };
   };
 }

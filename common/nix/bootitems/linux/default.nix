@@ -100,7 +100,7 @@ let
     in
     aliasesToMinimalKernelAttrs;
 
-  initrds =
+  initrds' =
     let
       buildInitrd = pkgs.callPackage ./build-initrd.nix;
       # Something overloads packages from busybox and break the init shell.
@@ -138,22 +138,12 @@ let
       default = buildInitrd {
         additionalPackages = commonConveniencePackages;
       };
-      vmms = buildInitrd {
-        additionalPackages =
-          commonConveniencePackages
-          ++ (with pkgs; [
-            cloud-hypervisor
-            qemu
-          ]);
-      };
     };
-in
-{
-  inherit kernels;
-  # initrds enriched with embedded kernels and initrds.
-  initrds = initrds // {
+
+  # initrds that reference/extend other base initrds.
+  initrds = initrds' // {
     # initrd with VMMs and bootfiles for nested virtualization.
-    vmms = initrds.default.override (old: {
+    vmms = initrds'.default.override (old: {
       additionalPackages =
         (old.additionalPackages or [ ])
         ++ (with pkgs; [
@@ -184,4 +174,10 @@ in
       ];
     });
   };
+in
+{
+  inherit
+    kernels
+    initrds
+    ;
 }
