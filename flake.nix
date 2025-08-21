@@ -109,9 +109,6 @@
     in
     flake-parts.lib.mkFlake { inherit inputs; } {
       flake = {
-        # Make the inputs easily usable for external scripting.
-        inherit inputs;
-
         # Here I simply re-export the library files without initializing
         # it with the nixpkgs input, i.e., this is no "per system" attribute.
         #
