@@ -1,8 +1,6 @@
 # nixpkgs fallback is only here for quick prototyping. See README.md.
 {
   pkgs ? builtins.trace "WARN: Using nixpkgs from ./nixpkgs.nix" (import ./nixpkgs.nix),
-  # Flake inputs
-  inputs ? { },
 }:
 
 let
@@ -13,7 +11,7 @@ let
     # packagesTests = import ./packages/tests.nix { inherit pkgs; };
   };
   libutil = import ./libutil { inherit pkgs; };
-  bootitems = import ./bootitems { inherit libutil inputs pkgs; };
+  bootitems = import ./bootitems { inherit libutil pkgs; };
   packages = import ./packages { inherit pkgs; };
 in
 {

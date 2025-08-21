@@ -3,10 +3,9 @@
 {
   pkgs ? builtins.trace "WARN: Using nixpkgs from NIX_PATH" (import <nixpkgs> { }),
   libutil ? import ../libutil { inherit pkgs; },
-  inputs,
 }:
 
 {
-  linux = import ./linux { inherit libutil inputs pkgs; };
+  linux = import ./linux { inherit libutil pkgs; };
   tinytoykernel = pkgs.callPackage ./tinytoykernel { };
 }
