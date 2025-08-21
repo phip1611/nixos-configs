@@ -1,4 +1,7 @@
-{ pkgs }:
+{
+  pkgs,
+  libutil,
+}:
 
 let
   lib = pkgs.lib;
@@ -100,7 +103,7 @@ let
     in
     aliasesToMinimalKernelAttrs;
 
-  initrds =
+  initrds' =
     let
       buildInitrd = pkgs.callPackage ./build-initrd.nix;
       # Something overloads packages from busybox and break the init shell.
@@ -138,22 +141,12 @@ let
       default = buildInitrd {
         additionalPackages = commonConveniencePackages;
       };
-      vmms = buildInitrd {
-        additionalPackages =
-          commonConveniencePackages
-          ++ (with pkgs; [
-            cloud-hypervisor
-            qemu
-          ]);
-      };
     };
-in
-{
-  inherit kernels;
-  # initrds enriched with embedded kernels and initrds.
-  initrds = initrds // {
+
+  # initrds that reference/extend other base initrds.
+  initrds = initrds' // {
     # initrd with VMMs and bootfiles for nested virtualization.
-    vmms = initrds.default.override (old: {
+    vmms = initrds'.default.override (old: {
       additionalPackages =
         (old.additionalPackages or [ ])
         ++ (with pkgs; [
@@ -175,7 +168,7 @@ in
       additionalFiles = (old.additionalFiles or [ ]) ++ [
         {
           symlink = "/etc/bootitems/initrd";
-          object = initrds.default;
+          object = initrds.minimal;
         }
         {
           symlink = "/etc/bootitems/kernel";
@@ -184,4 +177,68 @@ in
       ];
     });
   };
+
+  # Combines all kernels in a single derivation as vmlinux and bzImage with a
+  # file name reflecting the version number (x.y or x.y.z).
+  #
+  # The attribute name corresponds to the file name.
+  kernelsCombined =
+    let
+      # Function that extracts bzImage and vmlinux from a kernel drv into a new
+      # drv.
+      kernelDrvToArtifacts =
+        name: kernel:
+        let
+          bzImage = "${kernel}/bzImage";
+          vmlinux = "${libutil.builders.extractVmlinux kernel}/vmlinux";
+        in
+        pkgs.runCommand "${name}-artifacts" { } ''
+          mkdir $out
+          cp ${bzImage} $out/${name}.bzImage
+          cp ${vmlinux} $out/${name}.vmlinux
+        '';
+    in
+    lib.pipe kernels [
+      (lib.mapAttrsToList (name: kernel: kernelDrvToArtifacts name kernel))
+      (
+        drvs:
+        pkgs.symlinkJoin {
+          name = "kernels-combined";
+          paths = drvs;
+        }
+      )
+    ];
+
+  # Combines all initrds in a single derivation.
+  #
+  # The attribute name corresponds to the file name.
+  initrdsCombined =
+    let
+      # Function that extracts bzImage and vmlinux from a kernel drv into a new
+      # drv.
+      renameInitrd =
+        name: initrd:
+        pkgs.runCommand "${name}-artifacts" { } ''
+          mkdir $out
+          cp ${initrd}/initrd $out/initrd_${name}
+        '';
+    in
+    lib.pipe initrds [
+      (lib.mapAttrsToList (name: initrd: renameInitrd name initrd))
+      (
+        drvs:
+        pkgs.symlinkJoin {
+          name = "initrds-combined";
+          paths = drvs;
+        }
+      )
+    ];
+in
+{
+  inherit
+    kernels
+    kernelsCombined
+    initrdsCombined
+    initrds
+    ;
 }

@@ -183,13 +183,19 @@
           # and initialize it manually.
           pkgs = initNixpkgs inputs.nixpkgs system;
 
-          commonNix = {
-            # All unit and integration tests as combined derivation.
-            allTests = (import commonSrc.nix.all { inherit pkgs; }).allTests;
-            bootitems = import commonSrc.nix.bootitems { inherit pkgs; };
-            libutil = import commonSrc.nix.libutil { inherit pkgs; };
-            packages = import commonSrc.nix.packages { inherit pkgs; };
-          };
+          commonNix =
+            let
+              commonAll = (import commonSrc.nix.all { inherit pkgs; });
+            in
+            {
+              inherit (commonAll)
+                # All unit and integration tests as combined derivation.
+                allTests
+                bootitems
+                libutil
+                packages
+                ;
+            };
         in
         {
           # $ nix build .\#checks.x86_64-linux.<attribute-name> or
@@ -246,6 +252,14 @@
             commonNix.packages
             // {
               inherit listNixosOptions;
+              bootitems-combined = pkgs.symlinkJoin {
+                name = "bootitems-combined";
+                paths = [
+                  commonNix.bootitems.linux.kernelsCombined
+                  commonNix.bootitems.linux.initrdsCombined
+                  commonNix.bootitems.tinytoykernel
+                ];
+              };
             };
         };
     };
