@@ -27,9 +27,6 @@
 
     wambo-web.url = "github:phip1611/wambo-web";
     wambo-web.inputs.nixpkgs.follows = "nixpkgs";
-
-    memtouch.url = "git+ssh://git@github.com/cobaltcore-dev/memtouch?ref=main";
-    memtouch.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -81,7 +78,7 @@
       initCommonNix = pkgs: {
         # All unit and integration tests as combined derivation.
         allTests = (import commonSrc.nix.all { inherit pkgs; }).allTests;
-        bootitems = import commonSrc.nix.bootitems { inherit inputs pkgs; };
+        bootitems = import commonSrc.nix.bootitems { inherit pkgs; };
         libutil = import commonSrc.nix.libutil { inherit pkgs; };
         packages = import commonSrc.nix.packages { inherit pkgs; };
       };
