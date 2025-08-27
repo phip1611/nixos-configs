@@ -25,11 +25,29 @@ in
       programs.zsh = {
         enable = true;
         package = pkgsUnstable.zsh;
-
-        # TODO wait for https://github.com/nix-community/home-manager/pull/7333
-        initContent = ''
-          setopt INC_APPEND_HISTORY
-        '';
+        # Preferred over the explicit NixOS options:
+        # https://github.com/nix-community/home-manager/pull/7333#issuecomment-3225914278
+        #
+        # Context:
+        # - https://www.soberkoder.com/better-zsh-history/
+        # - https://zsh.sourceforge.io/Doc/Release/Options.html
+        # - https://zsh.sourceforge.io/Doc/Release/Parameters.html
+        setOptions = lib.mapAttrsToList (name: enabled: if enabled then name else "NO_${name}") {
+          APPEND_HISTORY = false;
+          EXTENDED_HISTORY = true;
+          HIST_EXPIRE_DUPS_FIRST = false;
+          HIST_FCNTL_LOCK = true;
+          HIST_FIND_NO_DUPS = false;
+          HIST_IGNORE_ALL_DUPS = false;
+          HIST_IGNORE_DUPS = true;
+          HIST_IGNORE_SPACE = true;
+          HIST_SAVE_NO_DUPS = false;
+          INC_APPEND_HISTORY = true;
+          # I prefer "INC_APPEND_HISTORY" over this, as I frequently work
+          # with multiple terminals simultaneously that should keep their own
+          # history as long as they are running.
+          SHARE_HISTORY = false;
+        };
 
         # Context:
         # - https://www.soberkoder.com/better-zsh-history/
@@ -44,33 +62,13 @@ in
             saveLines = 200000; # This results in roughly 1-6 MiB memory usage.
           in
           {
-            # INC_APPEND_HISTORY
-            # Append new commands immediately to the hist file.
-            # TODO wait for https://github.com/nix-community/home-manager/pull/7333
-            # appendInc = true;
-            # EXTENDED_HISTORY
-            # Save timestamp into the history file.
-            extended = true;
-            # HIST_IGNORE_DUPS
-            # Don't push commands to the history if they are a duplicate of the
-            # previous command.
-            ignoreDups = true;
-            # HIST_IGNORE_ALL_DUPS
-            # Don't remove old duplicates (not previous command) from history.
-            ignoreAllDups = false;
-            # HIST_IGNORE_SPACE
-            # Do not enter command lines into the history list if the first
-            # character is a space.
-            ignoreSpace = true;
+
             # SAVEHIST
             # Number of history lines to save on disk.
             save = saveLines;
             # HISTSIZE
             # Number of history lines to load into memory.
             size = saveLines;
-            # SHARE_HISTORY
-            # I'm using the mutually exclusive alternative INC_APPEND_HISTORY.
-            share = false;
           };
 
         oh-my-zsh = {
