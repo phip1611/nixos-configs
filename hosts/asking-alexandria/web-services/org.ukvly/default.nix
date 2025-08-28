@@ -1,3 +1,4 @@
+# dd-systems-meetup website
 {
   config,
   lib,
@@ -7,13 +8,8 @@
 }:
 
 let
-  nginxConf = {
-    enableACME = true;
-    http2 = true;
-    http3 = true;
-    quic = true; # also needed when http3 = true
-    # Upgrade HTTP to HTTPS
-    forceSSL = true;
+  commonCfg = import ../nginx-common-host-config.nix;
+  nginxConf = commonCfg // {
     root = "${dd-systems-meetup-website}/public";
     locations."/".tryFiles = "$uri $uri/ /index.html";
   };
