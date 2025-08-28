@@ -11,7 +11,15 @@
 }:
 
 let
-  limineX = limine.override ({ enableAll = true; });
+  # Limine with boot artifacts for x86 and x86_64.
+  limineX = limine.override ({
+    biosSupport = true;
+    buildCDs = true;
+    targets = [
+      "i686"
+      "x86_64"
+    ];
+  });
 
   scriptCheckIsMultiboot = writeShellScriptBin "check-is-multiboot" ''
     set -euo pipefail
