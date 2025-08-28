@@ -13,8 +13,8 @@
     ./de.wambo-web
     ./dev.phip1611.monitor
     ./dev.phip1611.nix-binary-cache
-    ./dev.phip1611.webp/img-to-webp-service.nix
-    ./org.ukvly/dd-systems-meetup.nix
+    ./dev.phip1611.webp
+    ./org.ukvly
   ];
 
   config = {
