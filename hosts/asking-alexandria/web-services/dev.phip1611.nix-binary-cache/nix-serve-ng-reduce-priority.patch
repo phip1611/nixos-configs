@@ -1,0 +1,13 @@
+diff --git a/src/Options.hs b/src/Options.hs
+index 029f402..385da8f 100644
+--- a/src/Options.hs
++++ b/src/Options.hs
+@@ -126,7 +126,7 @@ parsePriority =
+         (   Options.long "priority"
+         <>  Options.help "The priority of the cache (lower is higher priority)"
+         <>  Options.metavar "INTEGER"
+-        <>  Options.value 30
++        <>  Options.value 100
+         )
+
+ parseTimeout :: Parser Natural
