@@ -9,12 +9,12 @@ let
   cfg = config.phip1611.common.system;
 
   # Additional trusted binary caches. The default cache on `cache.nixos.org` is
-  # always added by default.
+  # always added by default and has a priority of 40.
   trustedBinaryCaches = [
     (
-      # nix-community: for example, the lanzaboote project.
+      # nix-community: for example, the lanzaboote project. priority is 41.
       {
-        url = "https://nix-community.cachix.org?priority=50";
+        url = "https://nix-community.cachix.org";
         key = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
       })
   ];
