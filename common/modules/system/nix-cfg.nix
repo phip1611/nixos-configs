@@ -8,14 +8,15 @@
 let
   cfg = config.phip1611.common.system;
 
-  # Additional trusted binary caches. The one from
-  # cache.nixos.org is always added by default.
+  # Additional trusted binary caches. The default cache on `cache.nixos.org` is
+  # always added by default.
   trustedBinaryCaches = [
-    # nix-community: for example, the lanzaboote project has its files there.
-    ({
-      url = "https://nix-community.cachix.org";
-      key = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
-    })
+    (
+      # nix-community: for example, the lanzaboote project.
+      {
+        url = "https://nix-community.cachix.org?priority=50";
+        key = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
+      })
   ];
 in
 {
@@ -47,8 +48,15 @@ in
         # keep-outputs = true;
         # keep-derivations = true;
 
-        # 256 MiB
-        download-buffer-size = 268435456;
+        # Faster downloads from Nix binary caches (higher parallelism)
+        download-buffer-size =
+          512 * 1024 * 1024 # 512 MiB
+        ;
+        # 128 instead of 25 parallel connections for faster downloads
+        http-connections = 128 # default is 25 _
+        ;
+        max-substitution-jobs = 128 # default is 16
+        ;
 
         trusted-users = [
           "root"
