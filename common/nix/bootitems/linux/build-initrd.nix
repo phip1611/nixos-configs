@@ -10,9 +10,12 @@
 # `exit`, the system is powered off.
 
 {
-  pkgs,
+  # Packages
   bashInteractive,
   busybox,
+
+  # Helpers
+  callPackage,
   lib,
   makeInitrd,
   writeScript,
@@ -31,6 +34,8 @@
 }:
 
 let
+  acpidSetup = callPackage ./busybox-acpid.nix { };
+
   # The one and only shell (a bash shell) the user sees. Due to the nature of
   # how I use these initrds, the machine is gracefully shut down once the
   # shell is exited (`exit` or `CTRL+D`).
@@ -71,10 +76,10 @@ makeInitrd {
         export PATH=${
           lib.makeBinPath (
             additionalPackages
-            ++ (with pkgs; [
+            ++ [
               bashInteractive
               busybox
-            ])
+            ]
           )
         }
       '';
@@ -92,7 +97,7 @@ makeInitrd {
         echo 🎉 HELLO FROM PHIPS TINY LINUX 🎉
         echo =================================
 
-        mkdir -p /proc /sys /tmp /run /var
+        mkdir -p /proc /sys /tmp /run /var /var/log
         mount -t proc none /proc
         mount -t sysfs none /sys
         mount -t tmpfs none /tmp
@@ -100,6 +105,9 @@ makeInitrd {
 
         # Create device nodes.
         mdev -s
+
+        # Setup acpid (for power-button events)
+        ${acpidSetup.setupScript}
       '';
     }
     # The shell that is invoked after the initial "ENTER" user prompt by
@@ -109,5 +117,6 @@ makeInitrd {
       object = initBashShell;
     }
   ]
+  ++ acpidSetup.initrdContents
   ++ additionalFiles;
 }
