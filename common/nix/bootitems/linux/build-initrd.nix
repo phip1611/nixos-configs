@@ -17,7 +17,7 @@
   # Helpers
   callPackage,
   lib,
-  makeInitrd,
+  makeInitrdNG,
   writeScript,
   writers,
 
@@ -26,8 +26,8 @@
   # Additional files in initrd.
   # ```
   # {
-  #   symlink = "/location";
-  #   object = some_derivation;
+  #   target = "/location";
+  #   source = some_derivation;
   # }
   # ```
   additionalFiles ? [ ],
@@ -56,7 +56,8 @@ let
     poweroff -f
   '';
 in
-makeInitrd {
+makeInitrdNG {
+  compressor = "zstd";
   contents = [
     # Forwards the init-responsibility to "init" of busybox.
     #
@@ -64,15 +65,15 @@ makeInitrd {
     # init process to do. For example, this is needed to prevent SIGINIT
     # resulting in a "attempted to kill init" kernel panic.
     {
-      symlink = "/init";
-      object = writers.writeBash "call-busybox-init" ''
+      target = "/init";
+      source = writers.writeBash "call-busybox-init" ''
         exec ${busybox}/bin/init
       '';
     }
     # Common shell configuration/source.
     {
-      symlink = "/etc/profile";
-      object = writeScript "configure-shell-env" ''
+      target = "/etc/profile";
+      source = writeScript "configure-shell-env" ''
         export PATH=${
           lib.makeBinPath (
             additionalPackages
@@ -89,8 +90,8 @@ makeInitrd {
     # This file is called by the init tool of busybox. By convention, this
     # file is a shell script. See https://unix.stackexchange.com/a/56171/196386
     {
-      symlink = "/etc/init.d/rcS";
-      object = writers.writeBash "init-sys-fs-and-device-nodes" ''
+      target = "/etc/init.d/rcS";
+      source = writers.writeBash "init-sys-fs-and-device-nodes" ''
         source /etc/profile
 
         echo =================================
@@ -113,8 +114,8 @@ makeInitrd {
     # The shell that is invoked after the initial "ENTER" user prompt by
     # busybox's "init".
     {
-      symlink = "/bin/sh";
-      object = initBashShell;
+      target = "/bin/sh";
+      source = initBashShell;
     }
   ]
   ++ acpidSetup.initrdContents
