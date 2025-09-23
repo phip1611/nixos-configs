@@ -41,7 +41,6 @@ fn_restore_backup() {
 
 # Checks if we need to restore the backup.
 fn_need_restore() {
-  local WAS_TRUNCATED_THRESHOLD=100
   local RET_NEED_BACKUP_RESTORE=0
   local RET_NO_BACKUP_RESTORE=1
   local backup_size=0
@@ -65,7 +64,7 @@ fn_need_restore() {
   # We only need to restore the file when the file was truncated.
   echo "current history size=$current_size"
   echo "backup history size =$backup_size"
-  if [ "$current_size" -lt "$WAS_TRUNCATED_THRESHOLD" ] && [ "$current_size" -lt "$backup_size" ]; then
+  if [ "$current_size" -lt "$backup_size" ]; then
       return "$RET_NEED_BACKUP_RESTORE"
   else
       return "$RET_NO_BACKUP_RESTORE"
