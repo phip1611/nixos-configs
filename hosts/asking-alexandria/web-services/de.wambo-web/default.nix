@@ -13,6 +13,7 @@ in
 {
   services.nginx.virtualHosts."wambo-web.de" = commonCfg // {
     root = "${webApp}/share/wambo-web";
+    locations."/".tryFiles = "$uri $uri/ /index.html";
   };
 
 }
