@@ -138,7 +138,28 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "slidev-slides": "slidev-slides",
         "wambo-web": "wambo-web"
+      }
+    },
+    "slidev-slides": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1759310475,
+        "narHash": "sha256-gdBfFYPmd1ZotK5gxMWpMfuZHLtcdjIYksku6MLqvlo=",
+        "owner": "phip1611",
+        "repo": "slidev-slides",
+        "rev": "e792ac5d1f9b9a1892c252e62ca515bbec474994",
+        "type": "github"
+      },
+      "original": {
+        "owner": "phip1611",
+        "repo": "slidev-slides",
+        "type": "github"
       }
     },
     "wambo-web": {
