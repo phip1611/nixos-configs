@@ -1,3 +1,5 @@
+# Serve all talks from `slidev-slides` under `<talk>.slides.phip1611.dev`.
+# This adds new talks dynamically, as soon as a new `talk-` package exists.
 {
   config,
   lib,
@@ -11,29 +13,22 @@ let
   commonCfg = import ../nginx-common-host-config.nix;
   slideWebApps = slidev-slides.packages.${pkgs.system}.default;
 
-  slideDefs = [
-    {
-      subdomain = "eurorust-2025";
-      root = "${slideWebApps}/2025-10-10-eurorust-minimal-rust-kernel";
-    }
-  ];
+  # Attrs with all slides from all talks in `slug => drv` format.
+  allSlides = lib.filterAttrs (
+    name: _value: lib.hasPrefix "talk-" name
+  ) slidev-slides.packages.${pkgs.system};
 
-  # Generates a single virtual host definition for `services.nginx`.
-  genVhost =
-    slideDef:
-    let
-      vhost = "${slideDef.subdomain}.${baseDomain}";
-    in
-    {
-      ${vhost} = commonCfg // {
-        inherit (slideDef) root;
-        locations."/".tryFiles = "$uri $uri/ /index.html";
-      };
+  # Generates a single virtual host definition for `services.nginx.virtualHosts.*`.
+  genVhost = slideDrv: {
+    "${slideDrv.meta.slug}.${baseDomain}" = commonCfg // {
+      root = "${slideDrv}";
+      locations."/".tryFiles = "$uri $uri/ /index.html";
     };
+  };
 
-  # Accumulates an attribute set with all vhost definitions.
-  genVhosts = slideDefs: lib.mergeAttrsList (map genVhost slideDefs);
+  # vhost definitions for `services.nginx.virtualHosts.*`..
+  vhostDefinitions = lib.concatMapAttrs (_name: slideDrv: genVhost slideDrv) allSlides;
 in
 {
-  services.nginx.virtualHosts = genVhosts slideDefs;
+  services.nginx.virtualHosts = vhostDefinitions;
 }
