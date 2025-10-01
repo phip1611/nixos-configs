@@ -11,7 +11,6 @@
 let
   baseDomain = "slides.phip1611.dev";
   commonCfg = import ../nginx-common-host-config.nix;
-  slideWebApps = slidev-slides.packages.${pkgs.system}.default;
 
   # Attrs with all slides from all talks in `slug => drv` format.
   allSlides = lib.filterAttrs (
