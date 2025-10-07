@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1759744822,
-        "narHash": "sha256-USJ+aShonCQ65a2ztouky1LcFWBuD2rRPvnLjvyhO40=",
+        "lastModified": 1759752246,
+        "narHash": "sha256-QKX1dC8W2JvRHf4ynPbAV46Xzl/2kdiwpiv3yPj50lI=",
         "owner": "phip1611",
         "repo": "dd-systems-meetup-website",
-        "rev": "c4d88d278f57acb14fc1a2bf32164df6d86ea7dc",
+        "rev": "fdb9dacd33482034037e870b1774dd1d6ffd4f58",
         "type": "github"
       },
       "original": {
@@ -100,11 +100,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1759580034,
-        "narHash": "sha256-YWo57PL7mGZU7D4WeKFMiW4ex/O6ZolUS6UNBHTZfkI=",
+        "lastModified": 1759735786,
+        "narHash": "sha256-a0+h02lyP2KwSNrZz4wLJTu9ikujNsTWIC874Bv7IJ0=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "3bcc93c5f7a4b30335d31f21e2f1281cba68c318",
+        "rev": "20c4598c84a671783f741e02bf05cbfaf4907cff",
         "type": "github"
       },
       "original": {
@@ -149,11 +149,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1759660939,
-        "narHash": "sha256-jFiwr9yNR/MzC3bbP0rfTg2lSshStq+ts23g2J0epq0=",
+        "lastModified": 1759778013,
+        "narHash": "sha256-1BE/ZAHrbOkhAXdnDVQa/GVSdvipOKFKlDnKW1JxD8M=",
         "owner": "phip1611",
         "repo": "slidev-slides",
-        "rev": "114c73a68b9f4f9242f87eb3ac578f88eab54725",
+        "rev": "d58175bc0d0c8158502bd3b8288916b38f8d5436",
         "type": "github"
       },
       "original": {
