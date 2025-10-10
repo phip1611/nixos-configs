@@ -149,11 +149,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1759849206,
-        "narHash": "sha256-ZaXbXlpmWTM4wS3k2wPXcGk6wAbzPLVbappfF4f4jqE=",
+        "lastModified": 1760082245,
+        "narHash": "sha256-xegPXQRaaL+FDaXphaM7Np8KKD8uDWauVJMuDKGfB+k=",
         "owner": "phip1611",
         "repo": "slidev-slides",
-        "rev": "e6dba2ac71ea3b6bede04983d5c43ba9858257bf",
+        "rev": "4c7dd449ce4ea4bd2dfd192ee288f38c15e07664",
         "type": "github"
       },
       "original": {
