@@ -64,6 +64,7 @@ in
             gnumake
             grub2 # for grub-file
             ninja
+            perf
             valgrind
           ]
         );
