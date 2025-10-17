@@ -38,7 +38,6 @@ in
     withDevNix = lib.mkEnableOption "Include developer tools for Nix (formatter, deadnix, ...)";
     withGui = lib.mkEnableOption "Include GUI-based applications (desktop environment enabled)";
     withMedia = lib.mkEnableOption "Include tools to enable media (images, videos, ...)";
-    withPerf = lib.mkEnableOption "Include perf tooling for the current kernel";
     withPkgsJ4F = lib.mkEnableOption "Include just-for-fun packages (cowsay, lolcat, hollywood, ...)";
     withVmms = lib.mkEnableOption "Include VMMs (QEMU, Cloud Hypervisor)";
   };
