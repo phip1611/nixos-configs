@@ -3,7 +3,7 @@
 CFLAGS = -m64 -ffreestanding -nostdlib -O3 \
          -pedantic -Wall -Wshadow -Wpointer-arith -Wcast-qual \
          -Wstrict-prototypes -Wmissing-prototypes \
-         -mcmodel=large \
+         -static -mcmodel=large \
          -Isrc/include \
          -T src/link.lds
 
