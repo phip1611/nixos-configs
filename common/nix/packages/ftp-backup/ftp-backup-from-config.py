@@ -12,6 +12,21 @@ import json
 import os
 
 from pathlib import Path
+from typing import TypedDict, List
+
+
+class FTPHostConfig(TypedDict):
+    """
+    Configuration of an FTP host to back up including a list of directories.
+    The default configuration should be set to "/".
+    """
+
+    host: str
+    user: str
+    # use `pass_` because `pass` is a reserved keyword
+    pass_: str
+    dirs: List[Path]
+    description: str
 
 
 def generate_backup_path(host: str, description: str) -> Path:
@@ -24,13 +39,10 @@ def generate_backup_path(host: str, description: str) -> Path:
     # Get current timestamp in the format yyyy-mm-dd
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    # Construct the path
     backup_path = Path.home() / "Downloads" / "FTP-Backups"
     if not backup_path.exists():
         print(f"Creating directory: {backup_path}")
         backup_path.mkdir()
-
-    # Create "FTP-Backups" in case it isn't there yet
 
     final_path = backup_path / f"{timestamp}_{host}_{description}"
 
@@ -51,22 +63,33 @@ def get_user_config_file() -> Path:
     return path
 
 
-def read_config(file_path: Path):
+class ConfigError(Exception):
+    """Raised when the configuration file is missing or invalid."""
+
+    pass
+
+
+def read_config(file_path: Path) -> List[FTPHostConfig]:
     """
     Reads the configuration file and returns a list with FTP hosts to back up.
     :param file_path:
     :return:
     """
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             config_data = json.load(f)
-            return config_data
-    except FileNotFoundError:
-        print(f"File not found: {file_path}")
-        return None
-    except json.JSONDecodeError:
-        print(f"Error decoding JSON in file: {file_path}")
-        return None
+
+    except FileNotFoundError as e:
+        raise ConfigError(f"Configuration file not found: {file_path}") from e
+    except json.JSONDecodeError as e:
+        raise ConfigError(f"Invalid JSON in configuration file: {file_path}") from e
+
+    # Normalize reserved keyword
+    for entry in config_data:
+        if "pass" in entry:
+            entry["pass_"] = entry.pop("pass")
+
+    return config_data
 
 
 def main():
@@ -85,7 +108,7 @@ def main():
         # processlist.
         env = os.environ.copy()
         backup_path = generate_backup_path(host["host"], host["description"])
-        env["FTP_PASS"] = host["pass"]
+        env["FTP_PASS"] = host["pass_"]
         subprocess.run(
             [
                 "ftp-backup",
