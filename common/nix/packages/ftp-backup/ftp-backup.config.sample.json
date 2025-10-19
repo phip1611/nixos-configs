@@ -5,7 +5,8 @@
         "pass": "123PASS",
         "dirs": [
             "/"
-        ]
+        ],
+        "description": "file-path-friendly-description--wordpress-abc"
     },
     {
         "host": "3132.ftphost.com",
@@ -13,6 +14,7 @@
         "pass": "123PASS",
         "dirs": [
             "/"
-        ]
+        ],
+        "description": "foobar.tld"
     }
 ]
