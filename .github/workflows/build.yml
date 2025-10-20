@@ -22,20 +22,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: cachix/install-nix-action@v31
       - name: Check Nix formatting
-        run: |
-          echo "nix version: $(nix --version)"
-          echo "nix fmt version: $(nix fmt -- --version)"
-
-          set +e
-          nix fmt
-
-          # "nix fmt" doesn't has a convenient `--check` option, therefore we
-          # use `git diff`
-          git --no-pager diff
-
-          # Report error, fail pipeline job
-          set -e
-          git --no-pager diff --quiet
+        run: nix fmt -- --ci
 
   # Nix flake checks. This runs on GitHub infrastructure and not by remote
   # builder (hosted by Netcup), as there is no nested virtualization available.
