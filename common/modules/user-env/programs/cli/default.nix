@@ -87,7 +87,7 @@ in
         coreutils # default package; here only for completeness
         curlFull # Curl with HTTP3 support and more
         dig # dig and nslookup
-        du-dust
+        dust
         eza # used to be exa
         fd # better find
         file
@@ -112,7 +112,7 @@ in
         ouch # cool convenient (de)compression tool
         paging-calculator
         pciutils # lspci
-        poppler_utils # for pdfunite
+        poppler-utils # for pdfunite
         python3Toolchain
         ripgrep
         strace
