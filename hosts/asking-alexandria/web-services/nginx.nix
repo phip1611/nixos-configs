@@ -39,6 +39,8 @@ in
   services.nginx.recommendedGzipSettings = true;
   services.nginx.recommendedZstdSettings = true;
 
+  services.nginx.serverNamesHashBucketSize = 128;
+
   security.acme = {
     acceptTerms = true;
     defaults.email = "phip1611@gmail.com";
