@@ -1,3 +1,4 @@
+# CLI tools for development.
 {
   config,
   lib,
@@ -10,7 +11,7 @@ let
   pkgsUnstable = import inputs.nixpkgs-unstable {
     system = pkgs.system;
   };
-  python3Toolchain = import ./python3-toolchain.nix { pkgs = pkgsUnstable; };
+  python3Toolchain = import ../_python3-toolchain.nix { pkgs = pkgsUnstable; };
 in
 {
   config = lib.mkIf cfg.enable (
@@ -20,8 +21,7 @@ in
           with pkgsUnstable;
           [
             jdk
-            maven # TODO, JDK might be not needed, as the maven derivation
-            # already comes with a JDK.
+            maven
           ]
         );
       })
