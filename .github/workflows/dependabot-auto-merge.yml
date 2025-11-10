@@ -1,4 +1,4 @@
-# We auto-merge all dependabot updates as soon as the CI are met.
+# We auto-merge all dependabot updates as soon as the CI requirements are met.
 #
 # More info: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
 
