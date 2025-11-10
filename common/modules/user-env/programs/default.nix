@@ -20,7 +20,5 @@
   imports = [
     ./cli
     ./gui
-    ./dev.nix
-    ./media.nix
   ];
 }

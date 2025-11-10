@@ -1,4 +1,5 @@
-# Some inputs refers to flake inputs.
+# All CLI tools.
+
 {
   config,
   lib,
@@ -14,12 +15,14 @@ let
       allowUnfree = true;
     };
   };
-  python3Toolchain = import ../python3-toolchain.nix { inherit pkgs; };
+  python3Toolchain = import ./_python3-toolchain.nix { inherit pkgs; };
 in
 {
   imports = [
+    ./dev
     ./git.nix
     ./micro.nix
+    ./media.nix
     ./zsh.nix
   ];
   config = lib.mkIf cfg.enable {
