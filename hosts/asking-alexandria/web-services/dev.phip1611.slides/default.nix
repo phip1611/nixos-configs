@@ -15,7 +15,7 @@ let
   # Attrs with all slides from all talks in `slug => drv` format.
   allSlides = lib.filterAttrs (
     name: _value: lib.hasPrefix "talk-" name
-  ) slidev-slides.packages.${pkgs.system};
+  ) slidev-slides.packages.${pkgs.stdenv.hostPlatform.system};
 
   # Generates a single virtual host definition for `services.nginx.virtualHosts.*`.
   genVhost = slideDrv: {

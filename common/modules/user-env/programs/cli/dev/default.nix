@@ -9,7 +9,7 @@
 let
   cfg = config.phip1611.common.user-env;
   pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.system;
+    system = pkgs.stdenv.hostPlatform.system;
   };
   python3Toolchain = import ../_python3-toolchain.nix { pkgs = pkgsUnstable; };
 in

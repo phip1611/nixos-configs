@@ -8,7 +8,7 @@
 
 let
   commonCfg = import ../nginx-common-host-config.nix;
-  webApp = wambo-web.packages.${pkgs.system}.default;
+  webApp = wambo-web.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   services.nginx.virtualHosts."wambo-web.de" = commonCfg // {
