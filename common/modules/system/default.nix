@@ -39,7 +39,7 @@ in
     lib.mkMerge [
       {
         # Prevent frequent "/boot volume full" errors. Limit this to a sane small
-        # number. Something small is suffucient due to my extensive git versioning.
+        # number. Something small is sufficient due to my extensive git versioning.
         boot.loader.grub.configurationLimit = 7;
         boot.loader.systemd-boot.configurationLimit = 7;
 
