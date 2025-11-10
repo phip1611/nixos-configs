@@ -7,7 +7,7 @@
 
 let
   pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.system;
+    system = pkgs.stdenv.hostPlatform.system;
   };
 in
 {
@@ -37,7 +37,6 @@ in
 
   services.nginx.recommendedBrotliSettings = true;
   services.nginx.recommendedGzipSettings = true;
-  services.nginx.recommendedZstdSettings = true;
 
   services.nginx.serverNamesHashBucketSize = 128;
 

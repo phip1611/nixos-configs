@@ -10,7 +10,7 @@
 let
   cfg = config.phip1611.common.user-env;
   pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.system;
+    system = pkgs.stdenv.hostPlatform.system;
     config = {
       allowUnfree = true;
     };
@@ -139,9 +139,6 @@ in
         zip
         zsh
       ])
-      # Dedicated feature-gate as sometimes, build problems with fresh
-      # (or old) kernels occur.
-      ++ lib.optional cfg.withPerf config.boot.kernelPackages.perf
       # Don't waste disk space when not needed.
       ++ lib.optionals cfg.withPkgsJ4F (
         with pkgsUnstable;
