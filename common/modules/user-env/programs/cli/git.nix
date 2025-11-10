@@ -28,17 +28,24 @@ in
   };
   config = lib.mkIf cfg.enable {
     home-manager.users."${cfg.username}" = {
+      programs.delta = {
+        # Enable the git-delta pager.
+        enable = true;
+        enableGitIntegration = true;
+        options = {
+          features = "side-by-side line-numbers decorations";
+          whitespace-error-style = "22 reverse";
+          paging = "always";
+          decorations = {
+            commit-decoration-style = "bold yellow box ul";
+            file-style = "bold yellow ul";
+            file-decoration-style = "none";
+          };
+        };
+      };
       programs.git = {
         enable = true;
         package = pkgsUnstable.git;
-        userName = cfg.git.username;
-        userEmail = cfg.git.email;
-        aliases = {
-          hist = "log --graph --decorate --oneline";
-          hist2 = "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
-          hist2all = "hist2 --all";
-          list-remotes = "! git remote | xargs -I {} sh -c \"echo -n '{} - ' && git remote get-url {}\"";
-        };
         ignores = [
           ".direnv/"
           ".idea/"
@@ -46,33 +53,29 @@ in
           ".vscode/"
           "cmake-build-*/"
         ];
-        extraConfig = {
-          core = {
-            editor = "micro";
+        settings = {
+          aliases = {
+            hist = "log --graph --decorate --oneline";
+            hist2 = "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
+            hist2all = "hist2 --all";
+            list-remotes = "! git remote | xargs -I {} sh -c \"echo -n '{} - ' && git remote get-url {}\"";
           };
-          pull = {
-            rebase = true;
-          };
-          diff = {
-            colorMoved = "default";
-          };
-          init = {
-            defaultBranch = "main";
-          };
-        };
-        # Enable the git-delta pager.
-        delta = {
-          enable = true;
-          options = {
-            features = "side-by-side line-numbers decorations";
-            whitespace-error-style = "22 reverse";
-            paging = "always";
-            decorations = {
-              commit-decoration-style = "bold yellow box ul";
-              file-style = "bold yellow ul";
-              file-decoration-style = "none";
+          extraConfig = {
+            core = {
+              editor = "micro";
+            };
+            pull = {
+              rebase = true;
+            };
+            diff = {
+              colorMoved = "default";
+            };
+            init = {
+              defaultBranch = "main";
             };
           };
+          user.name = cfg.git.username;
+          user.email = cfg.git.email;
         };
         lfs.enable = true; # Enable "git lfs <cmd>"
       };
