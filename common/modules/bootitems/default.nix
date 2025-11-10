@@ -11,7 +11,7 @@ let
   libutil = pkgs.phip1611.libutil;
 
   pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.system;
+    system = pkgs.stdenv.hostPlatform.system;
   };
 
   tinyToyKernelElf64 = libutil.builders.flattenDrv {
