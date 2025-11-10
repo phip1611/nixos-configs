@@ -30,6 +30,7 @@ in
           with pkgsUnstable;
           [
             nodejs
+            pnpm
             yarn
           ]
         );
@@ -57,6 +58,7 @@ in
             gcc
             gdb
             git
+            gh # GitHub CLI
             gitlab-timelogs
             gitui
             gnumake
