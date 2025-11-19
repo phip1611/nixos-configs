@@ -10,7 +10,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./wifi-hardware.nix
   ];
 
   phip1611 = {
@@ -23,10 +22,25 @@
     };
   };
 
-  # The required external driver (no upstream driver) does not (always)
-  # compile for the latest kernel. Therefore, we use the freshest LTS kernel
-  # that works.
-  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_12;
+  # Since 6.17, the special WiFi hardware I'm using should work since 6.17.
+  boot.kernelPackages = lib.mkForce (
+    if builtins.compareVersions pkgs.linuxPackages.kernel.version "6.17" >= 0 then
+      pkgs.linuxPackages
+    else
+      pkgs.linuxPackages_latest
+  );
+
+  assertions = [
+    (
+      let
+        version = config.boot.kernelPackages.kernel.version;
+      in
+      {
+        assertion = builtins.compareVersions version "6.17" >= 0;
+        message = "My WiFi dongles only work with upstream Linux >= 6.17 (is ${version})";
+      }
+    )
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
