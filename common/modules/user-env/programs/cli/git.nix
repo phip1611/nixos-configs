@@ -54,10 +54,9 @@ in
           "cmake-build-*/"
         ];
         settings = {
-          aliases = {
+          alias = {
             hist = "log --graph --decorate --oneline";
             hist2 = "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
-            hist2all = "hist2 --all";
             list-remotes = "! git remote | xargs -I {} sh -c \"echo -n '{} - ' && git remote get-url {}\"";
           };
           extraConfig = {
