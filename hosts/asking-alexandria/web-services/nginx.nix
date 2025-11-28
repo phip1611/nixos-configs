@@ -5,11 +5,6 @@
   ...
 }@inputs:
 
-let
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
-in
 {
   networking.firewall = {
     enable = true;
@@ -28,7 +23,7 @@ in
   users.users.nginx.extraGroups = [ "acme" ];
 
   services.nginx.enable = true;
-  services.nginx.package = pkgsUnstable.nginxQuic;
+  services.nginx.package = pkgs.nginxQuic;
 
   services.nginx.recommendedOptimisation = true;
   services.nginx.recommendedTlsSettings = true;
