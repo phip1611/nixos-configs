@@ -11,7 +11,7 @@ jobs:
     name: run "listNixosOptions" utility
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
       - run: nix run .\#listNixosOptions
 
@@ -19,7 +19,7 @@ jobs:
     name: Check Nix formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
       - name: Check Nix formatting
         run: nix fmt -- --ci
@@ -33,7 +33,7 @@ jobs:
     name: nix flake check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
         # Performs some basic checks of the NixOS system configurations and runs
         # all checks.
@@ -55,7 +55,7 @@ jobs:
       CI_BUILDER_PRIV_KEY: ${{ secrets.CI_BUILDER_PRIV_KEY }}
       REMOTE_CI_PWD: /tmp/github-ci-run--${{ github.EVENT_NAME }}--${{ github.REF_TYPE }}--${{ github.RUN_ID }}--${{ github.RUN_ATTEMPT }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         # Utilize the GitHub-specific local git repository so we do not have to
         # replicate any implementation details for the remote CI builder's
         # project checkout.
