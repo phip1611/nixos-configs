@@ -34,7 +34,10 @@
         };
       };
       nix-binary-cache.enable = true;
-      services.zsh-history-backup.enable = true;
+      services = {
+        flake-prefetch.enable = true;
+        zsh-history-backup.enable = true;
+      };
     };
 
     nix = {

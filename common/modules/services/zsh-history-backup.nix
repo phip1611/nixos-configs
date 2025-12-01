@@ -34,7 +34,7 @@ in
         ExecStart = "${lib.getExe pkg}";
       };
     };
-    systemd.user.timers.zsh-history-backup-update = {
+    systemd.user.timers.zsh-history-backup = {
       wantedBy = [ "timers.target" ];
       timerConfig = {
         OnBootSec = "0m";
