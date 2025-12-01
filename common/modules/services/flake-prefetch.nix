@@ -21,7 +21,7 @@ in
     enable = lib.mkEnableOption "Enable Nix flake-prefetch user service";
     devShells = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      description = "List of Nix dev shells to prefetch";
+      description = "List of Nix dev shells to prefetch using `nix develop`. Like the `flakes` option but including the shell name.";
       default = [
         "github:phip1611/nixos-configs#default"
       ];
@@ -31,7 +31,7 @@ in
     };
     flakes = lib.mkOption {
       type = lib.types.listOf lib.types.singleLineStr;
-      description = "Nix flake URLs to prefetch";
+      description = "List of URLs that should be prefetched using `nix flake`. This includes each flake's dependencies and works for non-flake targets (such as Tarballs).";
       default = [
         "github:NixOS/nixpkgs?ref=nixos-${config.system.nixos.release}"
         "github:NixOS/nixpkgs?ref=nixpkgs-unstable"
