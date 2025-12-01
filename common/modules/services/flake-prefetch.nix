@@ -71,6 +71,8 @@ in
       path = [
         config.nix.package
         pkgs.bash
+        pkgs.git
+        pkgs.openssh # for git+ssh dependencies
       ];
       serviceConfig = {
         Type = "oneshot";
