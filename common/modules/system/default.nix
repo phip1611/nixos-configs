@@ -31,7 +31,7 @@ in
       withAutoUpgrade = lib.mkEnableOption "Enable automatic system upgrades from this flake on GitHub";
       withBleedingEdgeLinux = lib.mkEnableOption "Enable bleeding edge Linux version and configs";
       withDockerRootless = lib.mkEnableOption "Enable rootless Docker";
-      withSecureDns = lib.mkEnableOption "Enable secure DNS (DNSSec, DoH, DoT)";
+      withSecureDns = lib.mkEnableOption "Enable secure DNS (DNSSec, DoH)";
     };
   };
 

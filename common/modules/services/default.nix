@@ -12,6 +12,7 @@
 {
   imports = [
     ./ddns-update.nix
+    ./flake-prefetch.nix
     ./zsh-history-backup.nix
   ];
 }
