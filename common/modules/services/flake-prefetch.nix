@@ -82,7 +82,7 @@ in
     systemd.user.timers.flake-prefetch = {
       wantedBy = [ "timers.target" ];
       timerConfig = {
-        OnBootSec = "5m";
+        OnBootSec = "0m";
         OnUnitActiveSec = "${toString cfg.intervalMinutes}m";
         Unit = "flake-prefetch.service";
       };
