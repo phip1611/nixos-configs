@@ -31,6 +31,9 @@ in
           url = "github:NixOS/nixpkgs?ref=nixpkgs-unstable";
         }
         {
+          url = "github:NixOS/nixpkgs?ref=nixos-unstable";
+        }
+        {
           url = "github:nix-community/home-manager?ref=release-${config.system.nixos.release}";
         }
         {
