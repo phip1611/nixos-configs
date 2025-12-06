@@ -19,31 +19,37 @@ in
 {
   options.phip1611.services.flake-prefetch = {
     enable = lib.mkEnableOption "Enable Nix flake-prefetch user service";
-    devShells = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      description = "List of Nix dev shells to prefetch using `nix develop`. Like the `flakes` option but including the shell name.";
-      default = [
-        "github:phip1611/nixos-configs#default"
-      ];
-      example = [
-        "github:phip1611/nixos-configs#default"
-      ];
-    };
     flakes = lib.mkOption {
-      type = lib.types.listOf lib.types.singleLineStr;
-      description = "List of URLs that should be prefetched using `nix flake`. This includes each flake's dependencies and works for non-flake targets (such as Tarballs).";
+      type = lib.types.listOf (
+        lib.types.submodule (import ./flake-prefetch-options.nix { inherit config lib; })
+      );
       default = [
-        "github:NixOS/nixpkgs?ref=nixos-${config.system.nixos.release}"
-        "github:NixOS/nixpkgs?ref=nixpkgs-unstable"
-        "github:nix-community/home-manager?ref=release-${config.system.nixos.release}"
-        "github:phip1611/nixos-configs"
+        {
+          url = "github:NixOS/nixpkgs?ref=nixos-${config.system.nixos.release}";
+        }
+        {
+          url = "github:NixOS/nixpkgs?ref=nixpkgs-unstable";
+        }
+        {
+          url = "github:NixOS/nixpkgs?ref=nixos-unstable";
+        }
+        {
+          url = "github:nix-community/home-manager?ref=release-${config.system.nixos.release}";
+        }
+        {
+          url = "github:phip1611/nixos-configs";
+          devShells = [
+            "default"
+          ];
+          attributesToBuild = [
+            # Some example to test I don't break anything.
+            "packages.${config.nixpkgs.system}.listNixosOptions"
+          ];
+        }
       ];
-      example = [
-        "github:NixOS/nixpkgs?ref=nixos-${config.system.nixos.release}"
-        "github:NixOS/nixpkgs?ref=nixpkgs-unstable"
-        "github:nix-community/home-manager?ref=release-${config.system.nixos.release}"
-        "github:phip1611/nixos-configs"
-      ];
+      description = ''
+        List of flakes and flake-compatible resource URLs that should be prefetched using `nix flake`.
+      '';
     };
     intervalMinutes = lib.mkOption {
       type = lib.types.int;
@@ -63,10 +69,29 @@ in
     systemd.user.services.flake-prefetch = {
       enable = true;
       description = "Nix flake-prefetch user service";
-      environment = {
-        DEV_SHELLS = lib.concatStringsSep " " cfg.devShells;
-        FLAKES = lib.concatStringsSep " " cfg.flakes;
-      };
+      environment =
+        let
+          # Function that builds a list of fully qualified Nix flake attribute
+          # URLs from a base URL anda list of attribute names.
+          fnNamesToAttributeUrls = url: attrNames: map (name: "${url}#${name}") attrNames;
+          # Function that builds a list of fully qualifies Nix flake attribute
+          # URLs from the given flakes definition and attribute type.
+          fnQualifyFlakeAttrUrls =
+            flakes: attrType:
+            lib.pipe flakes [
+              (lib.filter (flake: flake.${attrType} != [ ]))
+              (lib.concatMap (flake: fnNamesToAttributeUrls flake.url flake.${attrType}))
+            ];
+
+          attributesToBuild = fnQualifyFlakeAttrUrls cfg.flakes "attributesToBuild";
+          devShells = fnQualifyFlakeAttrUrls cfg.flakes "devShells";
+          flakeUrls = map (flake: flake.url) cfg.flakes;
+        in
+        {
+          ATTRIBUTES_TO_BUILD = lib.concatStringsSep " " attributesToBuild;
+          DEV_SHELLS = lib.concatStringsSep " " devShells;
+          FLAKES = lib.concatStringsSep " " flakeUrls;
+        };
       # Additional packages to standard path
       path = [
         config.nix.package
