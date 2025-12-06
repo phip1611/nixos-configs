@@ -65,10 +65,13 @@ in
       environment =
         let
           flakeUrls = map (flake: flake.url) cfg.flakes;
-          # List of URLs, such as "github:phip1611/nixos-configs#default"
-          devShells = lib.concatMap (
-            flake: if flake.devShells != [ ] then map (shell: "${flake.url}#${shell}") flake.devShells else [ ]
-          ) cfg.flakes;
+          devShells = lib.pipe cfg.flakes [
+            # Filter those who have at least one dev shell
+            (lib.filter (flake: flake.devShell != []))
+            # To list of full dev shell urls
+            (map (flake: map (devShell: "${flake.url}#${devShell}") flake.devShells))
+            lib.concatLists
+          ];
         in
         {
           DEV_SHELLS = lib.concatStringsSep " " devShells;
