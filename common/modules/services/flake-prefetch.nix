@@ -65,13 +65,18 @@ in
       environment =
         let
           flakeUrls = map (flake: flake.url) cfg.flakes;
-          devShells = lib.pipe cfg.flakes [
-            # Filter those who have at least one dev shell
-            (lib.filter (flake: flake.devShell != []))
-            # To list of full dev shell urls
-            (map (flake: map (devShell: "${flake.url}#${devShell}") flake.devShells))
-            lib.concatLists
-          ];
+          # Function that builds a list of fully qualified Nix flake attribute
+          # URLs from a base URL anda list of attribute names.
+          fnNamesToAttributeUrls = url: attrNames: map (name: "${url}#${name}") attrNames;
+          # Function that builds a list of fully qualifies Nix flake attribute
+          # URLs from the given flakes definition and attribute type.
+          fnQualifyFlakeAttrUrls =
+            flakes: attrType:
+            lib.pipe flakes [
+              (lib.filter (flake: flake.${attrType} != [ ]))
+              (lib.concatMap (flake: fnNamesToAttributeUrls flake.url flake.${attrType}))
+            ];
+          devShells = fnQualifyFlakeAttrUrls cfg.flakes "devShells";
         in
         {
           DEV_SHELLS = lib.concatStringsSep " " devShells;
