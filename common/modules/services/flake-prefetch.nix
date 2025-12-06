@@ -19,31 +19,30 @@ in
 {
   options.phip1611.services.flake-prefetch = {
     enable = lib.mkEnableOption "Enable Nix flake-prefetch user service";
-    devShells = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      description = "List of Nix dev shells to prefetch using `nix develop`. Like the `flakes` option but including the shell name.";
-      default = [
-        "github:phip1611/nixos-configs#default"
-      ];
-      example = [
-        "github:phip1611/nixos-configs#default"
-      ];
-    };
     flakes = lib.mkOption {
-      type = lib.types.listOf lib.types.singleLineStr;
-      description = "List of URLs that should be prefetched using `nix flake`. This includes each flake's dependencies and works for non-flake targets (such as Tarballs).";
+      type = lib.types.listOf (
+        lib.types.submodule (import ./flake-prefetch-options.nix { inherit config lib; })
+      );
       default = [
-        "github:NixOS/nixpkgs?ref=nixos-${config.system.nixos.release}"
-        "github:NixOS/nixpkgs?ref=nixpkgs-unstable"
-        "github:nix-community/home-manager?ref=release-${config.system.nixos.release}"
-        "github:phip1611/nixos-configs"
+        {
+          url = "github:NixOS/nixpkgs?ref=nixos-${config.system.nixos.release}";
+        }
+        {
+          url = "github:NixOS/nixpkgs?ref=nixpkgs-unstable";
+        }
+        {
+          url = "github:nix-community/home-manager?ref=release-${config.system.nixos.release}";
+        }
+        {
+          url = "github:phip1611/nixos-configs";
+          devShells = [
+            "default"
+          ];
+        }
       ];
-      example = [
-        "github:NixOS/nixpkgs?ref=nixos-${config.system.nixos.release}"
-        "github:NixOS/nixpkgs?ref=nixpkgs-unstable"
-        "github:nix-community/home-manager?ref=release-${config.system.nixos.release}"
-        "github:phip1611/nixos-configs"
-      ];
+      description = ''
+        List of flakes and flake-compatible resource URLs that should be prefetched using `nix flake`.
+      '';
     };
     intervalMinutes = lib.mkOption {
       type = lib.types.int;
@@ -63,10 +62,21 @@ in
     systemd.user.services.flake-prefetch = {
       enable = true;
       description = "Nix flake-prefetch user service";
-      environment = {
-        DEV_SHELLS = lib.concatStringsSep " " cfg.devShells;
-        FLAKES = lib.concatStringsSep " " cfg.flakes;
-      };
+      environment =
+        let
+          flakeUrls = map (flake: flake.url) cfg.flakes;
+          devShells = lib.pipe cfg.flakes [
+            # Filter those who have at least one dev shell
+            (lib.filter (flake: flake.devShell != []))
+            # To list of full dev shell urls
+            (map (flake: map (devShell: "${flake.url}#${devShell}") flake.devShells))
+            lib.concatLists
+          ];
+        in
+        {
+          DEV_SHELLS = lib.concatStringsSep " " devShells;
+          FLAKES = lib.concatStringsSep " " flakeUrls;
+        };
       # Additional packages to standard path
       path = [
         config.nix.package

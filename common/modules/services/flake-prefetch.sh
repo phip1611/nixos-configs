@@ -3,8 +3,8 @@
 set -euo pipefail
 
 # Transform the space-separated string into an array
-IFS=' ' read -r -a FLAKES <<< "$FLAKES"
 IFS=' ' read -r -a DEV_SHELLS <<< "$DEV_SHELLS"
+IFS=' ' read -r -a FLAKES <<< "$FLAKES"
 
 for FLAKE in "${FLAKES[@]}"; do
   echo "Flake input: $FLAKE"
