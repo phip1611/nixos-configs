@@ -15,5 +15,14 @@ with lib;
       default = [ ];
       example = [ "default" ];
     };
+    attributesToBuild = lib.mkOption {
+      type = lib.types.listOf lib.types.singleLineStr;
+      description = "List of packages, checks, and other attributes to fetch and possibly build (directly passed to `nix build`)";
+      default = [ ];
+      example = [
+        "checks.${builtins.currentSystem}.someCheck"
+        "packages.${builtins.currentSystem}.somePackage"
+      ];
+    };
   };
 }

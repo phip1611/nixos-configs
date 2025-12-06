@@ -38,6 +38,10 @@ in
           devShells = [
             "default"
           ];
+          attributesToBuild = [
+            # Some example to test I don't break anything.
+            "packages.${config.nixpkgs.system}.listNixosOptions"
+          ];
         }
       ];
       description = ''
@@ -64,7 +68,6 @@ in
       description = "Nix flake-prefetch user service";
       environment =
         let
-          flakeUrls = map (flake: flake.url) cfg.flakes;
           # Function that builds a list of fully qualified Nix flake attribute
           # URLs from a base URL anda list of attribute names.
           fnNamesToAttributeUrls = url: attrNames: map (name: "${url}#${name}") attrNames;
@@ -76,9 +79,13 @@ in
               (lib.filter (flake: flake.${attrType} != [ ]))
               (lib.concatMap (flake: fnNamesToAttributeUrls flake.url flake.${attrType}))
             ];
+
+          attributesToBuild = fnQualifyFlakeAttrUrls cfg.flakes "attributesToBuild";
           devShells = fnQualifyFlakeAttrUrls cfg.flakes "devShells";
+          flakeUrls = map (flake: flake.url) cfg.flakes;
         in
         {
+          ATTRIBUTES_TO_BUILD = lib.concatStringsSep " " attributesToBuild;
           DEV_SHELLS = lib.concatStringsSep " " devShells;
           FLAKES = lib.concatStringsSep " " flakeUrls;
         };
