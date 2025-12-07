@@ -69,6 +69,8 @@ in
     systemd.user.services.flake-prefetch = {
       enable = true;
       description = "Nix flake-prefetch user service";
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
       environment =
         let
           # Function that builds a list of fully qualified Nix flake attribute
