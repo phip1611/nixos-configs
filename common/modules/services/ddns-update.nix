@@ -35,6 +35,8 @@ in
     systemd.services.ddns-update = {
       enable = true;
       description = "ddns-update service";
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${lib.getExe pkg} --config ${cfg.configPath}";
