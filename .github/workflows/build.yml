@@ -13,6 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
+      - name: Restore Nix cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/nix
+          key: nix-cache
       - run: nix run .\#listNixosOptions
 
   nix-fmt:
@@ -35,8 +40,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
-        # Performs some basic checks of the NixOS system configurations and runs
-        # all checks.
+      - name: Restore Nix cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/nix
+          key: nix-cache
+          # Performs some basic checks of the NixOS system configurations and runs
+          # all checks.
       - run: nix flake check
 
   # Builds all Nix packages, shells, and NixOS systems of the flake. This uses
