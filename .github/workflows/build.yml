@@ -17,7 +17,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/nix
-          key: nix-cache
+          key: ${{ github.job }}-local-nix-cache
       - run: nix run .\#listNixosOptions
 
   nix-fmt:
@@ -26,6 +26,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
+      - name: Restore Nix cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/nix
+          key: ${{ github.job }}-local-nix-cache
       - name: Check Nix formatting
         run: nix fmt -- --ci
 
@@ -44,7 +49,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/nix
-          key: nix-cache
+          key: ${{ github.job }}-local-nix-cache
           # Performs some basic checks of the NixOS system configurations and runs
           # all checks.
       - run: nix flake check
