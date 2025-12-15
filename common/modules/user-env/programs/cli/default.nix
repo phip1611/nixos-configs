@@ -72,6 +72,7 @@ in
         clion-exclude-direnv
         colortest
         ddns-update
+        flake-prefetch
         ftp-backup
         keep-directory-diff
         link-to-copy

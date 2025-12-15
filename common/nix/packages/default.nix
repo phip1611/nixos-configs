@@ -7,12 +7,11 @@ let
   packageDirs = builtins.filter (n: dirEntries.${n} == "directory") (builtins.attrNames dirEntries);
   callPackages =
     names:
-    builtins.foldl' (
-      acc: package:
-      acc
-      // {
-        "${package}" = pkgs.callPackage "${src}/${package}" { };
-      }
-    ) { } names;
+    builtins.listToAttrs (
+      map (name: {
+        inherit name;
+        value = pkgs.callPackage (src + "/${name}") { };
+      }) names
+    );
 in
 callPackages packageDirs

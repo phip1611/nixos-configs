@@ -15,6 +15,11 @@
 
 let
   cfg = config.phip1611.services.flake-prefetch;
+  # Get package from overlay.
+  pkg = pkgs.phip1611.packages.flake-prefetch.override {
+    # Ensure this runs with the system's Nix toolchain.
+    nix = config.nix.package;
+  };
 in
 {
   options.phip1611.services.flake-prefetch = {
@@ -94,16 +99,9 @@ in
           DEV_SHELLS = lib.concatStringsSep " " devShells;
           FLAKES = lib.concatStringsSep " " flakeUrls;
         };
-      # Additional packages to standard path
-      path = [
-        config.nix.package
-        pkgs.bash
-        pkgs.git
-        pkgs.openssh # for git+ssh dependencies
-      ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = ./flake-prefetch.sh;
+        ExecStart = "${lib.getExe pkg}";
       };
     };
     systemd.user.timers.flake-prefetch = {
