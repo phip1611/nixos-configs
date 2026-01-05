@@ -5,10 +5,8 @@
 
 let
   tests = {
-    # bootitemsTests = import ./bootitems/tests.nix { inherit pkgs; };
-    combinedTests = import ./tests.nix { inherit pkgs; };
+    kernelbootTests = import ./kernelboot-tests.nix { inherit pkgs; };
     libutilTests = import ./libutil/tests.nix { inherit pkgs; };
-    # packagesTests = import ./packages/tests.nix { inherit pkgs; };
   };
   libutil = import ./libutil { inherit pkgs; };
   bootitems = import ./bootitems { inherit libutil pkgs; };
@@ -16,28 +14,19 @@ let
 in
 {
   inherit bootitems libutil packages;
-  allTests = pkgs.symlinkJoin {
-    name = "all-tests";
-    paths = [
-      # Check builders
-      tests.libutilTests.builders.testFlattened
-      tests.libutilTests.builders.testUnflattened
-
-      # Check that
-      # - tinytoykernel boots
-      # - create .iso and .efi works
-      # - run-efi works
-      # - the generated ISO and EFI indeed boot the kernel via Multiboot
-      tests.combinedTests.kernelboot.testRunQemuDirect
-      tests.combinedTests.kernelboot.testRunQemuEfiMb1
-      tests.combinedTests.kernelboot.testRunQemuEfiMb2
-      tests.combinedTests.kernelboot.testRunQemuIso
-      tests.combinedTests.kernelboot.testRunQemuIsoUefi
-      tests.combinedTests.kernelboot.testRunQemuEfiMb1
-      tests.combinedTests.kernelboot.testRunQemuEfiMb2
-      tests.combinedTests.kernelboot.testRunXenPVH
-    ];
-  };
+  # Combined derivation that exports the individual tests as passthru
+  # attributes.
+  allTests =
+    (pkgs.symlinkJoin {
+      name = "all-tests";
+      paths =
+        builtins.attrValues tests.kernelbootTests ++ builtins.attrValues tests.libutilTests.builders;
+    }).overrideAttrs
+      {
+        passthru = {
+          inherit (tests) kernelbootTests libutilTests;
+        };
+      };
 
   # Useful for quick prototyping.
   /*
