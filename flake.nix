@@ -51,17 +51,7 @@
         import nixpkgsSrc {
           inherit system;
           config = { };
-          overlays =
-            builtins.attrValues self.overlays
-            ++
-            # Temporary workaround as Limine 10.5.1 broke CDROM QEMU Boot:
-            # - https://codeberg.org/Limine/Limine/src/tag/v10.6.0/ChangeLog
-            # - https://github.com/NixOS/nixpkgs/pull/477095
-            [
-              (_final: _prev: {
-                limine = inputs.nixpkgs-unstable.legacyPackages.${system}.limine;
-              })
-            ];
+          overlays = builtins.attrValues self.overlays;
         };
 
       # Generates the typical per-system flake attributes.
