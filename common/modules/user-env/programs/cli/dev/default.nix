@@ -111,7 +111,6 @@ in
                 gawk
                 gcc
                 git
-                global
                 gmp
                 gmp.dev
                 gnumake
