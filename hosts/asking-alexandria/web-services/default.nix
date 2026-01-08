@@ -27,6 +27,12 @@
           git.email = "phip1611@gmail.com";
         };
       };
+      # This machine acts as my CI remote builder and as my Nix binary cache.
+      # Therefore, We should verify (and repair) the store frequently.
+      #
+      # Unlikely that ever there is something that actually needs to be repaired
+      # but better be safe.
+      services.nix-verify-store.enable = true;
     };
 
     # Turn stuff on that is deactivated by the server profile. This is not

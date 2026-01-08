@@ -27,7 +27,6 @@
         };
       };
       nix-binary-cache.enable = true;
-      services.nix-verify-store.enable = true;
       services.zsh-history-backup.enable = true;
     };
 
