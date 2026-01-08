@@ -20,12 +20,6 @@ let
   ];
 in
 {
-  options = {
-    phip1611.common.system = {
-      # Warn. This service is relatively heavy and runs for a long time.
-      withNixVerifyStoreService = lib.mkEnableOption "Enable the weekly Nix store verify service";
-    };
-  };
   config = lib.mkIf cfg.enable {
     nix = {
       # Not needed
@@ -52,11 +46,10 @@ in
         download-buffer-size =
           512 * 1024 * 1024 # 512 MiB
         ;
-        # 128 instead of 25 parallel connections for faster downloads
-        http-connections = 128 # default is 25 _
-        ;
-        max-substitution-jobs = 128 # default is 16
-        ;
+        # 128 parallel connections for faster downloads (default: 25)
+        http-connections = 128;
+        # 129 substitution jobs for faster downloads (default: 16)
+        max-substitution-jobs = 128;
 
         trusted-users = [
           "root"
@@ -80,29 +73,6 @@ in
       # by replacing identical files in the store by hard links.
       optimise = {
         automatic = true;
-      };
-    };
-
-    # I once had a case on host asking-alexandria where the Nix store was
-    # corrupted due to a kernel panic during a Nix derivation build job, caused
-    # by a IO uring bug in Linux 6.6. Afterwards, a few items of the store were
-    # broken. Therefore, it is smart to run this service occasionally. Especially,
-    # as I am a heavy NixOS user and I love bleeding edge stuff, the likelihood
-    # that something breaks is not zero.
-    systemd = lib.mkIf cfg.withNixVerifyStoreService {
-      services.nix-verify-store = {
-        description = "Nix Store Verify & Repair";
-        serviceConfig = {
-          ExecStart = "${config.nix.package}/bin/nix-store --verify --check-contents --repair";
-          Type = "oneshot";
-        };
-      };
-      timers.nix-verify-store = {
-        timerConfig = {
-          Persistent = true;
-          RandomizedDelaySec = 1800;
-          OnCalendar = "Sun 03:00:00";
-        };
       };
     };
   };

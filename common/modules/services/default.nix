@@ -13,6 +13,7 @@
   imports = [
     ./ddns-update.nix
     ./flake-prefetch.nix
+    ./nix-verify-store.nix
     ./zsh-history-backup.nix
   ];
 }

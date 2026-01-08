@@ -21,18 +21,18 @@
         system = {
           enable = true;
           withAutoUpgrade = true;
-          withNixVerifyStoreService = true;
           # Stability is king
           withBleedingEdgeLinux = false;
           withSecureDns = true;
         };
       };
       nix-binary-cache.enable = true;
+      services.nix-verify-store.enable = true;
       services.zsh-history-backup.enable = true;
     };
 
-    # Latest LTS kernel
-    boot.kernelPackages = pkgs.linuxPackages_6_12;
+    # Latest LTS kernel, not latest stable kernel.
+    boot.kernelPackages = pkgs.linuxPackages;
 
     # Comes with a pre-configured configuration for ssh.
     services.fail2ban.enable = true;
