@@ -50,7 +50,6 @@ in
         # gimp3-with-plugins
         gparted
         libreoffice-fresh
-        onlyoffice-desktopeditors
         screen-message
         signal-desktop
         spotify
