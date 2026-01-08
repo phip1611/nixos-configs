@@ -1,5 +1,4 @@
-# Mostly the default configuration.nix from the install wizard. Everything else
-# is in ./custom.
+# Mostly the default configuration.nix from the install wizard.
 
 {
   config,
