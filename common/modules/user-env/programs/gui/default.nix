@@ -64,6 +64,12 @@ in
           jetbrains.rust-rover
         ]
       ))
+      ++ (lib.optionals cfg.withDevJava (
+        with pkgsUnstable;
+        [
+          jetbrains.idea
+        ]
+      ))
       ++ (lib.optionals cfg.withMedia (
         with pkgsUnstable;
         [
