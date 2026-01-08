@@ -46,11 +46,10 @@ in
         download-buffer-size =
           512 * 1024 * 1024 # 512 MiB
         ;
-        # 128 instead of 25 parallel connections for faster downloads
-        http-connections = 128 # default is 25 _
-        ;
-        max-substitution-jobs = 128 # default is 16
-        ;
+        # 128 parallel connections for faster downloads (default: 25)
+        http-connections = 128;
+        # 129 substitution jobs for faster downloads (default: 16)
+        max-substitution-jobs = 128;
 
         trusted-users = [
           "root"
