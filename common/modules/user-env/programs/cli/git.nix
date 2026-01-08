@@ -58,6 +58,8 @@ in
             hist = "log --graph --decorate --oneline";
             hist2 = "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
             list-remotes = "! git remote | xargs -I {} sh -c \"echo -n '{} - ' && git remote get-url {}\"";
+            # Helper for sending patches to mailing lists.
+            publish = "! ${lib.getExe pkgsUnstable.git-publish}";
           };
           core = {
             editor = "micro";
