@@ -110,7 +110,7 @@ in
       # Use latest stable kernel and disable mitigations.
       (lib.mkIf cfg.withBleedingEdgeLinux {
         # To reset to default, set to `lib.mkForce pkgs.linuxPackages`.
-        boot.kernelPackages = pkgs.linuxPackages_latest;
+        boot.kernelPackages = pkgsUnstable.linuxPackages_latest;
         # Living on the edge. 2-5% faster compilation times.
         boot.kernelParams = [ "mitigations=off" ];
       })
