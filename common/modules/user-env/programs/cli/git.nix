@@ -80,6 +80,7 @@ in
           rebase = {
             # rebase on a dirty worktree, e.g., during git pull
             autostash = true;
+            autosquash = true;
           };
           user.name = cfg.git.username;
           user.email = cfg.git.email;
