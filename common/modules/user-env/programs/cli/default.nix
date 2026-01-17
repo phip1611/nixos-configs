@@ -110,7 +110,7 @@ in
         minicom # for USB serial: "sudo minicom -D /dev/ttyUSB0"
         nflz
         nix-tree # Useful to analyze Nix closure sizes
-        nixfmt-rfc-style
+        nixfmt
         nodejs
         ookla-speedtest
         ouch # cool convenient (de)compression tool

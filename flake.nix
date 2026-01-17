@@ -207,7 +207,7 @@
                 [
                   jq
                   nixos-rebuild
-                  nixfmt-rfc-style
+                  nixfmt
                 ]
                 ++ builtins.attrValues (initCommonNix pkgs).packages;
 
