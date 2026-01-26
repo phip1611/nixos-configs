@@ -43,6 +43,7 @@ in
             nixos-option
             # already there by default, here only for completeness
             nixos-rebuild
+            nixos-rebuild-ng
           ]
         );
       })
