@@ -70,5 +70,38 @@ in
         automatic = true;
       };
     };
+
+    # Auto Nix GC Root Retention (angrr): Delete old result links, .direnv
+    # entries, and profiles from `/nix/var/nix/gcroots/` so that the next Nix
+    # garbage collection also deletes these files.
+    services.angrr = {
+      enable = true;
+      # Run this always before the service from `nix.gc.automatic
+      enableNixGcIntegration = true;
+      settings = {
+        profile-policies = {
+          # Delete old system profiles
+          system = {
+            keep-booted-system = true;
+            keep-current-system = true;
+            keep-latest-n = 4;
+            keep-since = "14d";
+            profile-paths = [
+              "/nix/var/nix/profiles/system"
+            ];
+          };
+        };
+        temporary-root-policies = {
+          direnv = {
+            path-regex = "/\\.direnv/";
+            period = "14d";
+          };
+          result = {
+            path-regex = "/result[^/]*$";
+            period = "14d";
+          };
+        };
+      };
+    };
   };
 }
