@@ -36,16 +36,16 @@ in
         );
       })
       (lib.mkIf cfg.withDevNix {
-        users.users."${cfg.username}".packages = (
-          with pkgsUnstable;
-          [
+        users.users."${cfg.username}".packages =
+          (with pkgsUnstable; [
             deadnix
             nixos-option
             # already there by default, here only for completeness
             nixos-rebuild
+          ])
+          ++ (with pkgs; [
             nixos-rebuild-ng
-          ]
-        );
+          ]);
       })
       (lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = (
