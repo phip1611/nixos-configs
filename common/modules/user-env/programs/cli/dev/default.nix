@@ -40,6 +40,7 @@ in
           (with pkgsUnstable; [
             deadnix
             nixos-option
+            nix-output-monitor
             # already there by default, here only for completeness
             nixos-rebuild
           ])

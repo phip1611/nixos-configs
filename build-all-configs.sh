@@ -13,7 +13,7 @@ _fn_build_nixos_system() {
   system=$1
 
   echo "Building NixOS system $system ..."
-  nix build ".#nixosConfigurations.$system.config.system.build.toplevel"
+  nom build ".#nixosConfigurations.$system.config.system.build.toplevel"
   echo "✔️ Successfully built NixOS system $system"
 
   echo "Populating the Nix binary cache at $binary_cache_host"

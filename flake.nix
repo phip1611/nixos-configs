@@ -206,8 +206,9 @@
                 with pkgs;
                 [
                   jq
-                  nixos-rebuild
+                  nix-output-monitor
                   nixfmt
+                  nixos-rebuild
                 ]
                 ++ builtins.attrValues (initCommonNix pkgs).packages;
 
