@@ -139,7 +139,7 @@ jobs:
            set -euo pipefail
            cd $REMOTE_CI_PWD || exit 1
 
-           nix shell nixpkgs#jq --command bash -c "./build-all-bootitems.sh --ci"
+           nix develop . --command bash -c "./build-all-bootitems.sh --ci"
           EOF
       - name: "Flake: Build Packages"
         timeout-minutes: 60
