@@ -131,7 +131,16 @@ jobs:
             test -d .git
             test -f flake.nix
           EOF
-      # Build all packages
+      - name: "Flake: Build Bootitems"
+        timeout-minutes: 60
+        run: |
+          echo "[GitHub CI] Building Bootitems on remote ..."
+          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+           set -euo pipefail
+           cd $REMOTE_CI_PWD || exit 1
+
+           nix shell nixpkgs#jq --command bash -c "./build-all-bootitems.sh --ci"
+          EOF
       - name: "Flake: Build Packages"
         timeout-minutes: 60
         run: |
@@ -145,16 +154,6 @@ jobs:
                 | jq -r '.packages.\"x86_64-linux\" | keys[]' \
                 | xargs -I {} bash -c 'echo \"Building Package: {}\" && nix build .#{}'
             "
-          EOF
-      - name: "Flake: Build Bootitems"
-        timeout-minutes: 60
-        run: |
-          echo "[GitHub CI] Building Bootitems on remote ..."
-          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
-           set -euo pipefail
-           cd $REMOTE_CI_PWD || exit 1
-
-           nix shell nixpkgs#jq --command bash -c "./build-all-bootitems.sh --ci"
           EOF
       - name: "Flake: Open Dev Shell"
         timeout-minutes: 60
