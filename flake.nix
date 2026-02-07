@@ -210,6 +210,7 @@
                   jq
                   nix-output-monitor
                   nixfmt
+                  nixfmt-tree
                   nixos-rebuild
                 ]
                 ++ builtins.attrValues (initCommonNix pkgs).packages;
