@@ -1,8 +1,8 @@
-{ pkgs }:
+{ writeShellScriptBin }:
 
 # Taken from: https://raw.githubusercontent.com/pablopunk/colortest/master/colortest
 # MIT License: https://github.com/pablopunk/colortest/blob/master/LICENSE
-pkgs.writeShellScriptBin "colortest" ''
+writeShellScriptBin "colortest" ''
   # https://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 
   T='gYw' # The test text
