@@ -87,17 +87,16 @@ in
 
     # Set some security options for `resolved`. These are only used, if the
     # `dnscrypt-proxy` DNS server doesn't resolve a DNS request.
-
-    # At first I wanted to use "true", then "allow-downgrade"; none can
-    # resolve "x86.lol". This is the first time I encountered a problem with
-    # my "secure DNS" setup since I started using it 3 months ago.
-    services.resolved.dnssec = "false";
-    # Use DNS over TLS when the fallback servers are used. We only use
-    # opportunistic as some shitty ISPs and WiFis might block the DoT port.
-    services.resolved.dnsovertls = "opportunistic";
-    # DNS over HTTPS not yet supported by systemd-resolved.
-    # Wait for https://github.com/systemd/systemd/pull/31537 and corresponding
-    # support in NixOS
-    # services.resolved.dnsoverhttps = "true";
+    services.resolved.settings = {
+      # At first I wanted to use "true", then "allow-downgrade"; none can
+      # resolve "x86.lol". This is the first time I encountered a problem with
+      # my "secure DNS" setup since I started using it 3 months ago.
+      Resolve.DNSSEC = false;
+      # Use DNS over TLS when the fallback servers are used. We only use
+      # opportunistic as some shitty ISPs and WiFis might block the DoT port.
+      Resolve.DNSOverTLS = "opportunistic";
+      # https://github.com/systemd/systemd/pull/31537
+      # DNSOverHTTPS = true;
+    };
   };
 }

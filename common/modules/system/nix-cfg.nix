@@ -53,21 +53,7 @@ in
 
         substituters = map ({ url, ... }: url) trustedBinaryCaches;
         trusted-public-keys = map ({ key, ... }: key) trustedBinaryCaches;
-      }
-      //
-        # https://nix.dev/manual/nix/2.33/release-notes/rl-2.33.html
-        # TODO remove once the default nix version is at lest 2.33
-        (
-          if (lib.versionOlder config.nix.package.version "2.33") then
-            {
-              # Faster downloads from Nix binary caches (higher parallelism)
-              download-buffer-size =
-                512 * 1024 * 1024 # 512 MiB
-              ;
-            }
-          else
-            { }
-        );
+      };
 
       # Garbage Collection
       gc = {

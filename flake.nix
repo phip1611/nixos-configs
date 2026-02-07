@@ -215,6 +215,7 @@
                   jq
                   nix-output-monitor
                   nixfmt
+                  nixfmt-tree
                   nixos-rebuild
                   yamlfmt
                 ]
