@@ -9,6 +9,9 @@
 # After restoring, only new zsh sessions will read the history from the new
 # file, or the history needs to be explicitly imported using the shell built-in
 # `fc`.
+#
+# If there is a "corrupt zsh history file" error ever, it may help to run
+# `$ strings ~/.zsh_history /tmp/history && cp /tmp/history ~/.zsh_history`
 
 set -euo pipefail
 
