@@ -22,7 +22,7 @@ TIMESTAMP="$(date --iso-8601=seconds)"
 fn_backup_file() {
   mkdir -p "$BACKUP_DIR"
   if [ -f "$BACKUP_FILE_LATEST" ]; then
-    mv "$BACKUP_FILE_LATEST" "$BACKUP_FILE_LATEST.old"
+    mv -f "$BACKUP_FILE_LATEST" "$BACKUP_FILE_LATEST.old"
   fi
   # Keep freshest file in clear text
   cp "$HIST_FILE" "$BACKUP_FILE_LATEST"
