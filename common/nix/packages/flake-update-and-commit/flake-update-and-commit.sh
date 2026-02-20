@@ -28,6 +28,7 @@ for input in $inputs; do
         old_date="<unknown>"
     fi
 
+    echo "Trying to update input: $input"
     nix flake update "$input"
 
     # Get new lastModified / version
