@@ -13,8 +13,8 @@ trap 'rm -f "$tmpfile"' EXIT
 echo "flake: update all dependencies" > "$tmpfile"
 echo "" >> "$tmpfile"
 
-# Iterate over all flake inputs except 'root'
-inputs=$(jq -r '.nodes | keys[] | select(. != "root")' flake.lock)
+# Iterate over all flake inputs
+inputs=$(jq -r '.nodes.root.inputs | keys[]' flake.lock)
 
 for input in $inputs; do
     # Get old lastModified / version
