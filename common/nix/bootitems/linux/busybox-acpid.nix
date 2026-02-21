@@ -63,12 +63,12 @@ in
   inherit setupScript;
   initrdContents = [
     {
-      symlink = "/etc/acpid.conf";
-      object = config;
+      target = "/etc/acpid.conf";
+      source = config;
     }
     {
-      symlink = "/etc/acpi/power";
-      object = powerOffScript;
+      target = "/etc/acpi/power";
+      source = powerOffScript;
     }
   ];
 }
