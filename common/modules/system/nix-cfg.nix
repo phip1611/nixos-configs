@@ -18,6 +18,8 @@ let
         key = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
       })
   ];
+
+  garbageCollectionPeriod = "30d";
 in
 {
   config = lib.mkIf cfg.enable {
@@ -75,7 +77,7 @@ in
         dates = "weekly";
         # Runs normal garbage-collection plus removes all NixOS generations
         # that are older than the specified amount.
-        options = "--delete-older-than 30d";
+        options = "--delete-older-than ${garbageCollectionPeriod}";
       };
 
       # Scheduled systemd service that optimizes all paths in the nix store
@@ -84,5 +86,16 @@ in
         automatic = true;
       };
     };
+
+    # Auto Nix GC Root Retention (angrr): Delete old result links, .direnv
+    # entries, and profiles from `/nix/var/nix/gcroots/` so that the next Nix
+    # garbage collection also deletes these files.
+    services.angrr = {
+      enable = true;
+      # Run this always before the service from `nix.gc.automatic
+      enableNixGcIntegration = true;
+      period = garbageCollectionPeriod;
+    };
+
   };
 }
