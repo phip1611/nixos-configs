@@ -32,7 +32,7 @@ multiboot2_hdr: .long   0xe85250d6
                 /* Boot service tag. Required by EFI AMD64 tag when using GRUB. */
                 .balign 8
                 .word   0x7 /* type */
-                .word   0x0 /* flags */
+                .word   0x1 /* flags */
                 .long   0x8 /* size */
                 /* EFI AMD64 entry tag */
                 .balign 8
