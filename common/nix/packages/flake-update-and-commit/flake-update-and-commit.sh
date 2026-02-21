@@ -10,7 +10,7 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
 tmpfile=$(mktemp)
 trap 'rm -f "$tmpfile"' EXIT
 
-echo "flake: update all dependencies" > "$tmpfile"
+echo "flake: bump all dependencies" > "$tmpfile"
 echo "" >> "$tmpfile"
 
 # Iterate over all flake inputs
@@ -56,7 +56,7 @@ if [[ $(wc -l < "$tmpfile") -gt 2 ]]; then
     echo "This commit was generated via:" >> "$tmpfile"
     echo "nix run github:phip1611/nixos-configs#flake-update-and-commit" >> "$tmpfile"
     git commit -F "$tmpfile"
-    echo "Done: flake inputs updated and committed."
+    echo "Done: flake inputs bumped and committed."
 else
-    echo "No inputs changed — nothing to commit."
+    echo "No inputs changed - nothing to commit."
 fi
