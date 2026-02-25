@@ -17,7 +17,7 @@ _fn_build_nixos_system() {
   echo "✔️ Successfully built NixOS system $system"
 
   echo "Populating the Nix binary cache at $binary_cache_host"
-  NIX_SSHOPTS="-p $binary_cache_ssh_port" nix copy --to ssh-ng://$binary_cache_user@$binary_cache_host --substitute-on-destination ./result
+  NIX_SSHOPTS="-p $binary_cache_ssh_port" nix copy --to ssh://$binary_cache_user@$binary_cache_host --substitute-on-destination ./result
   echo "✔️ Populated the Nix binary cache at $binary_cache_host"
 }
 
