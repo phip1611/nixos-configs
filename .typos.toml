@@ -5,6 +5,12 @@ extend-exclude = [
   "common/nix/bootitems/linux/minimal-kernel.config",
 ]
 
+[default]
+extend-ignore-re = [
+  # ./common/modules/system/secure-dns.nix:53:48
+  "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"
+]
+
 [default.extend-words]
 
 [default.extend-identifiers]
