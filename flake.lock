@@ -27,11 +27,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772302941,
-        "narHash": "sha256-TL3+ckbOTILXrR0qSK3dJj2BJ0S5yz/YSsUF1oEgd9g=",
+        "lastModified": 1772380125,
+        "narHash": "sha256-8C+y46xA9bxcchj9GeDPJaRUDApaA3sy2fhJr1bTbUw=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "9b9142b5fe214c2adabe86257c33e022372b7c96",
+        "rev": "a07a44a839eb036e950bf397d9b782916f8dcab3",
         "type": "github"
       },
       "original": {
@@ -127,11 +127,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770473352,
-        "narHash": "sha256-MwQuhDvRQlMpnGxtRUpdK/CYjMaMxJ+bShXx8Bq0DHE=",
+        "lastModified": 1772377175,
+        "narHash": "sha256-/kDaQZCk6XLLJUP/j8WFKvBOL/fIN+koVz32TnUsvUU=",
         "owner": "phip1611",
         "repo": "slidev-slides",
-        "rev": "3c7983a1e4e9e8213def6798479636391ffb4b6c",
+        "rev": "fc7ad3052676314fdb8548e41799ba9b73feb622",
         "type": "github"
       },
       "original": {
@@ -147,11 +147,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767301611,
-        "narHash": "sha256-V3joOjBK0y6aJc60GC5bU6CqyC/8XkBrVyeI39b3K7o=",
+        "lastModified": 1772394948,
+        "narHash": "sha256-ohqqEoAChwzFcMQ3D4G2j+eVvBp6m1HjiMSrUzyi20o=",
         "owner": "phip1611",
         "repo": "wambo-web",
-        "rev": "7bb41fb92a6eb01df0d6fc846e252b876de62340",
+        "rev": "0fb6e8e163f0d506e73f59e992de805b4bb8f13f",
         "type": "github"
       },
       "original": {
