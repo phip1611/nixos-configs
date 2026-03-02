@@ -83,7 +83,7 @@ if is_charging || battery_above 30; then
     echo
   done
 else
-  echo -n "Low battery level. Skipping prefecthing (and possibly building) Nix"
+  echo -n "Low battery level. Skipping prefetching (and possibly building) Nix"
   echo " flake attributes."
 fi
 
