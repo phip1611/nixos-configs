@@ -61,18 +61,30 @@ in
             # Helper for sending patches to mailing lists.
             publish = "! ${lib.getExe pkgsUnstable.git-publish}";
           };
+          checkout = {
+            workers = 0;
+          };
           core = {
+            commitGraph = true;
             editor = "micro";
           };
           diff = {
             colorMoved = "default";
           };
+          fetch = {
+            writeCommitGraph = true;
+          };
           init = {
             defaultBranch = "main";
+          };
+          maintenance = {
+            auto = true;
+            strategy = "incremental";
           };
           merge = {
             # merge on a dirty worktree
             autostash = true;
+            conflictStyle = "zdiff3";
           };
           pull = {
             rebase = true;
@@ -81,6 +93,10 @@ in
             # rebase on a dirty worktree, e.g., during git pull
             autostash = true;
             autosquash = true;
+          };
+          rerere = {
+            enabled = true;
+            autoUpdate = true;
           };
           user.name = cfg.git.username;
           user.email = cfg.git.email;
