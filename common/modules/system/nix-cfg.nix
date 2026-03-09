@@ -72,7 +72,7 @@ in
       # Garbage Collection
       gc = {
         automatic = true;
-        dates = "weekly";
+        dates = "daily";
         # Runs normal garbage-collection plus removes all NixOS generations
         # that are older than the specified amount.
         options = "--delete-older-than 30d";
