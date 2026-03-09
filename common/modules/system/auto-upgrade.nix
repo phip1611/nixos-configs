@@ -18,21 +18,28 @@ let
 in
 {
   config = lib.mkIf (cfg.enable && cfg.withAutoUpgrade) {
+    # The host auto-updates itself from THIS flake on GitHub. It switches
+    # directly to any new configuration. Further, it reboots if the new
+    # generation uses a different kernel, kernel modules, or initrd than the
+    # booted system.
     system.autoUpgrade = {
       enable = true;
+      # Local time
+      dates = "02:00";
+      # hostname/configuration-name is implicit
       flake = "github:phip1611/nixos-configs";
+      operation = "switch";
       flags = [
         "--no-write-lock-file"
         "-L" # print build logs
       ];
-      operation = "boot";
       allowReboot = true;
-      dates = "02:00";
       rebootWindow = {
-        lower = "02:00";
-        upper = "05:00";
+        lower = "03:00";
+        upper = "03:00";
       };
-      randomizedDelaySec = "45min";
+      # We run this additionally to the scheduled job.
+      runGarbageCollection = true;
     };
   };
 }

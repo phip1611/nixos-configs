@@ -1,7 +1,7 @@
 name: Update Nix Flake
 on:
   schedule:
-    - cron: '0 0 * * *' # Daily at Midnight
+    - cron: '0 */6 * * *'  # Every 6 hours / 4 times a day
   workflow_dispatch: # Allow manual dispatch for testing
 
 jobs:
