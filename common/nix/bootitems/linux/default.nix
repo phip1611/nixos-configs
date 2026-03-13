@@ -167,12 +167,12 @@ let
       #     --memory size=1G
       additionalFiles = (old.additionalFiles or [ ]) ++ [
         {
-          symlink = "/etc/bootitems/initrd";
-          object = initrds.minimal;
+          target = "/etc/bootitems/initrd";
+          source = initrds.minimal;
         }
         {
-          symlink = "/etc/bootitems/kernel";
-          object = kernels.stable;
+          target = "/etc/bootitems/kernel";
+          source = kernels.stable;
         }
       ];
     });
