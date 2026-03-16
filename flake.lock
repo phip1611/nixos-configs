@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "argparse": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1726837382,
+        "narHash": "sha256-LKbcLX4rrhqNhcJE7/y12GUYa9rRLVt61YfhfeP8x+Q=",
+        "owner": "p-ranav",
+        "repo": "argparse",
+        "rev": "84c02050ea8bd1bf99de0a4943db40235e9fd5e7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "p-ranav",
+        "ref": "master",
+        "repo": "argparse",
+        "type": "github"
+      }
+    },
     "dd-systems-meetup-website": {
       "inputs": {
         "nixpkgs": [
@@ -61,6 +78,28 @@
         "type": "github"
       }
     },
+    "memtouch": {
+      "inputs": {
+        "argparse": "argparse",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772436950,
+        "narHash": "sha256-MfrM528geF3URsV01HV+AgoY735fWPF/EhRblwqRcTM=",
+        "owner": "cobaltcore-dev",
+        "repo": "memtouch",
+        "rev": "d7fc9fdf99cba703b6463d127ed392e2ce1c973b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cobaltcore-dev",
+        "ref": "main",
+        "repo": "memtouch",
+        "type": "github"
+      }
+    },
     "nixos-hardware": {
       "locked": {
         "lastModified": 1773533765,
@@ -113,6 +152,7 @@
         "dd-systems-meetup-website": "dd-systems-meetup-website",
         "home-manager": "home-manager",
         "img-to-webp-service": "img-to-webp-service",
+        "memtouch": "memtouch",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
