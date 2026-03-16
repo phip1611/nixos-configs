@@ -119,6 +119,13 @@ let
           mkdir -p $out/bin
           ${cpLines}
         '';
+      coreutils-reduced = pickBinsFromPkgs {
+        pkg = pkgs.coreutils;
+        components = [
+          # Provides ns support, which busybox's date doesn't has
+          "date"
+        ];
+      };
       # Something overloads packages from busybox and break the init shell.
       # Therefore, we use a reduced set. This also keeps the initrd small.
       linux-util-reduced = pickBinsFromPkgs {
@@ -130,6 +137,7 @@ let
       };
 
       commonConveniencePackages = with pkgs; [
+        coreutils-reduced
         curl
         htop
         linux-util-reduced
