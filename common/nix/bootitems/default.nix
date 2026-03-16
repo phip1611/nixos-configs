@@ -3,7 +3,8 @@
 {
   pkgs ? builtins.trace "WARN: Using nixpkgs from NIX_PATH" (import <nixpkgs> { }),
   libutil ? import ../libutil { inherit pkgs; },
-  memtouch,
+  # Only available when built from flake, not for local `nix-build` prototyping
+  memtouch ? null,
 }:
 
 {

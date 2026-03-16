@@ -86,18 +86,18 @@
         ]
       },
       "locked": {
-        "lastModified": 1751634093,
-        "narHash": "sha256-mFNGTdoaBo5vnq0uDbtD5ofvcXogffSZ6bihnQNnq9w=",
-        "ref": "main",
-        "rev": "34c13bf20755b087eb04e2bb1214988f812c72d2",
-        "revCount": 28,
-        "type": "git",
-        "url": "ssh://git@github.com/cobaltcore-dev/memtouch"
+        "lastModified": 1772436950,
+        "narHash": "sha256-MfrM528geF3URsV01HV+AgoY735fWPF/EhRblwqRcTM=",
+        "owner": "cobaltcore-dev",
+        "repo": "memtouch",
+        "rev": "d7fc9fdf99cba703b6463d127ed392e2ce1c973b",
+        "type": "github"
       },
       "original": {
+        "owner": "cobaltcore-dev",
         "ref": "main",
-        "type": "git",
-        "url": "ssh://git@github.com/cobaltcore-dev/memtouch"
+        "repo": "memtouch",
+        "type": "github"
       }
     },
     "nixos-hardware": {
