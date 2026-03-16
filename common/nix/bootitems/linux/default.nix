@@ -1,6 +1,7 @@
 {
   pkgs,
   libutil,
+  memtouch,
 }:
 
 let
@@ -136,19 +137,27 @@ let
         ];
       };
 
-      commonConveniencePackages = with pkgs; [
-        coreutils-reduced
-        cpuid
-        curl
-        htop
-        linux-util-reduced
-        msr
-        msr-tools
-        pciutils
-        strace
-        stress-ng
-        usbutils
-      ];
+      commonConveniencePackages =
+        with pkgs;
+        [
+          coreutils-reduced
+          cpuid
+          curl
+          htop
+          linux-util-reduced
+          msr
+          msr-tools
+          pciutils
+          strace
+          stress-ng
+          usbutils
+        ]
+        # Only available when built from flake, not for local `nix-build`
+        # prototyping
+        ++ lib.optional (
+          memtouch != null
+          || builtins.trace "memtouch is null, skipping memtouch binary (build locally, not from flake)" false
+        ) memtouch;
     in
     {
       minimal = buildInitrd { };
