@@ -106,24 +106,28 @@ let
   initrds' =
     let
       buildInitrd = pkgs.callPackage ./build-initrd.nix;
-      # Something overloads packages from busybox and break the init shell.
-      # Therefore, we use a reduced set.
-      linux-util-reduced =
+      # Picks selected binaries from a package.
+      pickBinsFromPkgs =
+        { pkg, components }:
         let
-          components = [
-            "lsblk"
-            "lscpu"
-          ];
-          pkg = pkgs.util-linux;
           cpLines = lib.pipe components [
             (map (component: "cp ${pkg}/bin/${component} $out/bin"))
             (lib.concatStringsSep "\n")
           ];
         in
-        pkgs.runCommandLocal "${pkg.name}-reduced" { } ''
+        pkgs.runCommand "${pkg.name}-reduced" { } ''
           mkdir -p $out/bin
           ${cpLines}
         '';
+      # Something overloads packages from busybox and break the init shell.
+      # Therefore, we use a reduced set. This also keeps the initrd small.
+      linux-util-reduced = pickBinsFromPkgs {
+        pkg = pkgs.util-linux;
+        components = [
+          "lsblk"
+          "lscpu"
+        ];
+      };
 
       commonConveniencePackages = with pkgs; [
         curl
