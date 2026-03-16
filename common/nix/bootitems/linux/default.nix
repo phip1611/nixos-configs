@@ -138,9 +138,11 @@ let
 
       commonConveniencePackages = with pkgs; [
         coreutils-reduced
+        cpuid
         curl
         htop
         linux-util-reduced
+        msr
         msr-tools
         pciutils
         strace
