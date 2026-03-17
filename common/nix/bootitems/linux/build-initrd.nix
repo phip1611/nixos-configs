@@ -78,7 +78,9 @@ makeInitrd {
             additionalPackages
             ++ [
               bashInteractive
-              busybox
+              (busybox.override { extraConfig = ''
+                CONFIG_FEATURE_DATE_NANO y
+              '';})
             ]
           )
         }
