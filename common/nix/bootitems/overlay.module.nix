@@ -5,7 +5,7 @@
   config,
   options,
   ...
-}:
+}@inputs:
 
 let
   cfg = config.phip1611.bootitems-overlay;
@@ -16,6 +16,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    nixpkgs.overlays = [ (import ./overlay.nix) ];
+    nixpkgs.overlays = [ (import ./overlay.nix { memtouchInput = inputs.memtouch; }) ];
   };
 }
