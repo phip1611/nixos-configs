@@ -73,7 +73,7 @@ for SHELL in "${DEV_SHELLS[@]}"; do
 done
 
 # Be graceful to our host system and prevent possibly expensive builds when
-# the system is running low on power.
+# the system is running low on battery.
 if is_charging || battery_above 30; then
   for ATTR in "${ATTRIBUTES_TO_BUILD[@]}"; do
     echo "Prefetch (and possibly build) Nix flake attribute: $ATTR"
