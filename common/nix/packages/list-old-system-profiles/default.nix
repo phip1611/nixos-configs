@@ -3,29 +3,27 @@
   makeWrapper,
   runCommand,
   # runtime deps
-  ansi,
   argc,
   bash,
 }:
 
 let
   deps = [
-    ansi
     argc
     bash
   ];
 in
-runCommand "link-to-copy"
+runCommand "list-old-system-profiles"
   {
     nativeBuildInputs = [ makeWrapper ];
     meta = {
-      mainProgram = "link-to-copy";
+      mainProgram = "list-old-system-profiles";
     };
   }
   ''
     mkdir -p $out/bin
-    install -m +x ${./link-to-copy.sh} $out/bin/link-to-copy
+    install -m +x ${./list-old-system-profiles.sh} $out/bin/list-old-system-profiles
 
-    wrapProgram $out/bin/link-to-copy \
+    wrapProgram $out/bin/list-old-system-profiles \
       --prefix PATH : ${lib.makeBinPath deps}
   ''
