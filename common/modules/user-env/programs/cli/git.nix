@@ -102,6 +102,8 @@ in
           user.email = cfg.git.email;
         };
         lfs.enable = true; # Enable "git lfs <cmd>"
+        # TODO switch to "ssh"?
+        signing.format = "openpgp";
       };
     };
   };
