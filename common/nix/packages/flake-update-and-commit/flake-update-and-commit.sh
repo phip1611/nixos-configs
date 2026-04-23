@@ -7,6 +7,20 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
     exit 1
 }
 
+# Refuse to run when there are already staged changes, because git commit
+# would include them together with the flake.lock update.
+git diff --cached --quiet || {
+    echo "Error: git index contains staged changes"
+    exit 1
+}
+
+# Refuse to run when flake.lock already has local modifications, because
+# git add flake.lock would stage and commit them together with the update.
+git diff --quiet -- flake.lock || {
+    echo "Error: flake.lock has unstaged changes"
+    exit 1
+}
+
 tmpfile=$(mktemp)
 trap 'rm -f "$tmpfile"' EXIT
 
