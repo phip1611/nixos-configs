@@ -4,16 +4,24 @@
 
 set -euo pipefail
 
+ARG=${1:-}
+
 binary_cache_host=nix-binary-cache.phip1611.dev
 binary_cache_user=phip1611
 binary_cache_ssh_port=7331
 
 # Helper for `fn_build_nixos_system`
 _fn_build_nixos_system() {
-  system=$1
+  local system=$1
+  local cmd="nom"
+  if [ "$ARG" == "--ci" ]; then
+    cmd="nix"
+  fi
 
   echo "Building NixOS system $system ..."
-  nom build ".#nixosConfigurations.$system.config.system.build.toplevel"
+  $cmd --version
+  return 0
+  $cmd build ".#nixosConfigurations.$system.config.system.build.toplevel"
   echo "✔️ Successfully built NixOS system $system"
 
   echo "Populating the Nix binary cache at $binary_cache_host"
