@@ -21,6 +21,8 @@
 
     dd-systems-meetup-website.url = "github:phip1611/dd-systems-meetup-website";
     dd-systems-meetup-website.inputs.nixpkgs.follows = "nixpkgs";
+    dd-systems-meetup-website-next.url = "github:phip1611/dd-systems-meetup-website?ref=next";
+    dd-systems-meetup-website-next.inputs.nixpkgs.follows = "nixpkgs";
 
     img-to-webp-service.url = "github:phip1611/img-to-webp-spring-service";
     img-to-webp-service.inputs.nixpkgs.follows = "nixpkgs";
