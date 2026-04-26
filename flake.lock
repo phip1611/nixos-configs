@@ -37,6 +37,27 @@
         "type": "github"
       }
     },
+    "dd-systems-meetup-website-next": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1777221262,
+        "narHash": "sha256-2FwzlotPVOXj5yzPHA0mksZreEW/tEJUu596JIN5jgU=",
+        "owner": "phip1611",
+        "repo": "dd-systems-meetup-website",
+        "rev": "ff0a49949d4731245da6e028429e4da77e71dc49",
+        "type": "github"
+      },
+      "original": {
+        "owner": "phip1611",
+        "ref": "next",
+        "repo": "dd-systems-meetup-website",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -150,6 +171,7 @@
     "root": {
       "inputs": {
         "dd-systems-meetup-website": "dd-systems-meetup-website",
+        "dd-systems-meetup-website-next": "dd-systems-meetup-website-next",
         "home-manager": "home-manager",
         "img-to-webp-service": "img-to-webp-service",
         "memtouch": "memtouch",
