@@ -15,14 +15,8 @@ let
     root = dd-systems-meetup-website.packages.${system}.default;
     locations."/".tryFiles = "$uri $uri/ /index.html";
   };
-
-  nginxConfNext = commonCfg // {
-    root = dd-systems-meetup-website-next.packages.${system}.default;
-    locations."/".tryFiles = "$uri $uri/ /index.html";
-  };
 in
 {
   # This host is the canonical URL.
   services.nginx.virtualHosts."ukvly.org" = nginxConf;
-  services.nginx.virtualHosts."next.ukvly.org" = nginxConfNext;
 }

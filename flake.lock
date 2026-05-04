@@ -24,36 +24,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1777903726,
-        "narHash": "sha256-MmApJGshF+Wrt6lURSmoFp9AUHHT3XR7adcqQim+hMo=",
+        "lastModified": 1777908385,
+        "narHash": "sha256-4N3Ew7tKc/bXsxGUSmv/aGo+CTgemZTN/qobe1YjbFU=",
         "owner": "phip1611",
         "repo": "dd-systems-meetup-website",
-        "rev": "2a8aa278043060965478a9ae0e4e0999e7f2cb80",
+        "rev": "8e03598b219bf7221da2c251510ce71ea0d68085",
         "type": "github"
       },
       "original": {
         "owner": "phip1611",
-        "repo": "dd-systems-meetup-website",
-        "type": "github"
-      }
-    },
-    "dd-systems-meetup-website-next": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1777906767,
-        "narHash": "sha256-oUzfUnMWr2SzLiRfMf5+5yhCW8GuBddOXC8JidQTdqk=",
-        "owner": "phip1611",
-        "repo": "dd-systems-meetup-website",
-        "rev": "1f58e2bace819a065428c98aa20cc53e37bd5b6b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "phip1611",
-        "ref": "next-tailwind",
         "repo": "dd-systems-meetup-website",
         "type": "github"
       }
@@ -171,7 +150,6 @@
     "root": {
       "inputs": {
         "dd-systems-meetup-website": "dd-systems-meetup-website",
-        "dd-systems-meetup-website-next": "dd-systems-meetup-website-next",
         "home-manager": "home-manager",
         "img-to-webp-service": "img-to-webp-service",
         "memtouch": "memtouch",
