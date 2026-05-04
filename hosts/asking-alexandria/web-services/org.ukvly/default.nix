@@ -10,18 +10,14 @@
 
 let
   commonCfg = import ../nginx-common-host-config.nix;
+  system = pkgs.stdenv.hostPlatform.system;
   nginxConf = commonCfg // {
-    root = "${dd-systems-meetup-website}/public";
+    root = dd-systems-meetup-website.packages.${system}.default;
     locations."/".tryFiles = "$uri $uri/ /index.html";
   };
 
   nginxConfNext = commonCfg // {
-    root =
-      let
-        system = pkgs.stdenv.hostPlatform.system;
-        website = dd-systems-meetup-website-next.packages.${system}.default;
-      in
-      website;
+    root = dd-systems-meetup-website-next.packages.${system}.default;
     locations."/".tryFiles = "$uri $uri/ /index.html";
   };
 in

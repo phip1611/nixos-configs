@@ -24,11 +24,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777888634,
-        "narHash": "sha256-vNLukFPSKfnza1mM9KEoJOK+9CObtGgUmTTc923C8EM=",
+        "lastModified": 1777903726,
+        "narHash": "sha256-MmApJGshF+Wrt6lURSmoFp9AUHHT3XR7adcqQim+hMo=",
         "owner": "phip1611",
         "repo": "dd-systems-meetup-website",
-        "rev": "b2ca5c945f4fd8d22522fc3971d2fd19d52695df",
+        "rev": "2a8aa278043060965478a9ae0e4e0999e7f2cb80",
         "type": "github"
       },
       "original": {
@@ -44,16 +44,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1777900928,
-        "narHash": "sha256-rbZKrXrRElzBLsCWWYR9byL8nyW0/HiIHUEnCgcU9jQ=",
+        "lastModified": 1777906767,
+        "narHash": "sha256-oUzfUnMWr2SzLiRfMf5+5yhCW8GuBddOXC8JidQTdqk=",
         "owner": "phip1611",
         "repo": "dd-systems-meetup-website",
-        "rev": "9eba7c1376337938f3e7ffbe42b05f09533f221f",
+        "rev": "1f58e2bace819a065428c98aa20cc53e37bd5b6b",
         "type": "github"
       },
       "original": {
         "owner": "phip1611",
-        "ref": "next",
+        "ref": "next-tailwind",
         "repo": "dd-systems-meetup-website",
         "type": "github"
       }
