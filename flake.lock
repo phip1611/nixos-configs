@@ -24,11 +24,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777908385,
-        "narHash": "sha256-4N3Ew7tKc/bXsxGUSmv/aGo+CTgemZTN/qobe1YjbFU=",
+        "lastModified": 1777920203,
+        "narHash": "sha256-+noSnE9X54RyShOvP77knprdM7dIKCPdLALkp/qWqt0=",
         "owner": "phip1611",
         "repo": "dd-systems-meetup-website",
-        "rev": "8e03598b219bf7221da2c251510ce71ea0d68085",
+        "rev": "8a69ebcfeb49fa798fa5b2a110ce15e448d75148",
         "type": "github"
       },
       "original": {
@@ -102,11 +102,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1777896550,
-        "narHash": "sha256-aaKwPuWAr+yZ5zLMq4npcXDZK97ZKdou0O/bCysdkeg=",
+        "lastModified": 1777917524,
+        "narHash": "sha256-k+LVe9YaO2BEPB9AaCtTtOMCeGi4dxDo6gt4Un3qoPY=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "10c52861814246081c201fe23f90d3587d5a0934",
+        "rev": "df7783100babf59001340a7a874ba3824e441ecb",
         "type": "github"
       },
       "original": {
