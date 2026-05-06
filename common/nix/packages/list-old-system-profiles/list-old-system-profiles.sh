@@ -19,9 +19,9 @@ eval "$(argc --argc-eval "$0" "$@")"
 
 set -euo pipefail
 
-find "$argc_dir" -maxdepth 1 -type l -name 'system-*-link' \
-    | sed -E 's#.*/system-([0-9]+)-link#\1 &#' \
-    | sort -nr \
-    | awk -v skip="$argc_skip" 'NR > skip { print }' \
-    | sort -n \
-    | awk '{ print $2 }'
+find "$argc_dir" -maxdepth 1 -type l -name 'system-*-link' |
+  sed -E 's#.*/system-([0-9]+)-link#\1 &#' |
+  sort -nr |
+  awk -v skip="$argc_skip" 'NR > skip { print }' |
+  sort -n |
+  awk '{ print $2 }'
