@@ -16,7 +16,6 @@ set -euo pipefail
 # Do the "argc" magic. Reference: https://github.com/sigoden/argc
 eval "$(argc --argc-eval "$0" "$@")"
 
-
 if [ ! -h "$argc_path" ]; then
   echo -e "$(ansi bold)$(ansi yellow)Not a symbolic link: $argc_path$(ansi reset)"
   exit 1
@@ -27,7 +26,6 @@ REALPATH=$(realpath "$argc_path")
 cp "$argc_path" "$argc_path".tmp
 rm "$argc_path"
 mv "$argc_path".tmp "$argc_path"
-
 
 echo -e "Replaced symlink at $(ansi bold)$argc_path$(ansi reset) pointing to $(ansi bold)$REALPATH$(ansi reset) with a copy."
 if [ "${argc_mode+x}" ]; then

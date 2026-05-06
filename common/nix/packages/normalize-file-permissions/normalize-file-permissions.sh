@@ -31,13 +31,11 @@ ARG_DRY_RUN="${argc_dry_run:-0}" # "0" or "1"
 
 # Replace magic arg values.
 
-if [ "$argc_user" = "\$(whoami)" ];
-then
+if [ "$argc_user" = "\$(whoami)" ]; then
   ARG_USER=$(whoami)
 fi
 
-if [ "$argc_directory" = "\$(pwd)" ];
-then
+if [ "$argc_directory" = "\$(pwd)" ]; then
   ARG_DIRECTORY=$(pwd)
 fi
 
@@ -48,8 +46,7 @@ echo "$ARG_GROUP"
 echo -ne "$(ansi bold)Directory: $(ansi reset)"
 echo "$ARG_DIRECTORY"
 
-if [ $ARG_DRY_RUN -eq 1 ];
-then
+if [ $ARG_DRY_RUN -eq 1 ]; then
   echo "Dry run. Do nothing."
   exit 0
 fi

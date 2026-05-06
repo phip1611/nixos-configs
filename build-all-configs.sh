@@ -34,7 +34,7 @@ _fn_build_nixos_system() {
 fn_build_nixos_system() {
   # read all lines in lines array
   while IFS= read -r line; do
-      _fn_build_nixos_system "$line"
+    _fn_build_nixos_system "$line"
   done
 }
 

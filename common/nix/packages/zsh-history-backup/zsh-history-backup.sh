@@ -31,7 +31,7 @@ fn_backup_file() {
   cp "$HIST_FILE" "$BACKUP_FILE_LATEST"
   chmod -w "$BACKUP_FILE_LATEST"
   # Also archive it (compressed)
-  zstd  "$BACKUP_FILE_LATEST" --compress -17 -o "$BACKUP_DIR/$TIMESTAMP-zsh-history.zstd" 2>/dev/null
+  zstd "$BACKUP_FILE_LATEST" --compress -17 -o "$BACKUP_DIR/$TIMESTAMP-zsh-history.zstd" 2>/dev/null
   chmod -w "$BACKUP_DIR/$TIMESTAMP-zsh-history.zstd"
   rm -f "$BACKUP_FILE_LATEST.old"
 }
@@ -46,46 +46,46 @@ fn_backup_file() {
 #   - Script will fail if a filename cannot be parsed into a valid timestamp.
 #   - Operates in-place, deleting files that do not meet the retention criteria.
 fn_delete_outdated() {
-    local now_ts file_ts_sec age month_key
-    local keep_last_days=2
-    declare -A seen_months=()
+  local now_ts file_ts_sec age month_key
+  local keep_last_days=2
+  declare -A seen_months=()
 
-    now_ts=$(date +%s)
+  now_ts=$(date +%s)
 
-    # Iterate all backup files, sorted oldest first
-    mapfile -t backup_files < <(ls -1 "$BACKUP_DIR"/*.zstd 2>/dev/null | sort)
+  # Iterate all backup files, sorted oldest first
+  mapfile -t backup_files < <(ls -1 "$BACKUP_DIR"/*.zstd 2>/dev/null | sort)
 
-    for file in "${backup_files[@]}"; do
-        local file_base
-        file_base=$(basename "$file")
+  for file in "${backup_files[@]}"; do
+    local file_base
+    file_base=$(basename "$file")
 
-        # Extract timestamp: YYYY-MM-DDTHH:MM:SS
-        local file_ts
-        file_ts=$(echo "$file_base" | cut -d'-' -f1-3 | sed 's/T/ /')
+    # Extract timestamp: YYYY-MM-DDTHH:MM:SS
+    local file_ts
+    file_ts=$(echo "$file_base" | cut -d'-' -f1-3 | sed 's/T/ /')
 
-        # Convert to epoch seconds; fail if invalid
-        file_ts_sec=$(date -d "$file_ts" +%s)
+    # Convert to epoch seconds; fail if invalid
+    file_ts_sec=$(date -d "$file_ts" +%s)
 
-        # Age in seconds
-        age=$(( now_ts - file_ts_sec ))
+    # Age in seconds
+    age=$((now_ts - file_ts_sec))
 
-        if [ "$age" -le $((keep_last_days*24*60*60)) ]; then
-            # Keep everything from the last 2 days
-            continue
-        fi
+    if [ "$age" -le $((keep_last_days * 24 * 60 * 60)) ]; then
+      # Keep everything from the last 2 days
+      continue
+    fi
 
-        # Key for the month, e.g., "2026-02"
-        month_key=$(date -d "@$file_ts_sec" +%Y-%m)
+    # Key for the month, e.g., "2026-02"
+    month_key=$(date -d "@$file_ts_sec" +%Y-%m)
 
-        # If we already kept a file for this month, delete this one
-        if [ -n "${seen_months[$month_key]+x}" ]; then
-            echo "Deleting outdated backup: $file"
-            rm -f "$file"
-        else
-            # Keep the first encountered backup for this month
-            seen_months[$month_key]=1
-        fi
-    done
+    # If we already kept a file for this month, delete this one
+    if [ -n "${seen_months[$month_key]+x}" ]; then
+      echo "Deleting outdated backup: $file"
+      rm -f "$file"
+    else
+      # Keep the first encountered backup for this month
+      seen_months[$month_key]=1
+    fi
+  done
 }
 
 fn_restore_backup() {
@@ -108,21 +108,21 @@ fn_need_restore() {
 
   # Check that current file exists.
   if [ -f "$HIST_FILE" ]; then
-    current_size=$(wc -l < "$HIST_FILE")
+    current_size=$(wc -l <"$HIST_FILE")
   fi
 
   # Check that backup file exists.
   if [ -f "$BACKUP_FILE_LATEST" ]; then
-    backup_size=$(wc -l < "$BACKUP_FILE_LATEST")
+    backup_size=$(wc -l <"$BACKUP_FILE_LATEST")
   fi
 
   # We only need to restore the file when the file was truncated.
   echo "current history size=$current_size"
   echo "backup history size =$backup_size"
   if [ "$current_size" -lt "$backup_size" ]; then
-      return "$RET_NEED_BACKUP_RESTORE"
+    return "$RET_NEED_BACKUP_RESTORE"
   else
-      return "$RET_NO_BACKUP_RESTORE"
+    return "$RET_NO_BACKUP_RESTORE"
   fi
 }
 

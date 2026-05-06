@@ -30,8 +30,8 @@ until ping -c 1 -W $argc_request_delay "$argc_host" >/dev/null 2>&1; do
     echo "Timeout!"
     exit 1
   fi
-done &    # The "&" backgrounds it
+done & # The "&" backgrounds it
 trap "kill $!; ping_cancelled=true" SIGINT
-wait $!          # Wait for the loop to exit, one way or another
-trap - SIGINT    # Remove the trap, now we're done with it
+wait $!       # Wait for the loop to exit, one way or another
+trap - SIGINT # Remove the trap, now we're done with it
 echo "Host is available (took ${DIFF}s)"

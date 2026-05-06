@@ -79,4 +79,3 @@ if [ -z "${argc_keep:-}" ]; then
 else
   echo -e "$(ansi bold)Keeping '$argc_target$(ansi reset)'"
 fi
-
