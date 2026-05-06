@@ -50,6 +50,45 @@ battery_above() {
     (( perc > threshold ))
 }
 
+is_metered_connection() {
+  SUCCESS=0
+  FAILURE=1
+
+  # Find the name of the default network interface
+  dev=$(ip route list default 2>/dev/null \
+    | head -n 1 \
+    | awk '{ for (i = 1; i <= NF; i++) if ($i == "dev") { print $(i + 1); exit } }')
+
+  if ! which nmcli; then
+    echo "Network manager not available - assuming unmetered connection"
+    return $FAILURE
+  fi
+
+  metered=$(
+      nmcli -t -g GENERAL.METERED device show "$dev" 2>/dev/null \
+        | head -n1
+  )
+
+  if [[ -z "$dev" ]]; then
+    return $FAILURE
+  fi
+
+  case "$metered" in
+    "no"|"no (guessed)")
+      return $FAILURE
+      ;;
+    *)
+      echo "Connection on device $dev is metered"
+      return $SUCCESS
+      ;;
+  esac
+}
+
+if is_metered_connection; then
+  echo "Abort: The connection is metered or there is no default route"
+  exit 1
+fi
+
 for FLAKE in "${FLAKES[@]}"; do
   echo "Flake input: $FLAKE"
   echo "Prefetch flake inputs ..."
