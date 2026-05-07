@@ -86,11 +86,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772436950,
-        "narHash": "sha256-MfrM528geF3URsV01HV+AgoY735fWPF/EhRblwqRcTM=",
+        "lastModified": 1778165757,
+        "narHash": "sha256-JPycWyoy2zfX/2sgGh+Z0Dhbu4xK+wS79lWWpZfiFQs=",
         "owner": "cobaltcore-dev",
         "repo": "memtouch",
-        "rev": "d7fc9fdf99cba703b6463d127ed392e2ce1c973b",
+        "rev": "df3a8bc1378621c0bdfb0b7ddd0b23d6578e066b",
         "type": "github"
       },
       "original": {
@@ -133,11 +133,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1778071213,
-        "narHash": "sha256-IoQY5s2VV3RDkX7iuONN9avQl07ItPwcvQWiqwDdfkQ=",
+        "lastModified": 1778124196,
+        "narHash": "sha256-pYEytCNic/czazbV9r3tbQ6BZzqRBg/41x2dIC5ymOo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "07800bee2b362f6c73fe17cb1593a260c5e183c6",
+        "rev": "68a8af93ff4297686cb68880845e61e5e2e41d92",
         "type": "github"
       },
       "original": {
