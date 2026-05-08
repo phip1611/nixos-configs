@@ -4,6 +4,7 @@
   runCommand,
   # runtime deps
   bash,
+  gawk,
   git,
   nix,
   openssh, # for git+ssh dependencies
@@ -12,6 +13,7 @@
 let
   deps = [
     bash
+    gawk
     git
     nix
     openssh
