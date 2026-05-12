@@ -6,6 +6,7 @@
   bash,
   gawk,
   git,
+  iproute2,
   nix,
   openssh, # for git+ssh dependencies
 }:
@@ -15,6 +16,7 @@ let
     bash
     gawk
     git
+    iproute2
     nix
     openssh
   ];
