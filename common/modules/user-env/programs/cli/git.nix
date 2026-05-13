@@ -47,10 +47,13 @@ in
         enable = true;
         package = pkgsUnstable.git;
         ignores = [
+          "*.iml"
           ".direnv/"
           ".idea/"
-          "*.iml"
           ".vscode/"
+          "/.agents"
+          "/.claude"
+          "/.codex"
           "cmake-build-*/"
         ];
         settings = {
