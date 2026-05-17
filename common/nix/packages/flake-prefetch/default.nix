@@ -7,6 +7,7 @@
   gawk,
   git,
   iproute2,
+  networkmanager,
   nix,
   openssh, # for git+ssh dependencies
 }:
@@ -16,6 +17,7 @@ let
     bash
     gawk
     git
+    networkmanager
     iproute2
     nix
     openssh
