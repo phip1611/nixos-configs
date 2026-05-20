@@ -55,7 +55,6 @@ in
         link-to-copy
         nix-shell-init
         normalize-file-permissions
-        strace-with-colors
         wait-host-online
         zsh-history-backup
       ]
