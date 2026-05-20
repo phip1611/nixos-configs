@@ -75,7 +75,7 @@ in
         dates = "daily";
         # Runs normal garbage-collection plus removes all NixOS generations
         # that are older than the specified amount.
-        options = "--delete-older-than 30d";
+        options = lib.mkDefault "--delete-older-than 30d";
       };
 
       # Scheduled systemd service that optimizes all paths in the nix store

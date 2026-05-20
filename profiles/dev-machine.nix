@@ -41,6 +41,7 @@
     };
 
     nix = {
+      gc.options = "--delete-older-than 14d";
       # Keep nix store populated for no/little wait times during typical work
       settings = {
         keep-outputs = true;
