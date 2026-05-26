@@ -42,8 +42,9 @@ in
         # keep-outputs = true;
         # keep-derivations = true;
 
+        # Faster downloads (default is 25)
+        http-connections = 48;
         # Faster downloads (default is 16)
-        http-connections = 32;
         max-substitution-jobs = 32;
 
         trusted-users = [
