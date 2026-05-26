@@ -55,7 +55,17 @@
         import nixpkgsSrc {
           inherit system;
           config = { };
-          overlays = builtins.attrValues self.overlays;
+          overlays = builtins.attrValues self.overlays ++ [
+            (
+              _final: _prev:
+              if builtins.hasAttr system inputs.memtouch.packages then
+                {
+                  memtouch = inputs.memtouch.packages.${system}.default;
+                }
+              else
+                { }
+            )
+          ];
         };
 
       # Generates the typical per-system flake attributes.
@@ -85,10 +95,7 @@
       initCommonNix = pkgs: {
         # All unit and integration tests as combined derivation.
         allTests = (import commonSrc.nix.all { inherit pkgs; }).allTests;
-        bootitems = import commonSrc.nix.bootitems {
-          inherit pkgs;
-          memtouch = inputs.memtouch.packages.${pkgs.stdenv.hostPlatform.system}.default;
-        };
+        bootitems = import commonSrc.nix.bootitems { inherit pkgs; };
         libutil = import commonSrc.nix.libutil { inherit pkgs; };
         packages = import commonSrc.nix.packages { inherit pkgs; };
       };
@@ -127,6 +134,21 @@
               # definitions can be better separated and the NixOS
               # configurations are less dependent on flake.nix.
               ./hosts/${hostName}/configuration.nix
+
+              # Add memtouch to `pkgs` via an overlay:
+              {
+                nixpkgs.overlays = [
+                  (
+                    _final: _prev:
+                    if builtins.hasAttr system inputs.memtouch.packages then
+                      {
+                        memtouch = inputs.memtouch.packages.${system}.default;
+                      }
+                    else
+                      { }
+                  )
+                ];
+              }
             ]
             ++ additionalModules;
         });
@@ -243,23 +265,19 @@
               listNixosOptions = pkgs.callPackage ./utils/list-nixos-options.nix {
                 inherit (inputs) self;
               };
+              commonNix = initCommonNix pkgs;
             in
-            (initCommonNix pkgs).packages
+            commonNix.packages
             // {
               inherit listNixosOptions;
-              bootitems-combined = pkgs.symlinkJoin (
-                let
-                  commonNix = initCommonNix pkgs;
-                in
-                {
-                  name = "bootitems-combined";
-                  paths = [
-                    commonNix.bootitems.linux.kernelsCombined
-                    commonNix.bootitems.linux.initrdsCombined
-                    commonNix.bootitems.tinytoykernel
-                  ];
-                }
-              );
+              bootitems-combined = pkgs.symlinkJoin ({
+                name = "bootitems-combined";
+                paths = [
+                  commonNix.bootitems.linux.kernelsCombined
+                  commonNix.bootitems.linux.initrdsCombined
+                  commonNix.bootitems.tinytoykernel
+                ];
+              });
             }
           );
         };
