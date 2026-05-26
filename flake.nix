@@ -215,6 +215,7 @@
                   nix-output-monitor
                   nixfmt
                   nixos-rebuild
+                  yamlfmt
                 ]
                 ++ builtins.attrValues (initCommonNix pkgs).packages;
 
