@@ -25,14 +25,14 @@ jobs:
           else
             echo "Changes detected."
           fi
+      # Opens a PR against the default branch.
       - name: Create or update PR
         id: cpr
         if: env.skip != 'true'
         uses: peter-evans/create-pull-request@v8
         with:
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          base: main
-          body: "Daily update via `nix flake update`"
+          body: "Automatic update via `nix flake update`"
           branch: automatic-flake-update
           commit-message: "flake: automatic update"
           delete-branch: false
