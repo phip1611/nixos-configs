@@ -56,6 +56,11 @@ in
           "/.codex"
           "cmake-build-*/"
         ];
+        signing = {
+          format = "ssh";
+          key = lib.mkDefault "~/.ssh/id_ed25519.pub";
+          signByDefault = true;
+        };
         settings = {
           alias = {
             hist = "log --graph --decorate --oneline";
@@ -77,6 +82,9 @@ in
           fetch = {
             writeCommitGraph = true;
           };
+          # Falls back to the default SSH key.
+          # This works fine as I typically do not have multiple keys.
+          # gpg.ssh.defaultKeyCommand = lib.mkDefault "ssh-add -L";
           init = {
             defaultBranch = "main";
           };
