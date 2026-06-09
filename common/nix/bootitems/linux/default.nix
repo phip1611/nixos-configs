@@ -156,7 +156,7 @@ let
         ++ lib.optional (
           pkgs ? "memtouch"
           || builtins.trace "pkgs.memtouch is null, skipping memtouch binary (must be provided via Nix overlay)" false
-        ) (builtins.trace "pkgs.memtouch is set" pkgs.memtouch);
+        ) pkgs.memtouch;
     in
     {
       minimal = buildInitrd { };
