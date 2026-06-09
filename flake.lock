@@ -65,11 +65,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779868662,
-        "narHash": "sha256-MdcZIUmbNMguWNOEUtJ/bWCYrQ2WrFfhA7Z8RlMY5fY=",
+        "lastModified": 1781013981,
+        "narHash": "sha256-oen8hIRf7KcQgJcv1StElmaXG5OMEfhslW9eaFD8WPE=",
         "owner": "phip1611",
         "repo": "img-to-webp-spring-service",
-        "rev": "ad9ad6cdadda90b12e76b73cd759a83d02d472e8",
+        "rev": "386938b497f7fbe5c47c60dfd223e0e2a06996be",
         "type": "github"
       },
       "original": {
@@ -86,11 +86,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1780284153,
-        "narHash": "sha256-bx4GFr6ASHFw/G26PsXuBZ8/L8i1gF1Vp8SyO0b2EMk=",
+        "lastModified": 1781003747,
+        "narHash": "sha256-cc9VKpNPCw/o02SLkIqV8Vov9wVtMycOXb6Wu6/5bxI=",
         "owner": "cobaltcore-dev",
         "repo": "memtouch",
-        "rev": "945a1cc8a2da0337e28d3bfd02fb4b4d9335142e",
+        "rev": "09d924c564ae4ecd08dac2ccfcf60c355338a3ef",
         "type": "github"
       },
       "original": {
