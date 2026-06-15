@@ -5,13 +5,15 @@
     ###################
     # NixOS modules and nixpkgs
 
-    home-manager.url = "github:nix-community/home-manager/release-26.05";
+    home-manager.url = "github:nix-community/home-manager/master";
+    # home-manager.url = "github:nix-community/home-manager/release-26.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixos-hardware.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.11";
     # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # Use nixpkgs-unstable instead of master so that packages are cached already
     # while still being as fresh as possible.
