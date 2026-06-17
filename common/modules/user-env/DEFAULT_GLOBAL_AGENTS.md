@@ -1,6 +1,7 @@
 # Global Agent Instructions
 
-<!-- Lower precedence than project-specific AGENTS.md files. -->
+<!-- Lower precedence than project-specific AGENTS.md files and project-specific
+     conventions. -->
 
 ## Git / Commits / Patches
 
@@ -22,10 +23,17 @@
 - During review, check consistency across all commits in a series: commit
   style, code style, and logging style - both within the series and against
   the project's conventions.
+- Also check if changes should be moved between commits to improve
+  reviewability or because changes belong together.
 
 ## Code Style
 
 - Prefer readable code over clever code.
+- When writing new code, use this precedence:
+  - Prefer standard library functionality.
+  - Reuse existing project dependencies and helpers.
+  - Add a local helper or a well-known ecosystem library when neither is enough.
+    Ask the developer if the tradeoff is unclear.
 - No premature optimization unless the function is demonstrably on a hot path.
 - Follow project linting, formatting, and established design patterns and
   best practices of the ecosystem.
