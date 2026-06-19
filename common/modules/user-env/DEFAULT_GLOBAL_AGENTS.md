@@ -66,4 +66,9 @@
 - Use a plain apostrophe (') and hyphen (-) instead of typographic
   apostrophes or em-dashes in code and markdown files.
 
+## Documentation
+
+- When a project maintains a changelog, add an entry there following the
+  existing style.
+
 <!-- End of global instructions. -->
