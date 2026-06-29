@@ -3,6 +3,12 @@
 <!-- Lower precedence than project-specific AGENTS.md files and project-specific
      conventions. -->
 
+## General
+
+- Be direct and concise.
+- Look for evidence that could invalidate users assumptions.
+- Question design choices, if something looks wrong.
+
 ## Git / Commits / Patches
 
 - Commits must be atomic, self-contained, and logically scoped. Prefer small,
