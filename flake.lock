@@ -86,11 +86,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781003747,
-        "narHash": "sha256-cc9VKpNPCw/o02SLkIqV8Vov9wVtMycOXb6Wu6/5bxI=",
+        "lastModified": 1782870859,
+        "narHash": "sha256-ip8O3ZnAN93aSZA+lApvfprDjTt0LQDbymU1Qn8qszo=",
         "owner": "cobaltcore-dev",
         "repo": "memtouch",
-        "rev": "09d924c564ae4ecd08dac2ccfcf60c355338a3ef",
+        "rev": "fdb60affdbd7dd4d7f82031bdee42ddd0d4ad46a",
         "type": "github"
       },
       "original": {
