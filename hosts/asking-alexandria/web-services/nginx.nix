@@ -3,12 +3,12 @@
   lib,
   pkgs,
   ...
-}@inputs:
+}:
 
 let
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
+  #pkgsUnstable = import inputs.nixpkgs-unstable {
+  #  system = pkgs.stdenv.hostPlatform.system;
+  #};
 in
 {
   networking.firewall = {
@@ -28,7 +28,9 @@ in
   users.users.nginx.extraGroups = [ "acme" ];
 
   services.nginx.enable = true;
-  services.nginx.package = pkgsUnstable.nginx;
+  # TODO reintroduce once nginx derivation from stable is compatible again
+  # (in 26.11?). Caused by https://github.com/NixOS/nixpkgs/pull/545717.
+  # services.nginx.package = pkgsUnstable.nginx;
 
   services.nginx.recommendedOptimisation = true;
   services.nginx.recommendedTlsSettings = true;
