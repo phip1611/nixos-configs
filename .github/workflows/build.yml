@@ -10,11 +10,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
+      # Cache for Nix evaluations, Nix tarballs, and Nix git fetches.
       - name: Restore Nix cache
         uses: actions/cache@v6
         with:
           path: ~/.cache/nix
-          key: ${{ github.job }}-local-nix-cache
+          # Hashing over flake.lock is an approximation and good enough.
+          key: ${{ github.job }}-local-nix-cache-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            ${{ github.job }}-local-nix-cache-
       - run: nix run .\#listNixosOptions
   nix-fmt:
     name: Check Nix formatting
@@ -22,11 +26,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
+      # Cache for Nix evaluations, Nix tarballs, and Nix git fetches.
       - name: Restore Nix cache
         uses: actions/cache@v6
         with:
           path: ~/.cache/nix
-          key: ${{ github.job }}-local-nix-cache
+          # Hashing over flake.lock is an approximation and good enough.
+          key: ${{ github.job }}-local-nix-cache-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            ${{ github.job }}-local-nix-cache-
       - name: Check Nix formatting
         run: nix fmt -- --ci
   # Nix flake checks. This runs on GitHub infrastructure and not by remote
@@ -40,13 +48,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
+      # Cache for Nix evaluations, Nix tarballs, and Nix git fetches.
       - name: Restore Nix cache
         uses: actions/cache@v6
         with:
           path: ~/.cache/nix
-          key: ${{ github.job }}-local-nix-cache
-          # Performs some basic checks of the NixOS system configurations and runs
-          # all checks.
+          # Hashing over flake.lock is an approximation and good enough.
+          key: ${{ github.job }}-local-nix-cache-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            ${{ github.job }}-local-nix-cache-
+      # Performs some basic checks of the NixOS system configurations and runs
+      # all checks.
       - run: nix flake check
   # Builds all Nix packages, shells, and NixOS systems of the flake. This uses
   # my host at nix-binary-cache.phip1611.dev as CI remote builder as:
