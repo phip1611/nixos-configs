@@ -24,7 +24,8 @@ request [1].
    **Only select repositories** and select `nixos-configs`.
 4. Configure these repository Actions secrets:
    https://github.com/phip1611/nixos-configs/settings/secrets/actions
-   - `FLAKE_AUTOUPDATE_APP_ID`: the GitHub App ID.
+   - `FLAKE_AUTOUPDATE_APP_CLIENT_ID`: the GitHub App Client ID. This is not
+     the numeric App ID; it is shown in the app's general settings.
    - `FLAKE_AUTOUPDATE_APP_PRIVATE_KEY`: the complete contents of the
      downloaded PEM private-key file.
 

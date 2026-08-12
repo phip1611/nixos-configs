@@ -23,14 +23,6 @@ jobs:
           key: ${{ github.job }}-local-nix-cache-${{ hashFiles('flake.lock') }}
           restore-keys: |
             ${{ github.job }}-local-nix-cache-
-      - name: Create GitHub App token
-        if: env.skip != 'true'
-        id: app-token
-        uses: actions/create-github-app-token@v3
-        with:
-          app-id: '${{ secrets.FLAKE_AUTOUPDATE_APP_ID }}'
-          private-key: '${{ secrets.FLAKE_AUTOUPDATE_APP_PRIVATE_KEY }}'
-      # Opens a PR against the default branch.
       - name: Run `nix flake update`
         run: nix flake update
       - name: Check for changes
@@ -41,6 +33,14 @@ jobs:
           else
             echo "Changes detected."
           fi
+      - name: Create GitHub App token
+        if: env.skip != 'true'
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: '${{ secrets.FLAKE_AUTOUPDATE_APP_CLIENT_ID }}'
+          private-key: '${{ secrets.FLAKE_AUTOUPDATE_APP_PRIVATE_KEY }}'
+      # Opens a PR against the default branch.
       - name: Create or update PR
         id: cpr
         if: env.skip != 'true'
