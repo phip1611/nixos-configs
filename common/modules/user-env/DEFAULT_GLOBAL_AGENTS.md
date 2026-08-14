@@ -45,6 +45,11 @@
   best practices of the ecosystem.
 - Default line width: 80 characters unless the project specifies otherwise.
 
+### Rust
+
+- Write `expect()` messages in the "should" style: briefly explain why the
+  operation should succeed.
+
 ## Code Comments
 
 - Keep comments concise and minimal. Omit comments that restate the obvious.
