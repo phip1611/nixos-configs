@@ -77,6 +77,7 @@ in
             cargo-careful
             cargo-deny
             cargo-expand
+            cargo-fuzz
             cargo-license
             cargo-msrv
             cargo-nextest
