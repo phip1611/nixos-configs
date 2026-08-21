@@ -14,6 +14,7 @@ in
 {
   imports = [
     ./auto-upgrade.nix
+    ./bootscreen
     ./docker.nix
     ./documentation.nix
     ./firmware.nix
@@ -30,6 +31,7 @@ in
       # Only server-environments should enable that.
       withAutoUpgrade = lib.mkEnableOption "Enable automatic system upgrades from this flake on GitHub";
       withBleedingEdgeLinux = lib.mkEnableOption "Enable bleeding edge Linux version and configs";
+      withBootscreen = lib.mkEnableOption "Enable my cool bootscreen (background)";
       withDockerRootless = lib.mkEnableOption "Enable rootless Docker";
       withSecureDns = lib.mkEnableOption "Enable secure DNS (DNSSec, DoH)";
     };

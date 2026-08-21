@@ -29,6 +29,7 @@
         system = {
           enable = true;
           withBleedingEdgeLinux = true;
+          withBootscreen = true;
           withDockerRootless = true;
           withSecureDns = true;
         };
