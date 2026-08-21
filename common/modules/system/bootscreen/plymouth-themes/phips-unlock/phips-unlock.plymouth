@@ -1,0 +1,9 @@
+[Plymouth Theme]
+Name=Phips Unlock
+Description=Centered Phips boot logo with a minimal disk unlock prompt.
+ModuleName=script
+
+[script]
+ImageDir=@THEME_DIR@
+ScriptFile=@THEME_DIR@/phips-unlock.script
+ConsoleLogBackgroundColor=0x000000
