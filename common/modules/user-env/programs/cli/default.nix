@@ -64,6 +64,8 @@ in
         binsider
         bottom
         calc
+        claude-code
+        codex
         coreutils # default package; here only for completeness
         curlFull # Curl with HTTP3 support and more
         dig # dig and nslookup
