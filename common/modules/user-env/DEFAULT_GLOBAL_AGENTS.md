@@ -9,6 +9,12 @@
 - Look for evidence that could invalidate users assumptions.
 - Question design choices, if something looks wrong.
 
+## Tooling
+
+- When investigating Rust semantics, prefer rust-analyzer or RustRover's
+  semantic tooling when available and useful (for example, symbol search,
+  call hierarchies, and inspections).
+
 ## Git / Commits / Patches
 
 - Commits must be atomic, self-contained, and logically scoped. Prefer small,
