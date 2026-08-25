@@ -46,6 +46,34 @@ in
       programs.git = {
         enable = true;
         package = pkgsUnstable.git;
+        # Improve the git diff for various languages
+        attributes = [
+          # Source code
+          "*.rs        diff=rust"
+          "*.c         diff=cpp"
+          "*.h         diff=cpp"
+          "*.cc        diff=cpp"
+          "*.cpp       diff=cpp"
+          "*.hpp       diff=cpp"
+          "*.sh        diff=bash"
+
+          # Documentation/configuration
+          "*.md        diff=markdown"
+          "*.ini       diff=ini"
+
+          # INI-like configuration
+          "*.ini       diff=ini"
+          "*.toml      diff=ini"
+          "*.service   diff=ini"
+          "*.socket    diff=ini"
+          "*.target    diff=ini"
+          "*.timer     diff=ini"
+          "*.mount     diff=ini"
+
+          # Device trees
+          "*.dts       diff=dts"
+          "*.dtsi      diff=dts"
+        ];
         ignores = [
           "*.iml"
           ".direnv/"
