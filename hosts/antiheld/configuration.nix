@@ -42,6 +42,9 @@ in
     services.ddns-update.configPath = "/home/phip1611/ddns-config.json";
   };
 
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless.enable = lib.mkForce false;
+
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
 
@@ -94,6 +97,7 @@ in
       extraGroups = [
         "wheel"
         "gpio"
+        "docker"
       ];
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGZ1CsDfB8Bsg8H82oIgVjv8bu5KEh4UX5iqEfC+4hzF pschuster@xps13-pschuster"
