@@ -22,14 +22,6 @@
     };
   };
 
-  # Since 6.17, the special WiFi hardware I'm using should work since 6.17.
-  boot.kernelPackages = lib.mkForce (
-    if builtins.compareVersions pkgs.linuxPackages.kernel.version "6.17" >= 0 then
-      pkgs.linuxPackages
-    else
-      pkgs.linuxPackages_latest
-  );
-
   assertions = [
     (
       let

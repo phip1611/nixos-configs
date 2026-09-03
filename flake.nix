@@ -5,16 +5,20 @@
     ###################
     # NixOS modules and nixpkgs
 
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    # Use nixpkgs-unstable instead of master so that packages are more likely
-    # to be cached already while still being as fresh as possible.
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Use nixpkgs-unstable instead of master so that packages are cached already
+    # while still being as fresh as possible.
     # See https://discourse.nixos.org/t/differences-between-nix-channels/13998
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
+    memtouch.url = "github:cobaltcore-dev/memtouch?ref=main";
+    memtouch.inputs.nixpkgs.follows = "nixpkgs";
 
     ###################
     # Web Projects
@@ -30,9 +34,6 @@
 
     wambo-web.url = "github:phip1611/wambo-web";
     wambo-web.inputs.nixpkgs.follows = "nixpkgs";
-
-    memtouch.url = "github:cobaltcore-dev/memtouch?ref=main";
-    memtouch.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -54,7 +55,17 @@
         import nixpkgsSrc {
           inherit system;
           config = { };
-          overlays = builtins.attrValues self.overlays;
+          overlays = builtins.attrValues self.overlays ++ [
+            (
+              _final: _prev:
+              if builtins.hasAttr system inputs.memtouch.packages then
+                {
+                  memtouch = inputs.memtouch.packages.${system}.default;
+                }
+              else
+                { }
+            )
+          ];
         };
 
       # Generates the typical per-system flake attributes.
@@ -84,10 +95,7 @@
       initCommonNix = pkgs: {
         # All unit and integration tests as combined derivation.
         allTests = (import commonSrc.nix.all { inherit pkgs; }).allTests;
-        bootitems = import commonSrc.nix.bootitems {
-          inherit pkgs;
-          memtouch = inputs.memtouch.packages.${pkgs.stdenv.hostPlatform.system}.default;
-        };
+        bootitems = import commonSrc.nix.bootitems { inherit pkgs; };
         libutil = import commonSrc.nix.libutil { inherit pkgs; };
         packages = import commonSrc.nix.packages { inherit pkgs; };
       };
@@ -126,6 +134,21 @@
               # definitions can be better separated and the NixOS
               # configurations are less dependent on flake.nix.
               ./hosts/${hostName}/configuration.nix
+
+              # Add memtouch to `pkgs` via an overlay:
+              {
+                nixpkgs.overlays = [
+                  (
+                    _final: _prev:
+                    if builtins.hasAttr system inputs.memtouch.packages then
+                      {
+                        memtouch = inputs.memtouch.packages.${system}.default;
+                      }
+                    else
+                      { }
+                  )
+                ];
+              }
             ]
             ++ additionalModules;
         });
@@ -147,6 +170,16 @@
           };
 
           nixosConfigurations = {
+            # My Raspberry Pi 4 at home.
+            antiheld = buildNixosSystem {
+              hostName = "antiheld";
+              system = "aarch64-linux";
+              additionalModules = [
+                (inputs.nixos-hardware.nixosModules.raspberry-pi-4)
+              ];
+
+            };
+
             # My Netcup Root Server.
             asking-alexandria = buildNixosSystem {
               hostName = "asking-alexandria";
@@ -214,6 +247,7 @@
                   jq
                   nix-output-monitor
                   nixfmt
+                  nixfmt-tree
                   nixos-rebuild
                   yamlfmt
                 ]
@@ -241,23 +275,19 @@
               listNixosOptions = pkgs.callPackage ./utils/list-nixos-options.nix {
                 inherit (inputs) self;
               };
+              commonNix = initCommonNix pkgs;
             in
-            (initCommonNix pkgs).packages
+            commonNix.packages
             // {
               inherit listNixosOptions;
-              bootitems-combined = pkgs.symlinkJoin (
-                let
-                  commonNix = initCommonNix pkgs;
-                in
-                {
-                  name = "bootitems-combined";
-                  paths = [
-                    commonNix.bootitems.linux.kernelsCombined
-                    commonNix.bootitems.linux.initrdsCombined
-                    commonNix.bootitems.tinytoykernel
-                  ];
-                }
-              );
+              bootitems-combined = pkgs.symlinkJoin ({
+                name = "bootitems-combined";
+                paths = [
+                  commonNix.bootitems.linux.kernelsCombined
+                  commonNix.bootitems.linux.initrdsCombined
+                  commonNix.bootitems.tinytoykernel
+                ];
+              });
             }
           );
         };

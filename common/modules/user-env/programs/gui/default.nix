@@ -49,7 +49,7 @@ in
         gimp3
         # gimp3-with-plugins
         gparted
-        libreoffice-fresh
+        libreoffice-stable
         screen-message
         signal-desktop
         spotify

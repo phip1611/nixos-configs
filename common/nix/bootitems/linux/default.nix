@@ -1,7 +1,6 @@
 {
   pkgs,
   libutil,
-  memtouch,
 }:
 
 let
@@ -155,9 +154,9 @@ let
         # Only available when built from flake, not for local `nix-build`
         # prototyping
         ++ lib.optional (
-          memtouch != null
-          || builtins.trace "memtouch is null, skipping memtouch binary (build locally, not from flake)" false
-        ) memtouch;
+          pkgs ? "memtouch"
+          || builtins.trace "pkgs.memtouch is null, skipping memtouch binary (must be provided via Nix overlay)" false
+        ) pkgs.memtouch;
     in
     {
       minimal = buildInitrd { };

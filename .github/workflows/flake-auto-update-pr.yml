@@ -11,9 +11,18 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Set up Nix
         uses: cachix/install-nix-action@v31
+      # Cache for Nix evaluations, Nix tarballs, and Nix git fetches.
+      - name: Restore Nix cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/nix
+          # Hashing over flake.lock is an approximation and good enough.
+          key: ${{ github.job }}-local-nix-cache-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            ${{ github.job }}-local-nix-cache-
       - name: Run `nix flake update`
         run: nix flake update
       - name: Check for changes
@@ -24,6 +33,13 @@ jobs:
           else
             echo "Changes detected."
           fi
+      - name: Create GitHub App token
+        if: env.skip != 'true'
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: '${{ secrets.FLAKE_AUTOUPDATE_APP_CLIENT_ID }}'
+          private-key: '${{ secrets.FLAKE_AUTOUPDATE_APP_PRIVATE_KEY }}'
       # Opens a PR against the default branch.
       - name: Create or update PR
         id: cpr
@@ -38,11 +54,11 @@ jobs:
           labels: |
             dependencies
           title: "flake: automatic update"
-          token: '${{ secrets.FLAKE_AUTOUPDATE_GITHUB_TOKEN }}'
+          token: '${{ steps.app-token.outputs.token }}'
       - name: Mark PR as auto-merge
         if: env.skip != 'true'
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           merge-method: 'merge'
-          token: '${{ secrets.FLAKE_AUTOUPDATE_GITHUB_TOKEN }}'
+          token: '${{ steps.app-token.outputs.token }}'
           pull-request-number: '${{ steps.cpr.outputs.pull-request-number }}'

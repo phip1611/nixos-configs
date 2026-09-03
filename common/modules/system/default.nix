@@ -14,6 +14,7 @@ in
 {
   imports = [
     ./auto-upgrade.nix
+    ./bootscreen
     ./docker.nix
     ./documentation.nix
     ./firmware.nix
@@ -30,6 +31,7 @@ in
       # Only server-environments should enable that.
       withAutoUpgrade = lib.mkEnableOption "Enable automatic system upgrades from this flake on GitHub";
       withBleedingEdgeLinux = lib.mkEnableOption "Enable bleeding edge Linux version and configs";
+      withBootscreen = lib.mkEnableOption "Enable my cool bootscreen (background)";
       withDockerRootless = lib.mkEnableOption "Enable rootless Docker";
       withSecureDns = lib.mkEnableOption "Enable secure DNS (DNSSec, DoH)";
     };
@@ -99,12 +101,23 @@ in
           SystemMaxFileSize=50M
         '';
 
-        # zram swap seems to enable a quicker and more responsive system when
-        # memory usage is high.
+        # zRam-based swap offers very responsive swapping when the memory usage
+        # is high. It still makes sense to provide multiple GB of traditional
+        # swap files/partitions.
+        #
+        # Size the zRam swap device to 50% of RAM, capped at 16 GiB. This does
+        # not reserve the full amount immediately; actual RAM use depends on how
+        # much is swapped into zRam and how well it compresses.
         zramSwap = {
           enable = true;
           algorithm = "zstd";
-          memoryPercent = 25;
+          memoryPercent = lib.mkDefault 50;
+          # Ensure that never more than `min(16 GiB, 50%)` are used by ZRAM so
+          # that machines with much RAM (32 GiB plus) primarily use RAM as is.
+          memoryMax = 16 * 1024 * 1024 * 1024;
+          # Should be higher than everything in `swapDevices.*.priority`.
+          # Range: 0..32767
+          priority = 100;
         };
       }
       # Use latest stable kernel and disable mitigations.

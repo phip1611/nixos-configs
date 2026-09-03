@@ -55,7 +55,6 @@ in
         link-to-copy
         nix-shell-init
         normalize-file-permissions
-        strace-with-colors
         wait-host-online
         zsh-history-backup
       ]
@@ -65,6 +64,8 @@ in
         binsider
         bottom
         calc
+        claude-code
+        codex
         coreutils # default package; here only for completeness
         curlFull # Curl with HTTP3 support and more
         dig # dig and nslookup
