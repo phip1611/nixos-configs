@@ -27,10 +27,14 @@ in
   };
 
   phip1611 = {
-    common.user-env = {
-      username = "phip1611";
-      git.username = "Philipp Schuster";
-      git.email = "phip1611@gmail.com";
+    common = {
+      user-env = {
+        username = "phip1611";
+        withDevCAndRust = true;
+        withDevNix = true;
+        git.username = "Philipp Schuster";
+        git.email = "phip1611@gmail.com";
+      };
     };
 
     services.ddns-update.enable = true;
