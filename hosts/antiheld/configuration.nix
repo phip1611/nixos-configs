@@ -14,16 +14,15 @@ in
   ];
 
   boot = {
-    kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_rpi4;
     initrd.availableKernelModules = [
       "xhci_pci"
       "usbhid"
       "usb_storage"
     ];
-    loader = {
-      grub.enable = false;
-      generic-extlinux-compatible.enable = true;
-    };
+    # loader = {
+    #   grub.enable = false;
+    #   generic-extlinux-compatible.enable = true;
+    # };
   };
 
   phip1611 = {
@@ -41,9 +40,6 @@ in
     # This file should only be root-readable!
     services.ddns-update.configPath = "/home/phip1611/ddns-config.json";
   };
-
-  virtualisation.docker.enable = true;
-  virtualisation.docker.rootless.enable = lib.mkForce false;
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -97,7 +93,6 @@ in
       extraGroups = [
         "wheel"
         "gpio"
-        "docker"
       ];
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGZ1CsDfB8Bsg8H82oIgVjv8bu5KEh4UX5iqEfC+4hzF pschuster@xps13-pschuster"
