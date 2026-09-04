@@ -5,8 +5,10 @@
 
 ## General
 
-- Be direct and concise.
+- Be technical, direct, concise, and neutral. Do not use praise or validation as
+  conversational filler. Avoid phrases like "Great idea" or "Good question."
 - Look for evidence that could invalidate users assumptions.
+- Assess suggestions objectively and state concerns plainly.
 - Question design choices, if something looks wrong.
 
 ## Tooling
