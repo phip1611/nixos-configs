@@ -3,7 +3,7 @@
   lib,
   pkgs,
   ...
-}:
+}@inputs:
 
 {
   networking.firewall = {
@@ -23,9 +23,7 @@
   users.users.nginx.extraGroups = [ "acme" ];
 
   services.nginx.enable = true;
-  # TODO reintroduce once nginx derivation from stable is compatible again
-  # (in 26.11?). Caused by https://github.com/NixOS/nixpkgs/pull/545717.
-  # services.nginx.package = pkgs.pkgsUnstable.nginx;
+  services.nginx.package = pkgs.pkgsUnstable.nginx;
 
   services.nginx.recommendedOptimisation = true;
   services.nginx.recommendedTlsSettings = true;
