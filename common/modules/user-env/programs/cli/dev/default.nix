@@ -84,7 +84,6 @@ in
             cargo-outdated
             cargo-release
             cargo-update
-            cargo-watch
 
             # Rustup can't auto-update itself but manage installed Rust
             # toolchains.
