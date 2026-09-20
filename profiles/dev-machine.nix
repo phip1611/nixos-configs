@@ -12,6 +12,10 @@
 
 {
   config = {
+    users.users.${config.phip1611.common.user-env.username}.extraGroups = [
+      "dialout" # use serial interfaces(e.g. via minicom) without sudo
+    ];
+
     phip1611 = {
       bootitems.enable = true;
       common = {
