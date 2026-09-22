@@ -16,17 +16,29 @@
 - When investigating Rust semantics, prefer rust-analyzer or RustRover's
   semantic tooling when available and useful (for example, symbol search,
   call hierarchies, and inspections).
+- When analyzing code, inspect relevant Git history where feasible to
+  understand why it is written that way.
 
 ## Git / Commits / Patches
 
+### Authoring, Revising, and Reviewing My Own Commits
+
+- Apply the following rules strictly to my own commits
 - Commits must be atomic, self-contained, and logically scoped. Prefer small,
   reviewable units over large blobs.
 - A commit series must tell a coherent story from A to B. Reorder and squash
   intermediate or fixup commits before submission.
+- Preferred subject format: `<component>: <title>` (imperative, <=72 chars).
+  Wrap bodies at 72 characters.
 - Commit messages must capture the _why_, not the _how_. A brief how-summary
   is acceptable only when the mechanism is non-obvious or large.
-- Preferred subject format: `<component>: <title>` (imperative, <=72 chars).
-  Body wrapped at 72 characters.
+- Trivial commits generally need no body. Add one only when it provides useful
+  context for reviewing the change.
+- Where applicable, start the commit body with user-visible changes to
+  strengthen motivation.
+- Keep commit bodies minimal and concise.
+- For non-trivial commits with long bodies, add a TL;DR. Prefer one sentence;
+  use two only when necessary.
 - Aggregate all links at the end of the body, before trailers
   (Signed-off-by etc.), using numbered references:
   ```
@@ -34,11 +46,16 @@
 
   [0]: https://example.com/issue/123
   ```
-- During review, check consistency across all commits in a series: commit
-  style, code style, and logging style - both within the series and against
-  the project's conventions.
-- Also check if changes should be moved between commits to improve
-  reviewability or because changes belong together.
+
+### Reviewing Commits by Others
+
+- Prioritize correctness and established project conventions.
+- Use the authoring rules above as guidance, not automatic blockers.
+- Check consistency across all commits in a series: commit style, code style,
+  and logging style - both within the series and against the project's
+  conventions.
+- Report deviations only when they materially harm clarity or reviewability,
+  or conflict with an established project convention.
 
 ## Code Style
 
