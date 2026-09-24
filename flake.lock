@@ -133,11 +133,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1790178388,
-        "narHash": "sha256-kK3t7gwoz4Nx8RF46cs1Xz/skKNcK7y3KYP+gGqX6W8=",
+        "lastModified": 1790238896,
+        "narHash": "sha256-ym4BG18Pu2awiJIehla1Lo9xiB2QYRcCzW3SB74gEBY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "00455b0a3690d3f5dc61e9aef4277dc86235b73f",
+        "rev": "34ca302a9572963c02e385c056be37c85ff51b77",
         "type": "github"
       },
       "original": {
@@ -183,11 +183,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790250815,
-        "narHash": "sha256-s8ghQemaz8Ays6x3mXC0F/dZqQR6v6RSsBQAx/cJi0c=",
+        "lastModified": 1790262906,
+        "narHash": "sha256-Ns1xJwgm1b2JibUeY4YVYELbuJzdqH7JzQvsoFIfpWk=",
         "owner": "phip1611",
         "repo": "slidev-slides",
-        "rev": "d971693a1cd4f094665021b4427b9d8f5eb680d8",
+        "rev": "ce0f0094fceff82fac2ede1f0fa848c5b92e13e8",
         "type": "github"
       },
       "original": {
