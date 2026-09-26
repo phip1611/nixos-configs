@@ -15,8 +15,8 @@ in
     networking.firewall.rejectPackets = true;
 
     networking.firewall.allowedTCPPorts = [
+      1337 # for misc fun stuff
       5201 # iperf3
-      8080 # typical http dev server
     ];
 
     # Recommended by the docs. Also, I had so often trouble with a failing
