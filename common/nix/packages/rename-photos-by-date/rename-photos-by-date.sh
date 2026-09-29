@@ -31,11 +31,19 @@
 # proper name like every other photo. Recovery only happens if every leftover
 # is still a readable photo with an EXIF creation date.
 #
+# With "--sync-file-times", the file modification and access times are set to
+# the EXIF creation date as well. This helps tools that sort by file time rather
+# than by EXIF data. Note that the file *creation* time (birth time) cannot be
+# set on Linux: there is no system call for it, and exiftool can only write it
+# on Windows and macOS. Copying a photo resets it anyway, so it is rarely
+# meaningful.
+#
 # @arg name!                  Name template, such as "Kanada".
 # @option --directory=$(pwd)  Directory holding the photos.
 # @flag --dry-run             Only print what would be done.
 # @flag --yes                 Do not ask for confirmation.
 # @flag --recover             Take leftovers of an interrupted run into this run.
+# @flag --sync-file-times     Also set file modification/access time to the EXIF date.
 
 set -euo pipefail
 
@@ -47,6 +55,7 @@ ARG_DIRECTORY="$argc_directory"
 ARG_DRY_RUN="${argc_dry_run:-0}" # "0" or "1"
 ARG_YES="${argc_yes:-0}"         # "0" or "1"
 ARG_RECOVER="${argc_recover:-0}" # "0" or "1"
+ARG_SYNC_FILE_TIMES="${argc_sync_file_times:-0}" # "0" or "1"
 
 # Replace magic arg values.
 if [ "$ARG_DIRECTORY" = "\$(pwd)" ]; then
@@ -169,15 +178,16 @@ done
 # Step 3: Read the EXIF creation date of each photo (single batch call).
 # ------------------------------------------------------------------------------
 
-# Each output line looks like "<date> <path>". The date never contains a space,
-# so splitting at the first space is unambiguous, even for file names with
-# spaces. Photos without the tag produce no line at all (-if filter) and are
-# therefore ignored.
+# Each output line looks like "<date> <path>". The date is ISO 8601 and thus
+# contains no space, so splitting at the first space is unambiguous, even for
+# file names with spaces. Sorting such dates as text sorts them chronologically,
+# and "touch" understands them as they are. Photos without the tag produce no
+# line at all (-if filter) and are therefore ignored.
 readarray -t EXIF_LINES < <(
   exiftool \
     -quiet -quiet \
     -ignoreMinorErrors \
-    -dateFormat '%Y-%m-%d_%H-%M-%S' \
+    -dateFormat '%Y-%m-%dT%H:%M:%S' \
     -if "\$$EXIF_DATE_TAG" \
     -printFormat "\${$EXIF_DATE_TAG} \${Directory}/\${FileName}" \
     "${PHOTOS[@]}" || true
@@ -233,6 +243,10 @@ fi
 RENAME_SOURCES=()
 RENAME_TARGETS=()
 SKIPPED_COUNT=0
+# Where every dated photo ends up, renamed or not, and its EXIF date. This is
+# what the file times are synced from.
+FINAL_PATHS=()
+FINAL_DATES=()
 
 # Names of all photos we are about to rename. Only these may legitimately
 # occupy a target name. Names are compared in lower case, as the file system
@@ -260,6 +274,7 @@ done
 
 NUMBER=0
 for LINE in "${SORTED_EXIF_LINES[@]}"; do
+  DATE="${LINE%% *}"
   PATH_OF_PHOTO="${LINE#* }"
   CURRENT_NAME="${PATH_OF_PHOTO##*/}"
   if [[ "$CURRENT_NAME" =~ $TMP_REGEX ]]; then
@@ -282,6 +297,9 @@ for LINE in "${SORTED_EXIF_LINES[@]}"; do
     exit 1
   fi
 
+  FINAL_PATHS+=("$ARG_DIRECTORY/$TARGET_NAME")
+  FINAL_DATES+=("$DATE")
+
   if [ "$TARGET_NAME" = "$CURRENT_NAME" ]; then
     SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
     continue
@@ -295,6 +313,10 @@ echo -ne "${BOLD}Photos   : ${RESET}"
 echo "$PHOTO_COUNT with an EXIF creation date (of ${#PHOTOS[@]} candidates)"
 echo -ne "${BOLD}Renamings: ${RESET}"
 echo "${#RENAME_SOURCES[@]} ($SKIPPED_COUNT already have their final name)"
+if [ "$ARG_SYNC_FILE_TIMES" -eq 1 ]; then
+  echo -ne "${BOLD}File times: ${RESET}"
+  echo "synced to the EXIF creation date for all $PHOTO_COUNT photos"
+fi
 
 for I in "${!RENAME_SOURCES[@]}"; do
   SOURCE_NAME="${RENAME_SOURCES[$I]##*/}"
@@ -302,7 +324,7 @@ for I in "${!RENAME_SOURCES[@]}"; do
   echo -e "  ${BOLD}$SOURCE_NAME${RESET} -> ${BOLD}$TARGET_NAME${RESET}"
 done
 
-if [ "${#RENAME_SOURCES[@]}" -eq 0 ]; then
+if [ "${#RENAME_SOURCES[@]}" -eq 0 ] && [ "$ARG_SYNC_FILE_TIMES" -eq 0 ]; then
   echo "Nothing to do."
   exit 0
 fi
@@ -322,10 +344,18 @@ if [ "$ARG_YES" -ne 1 ]; then
     echo -e "${BOLD}${RED}No terminal for the confirmation prompt. Use --yes.${RESET}" >&2
     exit 1
   fi
-  read -r -u 3 -p "Rename these ${#RENAME_SOURCES[@]} photos? [y/N] " ANSWER
+  if [ "${#RENAME_SOURCES[@]}" -gt 0 ]; then
+    QUESTION="Rename these ${#RENAME_SOURCES[@]} photos"
+    if [ "$ARG_SYNC_FILE_TIMES" -eq 1 ]; then
+      QUESTION="$QUESTION and sync the file times"
+    fi
+  else
+    QUESTION="Sync the file times of $PHOTO_COUNT photos"
+  fi
+  read -r -u 3 -p "$QUESTION? [y/N] " ANSWER
   exec 3<&-
   if [ "$ANSWER" != "y" ] && [ "$ANSWER" != "Y" ]; then
-    echo "Aborted. Nothing was renamed."
+    echo "Aborted. Nothing was changed."
     exit 0
   fi
 fi
@@ -377,4 +407,56 @@ done
 
 trap - ERR
 
-echo -e "${BOLD}${GREEN}Renamed ${#RENAME_SOURCES[@]} photos.${RESET}"
+if [ "${#RENAME_SOURCES[@]}" -gt 0 ]; then
+  echo -e "${BOLD}${GREEN}Renamed ${#RENAME_SOURCES[@]} photos.${RESET}"
+fi
+
+# ------------------------------------------------------------------------------
+# Step 6: Sync the file times to the EXIF creation date.
+# ------------------------------------------------------------------------------
+#
+# This only touches the file's metadata, not its content, so exiftool creates no
+# backup copy. The EXIF date carries no time zone, so it is interpreted as local
+# time, which is what every other tool does as well.
+
+if [ "$ARG_SYNC_FILE_TIMES" -eq 1 ]; then
+  # "touch" is used rather than exiftool, as the dates are already known: a
+  # second exiftool pass would open and parse every photo again, which is what
+  # dominates the runtime on slow media such as USB drives.
+  #
+  # The two flags are what makes this fast: without them, "touch" opens the file
+  # for writing, and on a FAT file system mounted with the "flush" option (the
+  # default for removable media) every such close is flushed to the device,
+  # which costs about 100 ms per photo. With them, "touch" only calls
+  # utimensat() on the path, which is about a hundred times quicker. They are
+  # the safer choice anyway: a photo that vanished in the meantime is not
+  # re-created as an empty file, and a symlink is not followed.
+  REJECTED_PATHS=()
+  for I in "${!FINAL_PATHS[@]}"; do
+    if ! touch --no-create --no-dereference --date="${FINAL_DATES[$I]}" \
+      -- "${FINAL_PATHS[$I]}" 2>/dev/null; then
+      REJECTED_PATHS+=("${FINAL_PATHS[$I]}")
+    fi
+  done
+
+  # An EXIF time is the local time of the camera, which may be a local time that
+  # does not exist here: the hour that a daylight saving time change skips in
+  # the local time zone. "touch" rejects such a time, whereas exiftool shifts it
+  # into the following hour. So the few rejected photos are handed to exiftool,
+  # which is also what this script did before it used "touch".
+  if [ "${#REJECTED_PATHS[@]}" -gt 0 ]; then
+    echo "Using exiftool for ${#REJECTED_PATHS[@]} photo(s) whose time does not exist locally."
+    if ! exiftool \
+      -quiet \
+      -ignoreMinorErrors \
+      -overwrite_original \
+      "-FileModifyDate<$EXIF_DATE_TAG" \
+      "-FileAccessDate<$EXIF_DATE_TAG" \
+      -- "${REJECTED_PATHS[@]}"; then
+      echo -e "${BOLD}${YELLOW}Could not sync the file times of all photos, see above.${RESET}" >&2
+      exit 1
+    fi
+  fi
+
+  echo -e "${BOLD}${GREEN}Synced the file times of ${#FINAL_PATHS[@]} photos.${RESET}"
+fi
