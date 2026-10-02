@@ -79,6 +79,18 @@ in
     };
   };
 
+  # The root filesystem lives on an SD card, which is slow for many small
+  # synchronous writes.
+  nix = {
+    settings = {
+      # Hard-linking every new store path makes substitutions slower. The
+      # nix-optimise timer still deduplicates the store periodically.
+      auto-optimise-store = lib.mkForce false;
+      # Parallel unpacking competes for the few write IOPS of the SD card.
+      max-substitution-jobs = lib.mkForce 8;
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     libraspberrypi
     raspberrypi-eeprom
