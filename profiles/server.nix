@@ -50,6 +50,10 @@ in
       services.zsh-history-backup.enable = true;
     };
 
+    # Otherwise, anyone with access to the (VNC) console can edit the kernel
+    # command line at boot, e.g., `init=/bin/sh`, and gain root.
+    boot.loader.systemd-boot.editor = false;
+
     # Latest LTS kernel, not latest stable kernel.
     boot.kernelPackages = pkgs.linuxPackages;
 
