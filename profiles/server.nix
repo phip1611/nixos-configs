@@ -57,6 +57,21 @@ in
     # No kexec and no hibernation: both allow replacing the running kernel.
     security.protectKernelImage = true;
 
+    boot.kernel.sysctl = {
+      # Hide kernel logs and pointers, which help exploiting the kernel.
+      "kernel.dmesg_restrict" = 1;
+      "kernel.kptr_restrict" = 2;
+      "net.core.bpf_jit_harden" = 2;
+      # Servers don't act on or send ICMP redirects. This also matters for
+      # servers that forward traffic, e.g., to containers.
+      "net.ipv4.conf.all.accept_redirects" = 0;
+      "net.ipv4.conf.default.accept_redirects" = 0;
+      "net.ipv4.conf.all.send_redirects" = 0;
+      "net.ipv4.conf.default.send_redirects" = 0;
+      "net.ipv6.conf.all.accept_redirects" = 0;
+      "net.ipv6.conf.default.accept_redirects" = 0;
+    };
+
     # Latest LTS kernel, not latest stable kernel.
     boot.kernelPackages = pkgs.linuxPackages;
 
