@@ -71,10 +71,14 @@ in
     };
 
     nix = {
-      # Save some disk space.
       settings = {
+        # Save some disk space.
         keep-outputs = false;
         keep-derivations = false;
+        # Trusted users are root-equivalent (they can, e.g., import arbitrary
+        # store paths), but without the sudo password. Servers are deployed
+        # locally via sudo or auto-upgrade, which don't need that.
+        trusted-users = lib.mkForce [ "root" ];
       };
     };
   };
