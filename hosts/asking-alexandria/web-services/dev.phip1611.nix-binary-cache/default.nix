@@ -12,10 +12,6 @@ let
   commonCfg = import ../nginx-common-host-config.nix;
 in
 {
-  imports = [
-    ./ci-user.nix
-  ];
-
   config = {
     services.nginx.virtualHosts."nix-binary-cache.phip1611.dev" = commonCfg // {
       locations."/".proxyPass = with config.services.nix-serve; "http://${bindAddress}:${toString port}";

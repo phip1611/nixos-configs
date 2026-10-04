@@ -9,6 +9,8 @@
 
 {
   imports = [
+    ./ci-user.nix
+    ./netdata.nix
     ./web-services
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
