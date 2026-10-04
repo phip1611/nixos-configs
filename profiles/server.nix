@@ -54,6 +54,9 @@ in
     # command line at boot, e.g., `init=/bin/sh`, and gain root.
     boot.loader.systemd-boot.editor = false;
 
+    # No kexec and no hibernation: both allow replacing the running kernel.
+    security.protectKernelImage = true;
+
     # Latest LTS kernel, not latest stable kernel.
     boot.kernelPackages = pkgs.linuxPackages;
 
