@@ -53,6 +53,10 @@ in
     # Latest LTS kernel, not latest stable kernel.
     boot.kernelPackages = pkgs.linuxPackages;
 
+    # Only wheel members can execute sudo at all, which reduces the attack
+    # surface of the setuid binary for all other (service) users.
+    security.sudo.execWheelOnly = true;
+
     # Comes with a pre-configured configuration for ssh.
     services.fail2ban.enable = true;
 
