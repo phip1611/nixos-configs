@@ -81,6 +81,8 @@ in
 
     # Comes with a pre-configured configuration for ssh.
     services.fail2ban.enable = true;
+    # Ban repeat offenders for increasingly long times.
+    services.fail2ban.bantime-increment.enable = true;
 
     # Servers only run software from this flake, which never needs the
     # compatibility layer for unpatched binaries.
