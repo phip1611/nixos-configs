@@ -9,8 +9,25 @@
   ...
 }:
 
+let
+  username = config.phip1611.common.user-env.username;
+in
 {
   config = {
+    assertions = [
+      {
+        assertion = config.users.users.${username}.openssh.authorizedKeys.keys != [ ];
+        message = "Servers only allow SSH public key authentication: declare a key for ${username}.";
+      }
+    ];
+
+    # Public keys only. `KbdInteractiveAuthentication` must be disabled as
+    # well, as it accepts passwords via PAM.
+    services.openssh.settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+    };
+
     phip1611 = {
       common = {
         user-env = {
