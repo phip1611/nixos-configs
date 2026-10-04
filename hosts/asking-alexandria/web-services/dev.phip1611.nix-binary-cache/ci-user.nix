@@ -22,6 +22,8 @@ in
     ];
   };
 
+  services.openssh.settings.AllowUsers = [ username ];
+
   # The CI only runs commands and copies files.
   # - Public keys only: `PasswordAuthentication no` alone still allows
   #   password logins via PAM (keyboard-interactive).

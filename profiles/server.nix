@@ -26,6 +26,9 @@ in
     services.openssh.settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
+      # Hosts add further (service) users as needed.
+      AllowUsers = [ username ];
+      PermitRootLogin = "no";
     };
 
     phip1611 = {
