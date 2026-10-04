@@ -82,6 +82,10 @@ in
     # Comes with a pre-configured configuration for ssh.
     services.fail2ban.enable = true;
 
+    # Servers only run software from this flake, which never needs the
+    # compatibility layer for unpatched binaries.
+    programs.nix-ld.enable = lib.mkForce false;
+
     # Shrink system closure size. Don't require perl.
     programs.command-not-found.enable = false;
 
