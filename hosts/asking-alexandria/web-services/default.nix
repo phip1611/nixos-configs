@@ -59,8 +59,6 @@ let
       // {
         modules = args.modules ++ [
           {
-            # Like on the host.
-            networking.nftables.enable = true;
             networking.firewall.allowedTCPPorts = [ backend.port ];
           }
         ];
@@ -113,8 +111,6 @@ in
   # Root in the edge container is unprivileged on the host and thus can't bind
   # ports below 1024 there.
   boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
-
-  networking.nftables.enable = true;
 
   # The nixos-container scripts configure the backends' veths. Otherwise,
   # networkd applies its stock 80-container-ve.network: a DHCP server,
