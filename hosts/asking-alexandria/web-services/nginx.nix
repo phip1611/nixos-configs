@@ -42,6 +42,17 @@ in
 
   services.nginx.serverNamesHashBucketSize = 128;
 
+  # Reject requests for unknown host names, e.g., from scanners that only know
+  # the IP, instead of serving them by the first vhost. `rejectSSL` aborts the
+  # TLS handshake, so no certificate reveals the hosted domains. QUIC makes
+  # this the default for HTTP/3 as well.
+  services.nginx.virtualHosts."_" = {
+    default = true;
+    rejectSSL = true;
+    quic = true;
+    locations."/".return = "444";
+  };
+
   security.acme = {
     acceptTerms = true;
     defaults.email = "phip1611@gmail.com";
