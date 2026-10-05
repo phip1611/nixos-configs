@@ -18,8 +18,7 @@
 let
   net = import ./net.nix;
   externalIface = "ens3";
-  # Host side of the edge container's link.
-  edgeIface = "ve-edge";
+  edgeBridge = net.edgeBridge.name;
 
   forwardedPorts = [
     {
@@ -100,13 +99,13 @@ in
         inherit dd-systems-meetup-website slidev-slides wambo-web;
       };
       modules = [ ./edge.nix ];
-      # Point-to-point link to the host. nixos-container also sets up the
-      # default routes via the host.
+      # Link to the host. Not a point-to-point veth with `hostAddress`:
+      # nixos-container would configure the host side only after the
+      # container's boot, which includes ordering ACME certificates.
       network = {
-        hostAddress = net.host.ipv4;
-        localAddress = net.edge.ipv4;
-        hostAddress6 = net.host.ipv6;
-        localAddress6 = net.edge.ipv6;
+        hostBridge = edgeBridge;
+        localAddress = "${net.edge.ipv4}/${toString net.edgeBridge.prefixLength.ipv4}";
+        localAddress6 = "${net.edge.ipv6}/${toString net.edgeBridge.prefixLength.ipv6}";
         # Link to the backend containers.
         extraVeths.${net.backendBridge.edgeVeth} = {
           hostBridge = net.backendBridge.name;
@@ -134,6 +133,26 @@ in
   # with it. The default of 1min is too short for that.
   containers.edge.timeoutStartSec = "5min";
 
+  networking.bridges.${edgeBridge}.interfaces = [ ];
+  networking.interfaces.${edgeBridge} = {
+    useDHCP = false;
+    ipv4.addresses = [
+      {
+        address = net.host.ipv4;
+        prefixLength = net.edgeBridge.prefixLength.ipv4;
+      }
+    ];
+    ipv6.addresses = [
+      {
+        address = net.host.ipv6;
+        prefixLength = net.edgeBridge.prefixLength.ipv6;
+      }
+    ];
+  };
+  # The bridge has no carrier until the container starts. Configure the host's
+  # addresses anyway, so that the container can reach the host during its boot.
+  systemd.network.networks."40-${edgeBridge}".networkConfig.ConfigureWithoutCarrier = true;
+
   # The bridge between the edge container and the backend containers. The host
   # has no address on it.
   networking.bridges.${net.backendBridge.name}.interfaces = [ ];
@@ -145,7 +164,7 @@ in
     enableIPv6 = true;
     externalInterface = externalIface;
     # Outgoing traffic of the edge container, e.g., for ACME.
-    internalInterfaces = [ edgeIface ];
+    internalInterfaces = [ edgeBridge ];
     # Keep the public IPs of the host, so no DNS changes are needed. This also
     # preserves the client IPs for nginx.
     forwardPorts = lib.concatMap (
@@ -174,14 +193,7 @@ in
   networking.firewall.filterForward = true;
 
   # Host services nginx in the edge container proxies to.
-  networking.firewall.interfaces.${edgeIface}.allowedTCPPorts = [ net.ports.netdata ];
-
-  # The nixos-container scripts configure the veth. Otherwise, networkd applies
-  # its stock 80-container-ve.network (DHCP server, masquerading, RAs).
-  systemd.network.networks."05-${edgeIface}" = {
-    matchConfig.Name = edgeIface;
-    linkConfig.Unmanaged = true;
-  };
+  networking.firewall.interfaces.${edgeBridge}.allowedTCPPorts = [ net.ports.netdata ];
 
   # With IPv6 forwarding enabled (by NAT), networkd ignores router
   # advertisements by default, which removes the default IPv6 route.

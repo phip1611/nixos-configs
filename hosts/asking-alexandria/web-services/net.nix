@@ -16,7 +16,15 @@ let
   };
 in
 {
-  # Point-to-point link between the host and the edge container.
+  # Bridge between the host and the edge container. The host configures its
+  # address at boot, independent of the container.
+  edgeBridge = {
+    name = "br-edge";
+    prefixLength = {
+      ipv4 = 24;
+      ipv6 = 64;
+    };
+  };
   host = {
     ipv4 = "10.231.0.1";
     ipv6 = "fd97:4b75:4af6::1";
