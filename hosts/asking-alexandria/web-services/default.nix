@@ -38,7 +38,8 @@ let
   ];
 
   # A web service container, as a module. `hostFiles` are bind-mounted
-  # read-only; `network` holds the container's network options.
+  # read-only; `idmap` preserves their host ownership despite the container's
+  # user namespace. `network` holds the container's network options.
   mkContainer =
     name:
     {
@@ -51,10 +52,10 @@ let
       containers.${name} = network // {
         autoStart = true;
         privateNetwork = true;
-        bindMounts = lib.genAttrs hostFiles (path: {
-          hostPath = path;
-          isReadOnly = true;
-        });
+        # Root in the container is an unprivileged user on the host.
+        privateUsers = "pick";
+        # `bindMounts` doesn't support mount options such as `idmap`.
+        extraFlags = map (path: "--bind-ro=${path}:${path}:idmap") hostFiles;
         inherit specialArgs;
         config = {
           imports = [ ./container-common.nix ] ++ modules;
