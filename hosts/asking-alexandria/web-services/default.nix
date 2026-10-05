@@ -75,6 +75,14 @@ in
     internalInterfaces = [ edgeIface ];
   };
 
+  # NAT enables IP forwarding. Only forward the port forwards and the edge
+  # container's outgoing traffic (both allowed by the NAT module), so that,
+  # e.g., neighbors in the same L2 segment can't route through this host or
+  # reach the container directly. `filterForward` requires the nftables-based
+  # firewall.
+  networking.nftables.enable = true;
+  networking.firewall.filterForward = true;
+
   # The nixos-container scripts configure the veth. Otherwise, networkd applies
   # its stock 80-container-ve.network (DHCP server, masquerading, RAs).
   systemd.network.networks."05-${edgeIface}" = {
