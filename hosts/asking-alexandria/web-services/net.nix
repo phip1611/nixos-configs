@@ -11,4 +11,11 @@
     ipv4 = "10.231.0.2";
     ipv6 = "fd97:4b75:4af6::2";
   };
+
+  # Host services the edge container proxies to.
+  ports = {
+    # https://learn.netdata.cloud/docs/netdata-agent/securing-netdata-agents/web-server
+    netdata = 19999;
+    nixServe = 5000;
+  };
 }

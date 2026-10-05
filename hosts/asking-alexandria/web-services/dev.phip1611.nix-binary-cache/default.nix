@@ -1,35 +1,11 @@
-# Hosts the binary cache with the artifacts of this project/repository.
-#
-# Reference: https://nixos.wiki/wiki/Binary_Cache
-
-{
-  config,
-  pkgs,
-  ...
-}:
-
+# The binary cache with the artifacts of this project/repository. nix-serve
+# runs on the host (see ./service.nix).
 let
+  net = import ../net.nix;
   commonCfg = import ../nginx-common-host-config.nix;
 in
 {
-  config = {
-    services.nginx.virtualHosts."nix-binary-cache.phip1611.dev" = commonCfg // {
-      locations."/".proxyPass = with config.services.nix-serve; "http://${bindAddress}:${toString port}";
-    };
-
-    services.nix-serve = {
-      enable = true;
-      # Drop-in replacement on steroids
-      # https://github.com/aristanetworks/nix-serve-ng
-      package = pkgs.nix-serve-ng.overrideAttrs (old: {
-        # I reduce the default priority of 30 by setting it to 100
-        # (higher value => lower priority). This way, the default NixOS cache,
-        # which has a priority of 40, is always preferred over my own cache.
-        patches = (old.patches or [ ]) ++ [
-          ./nix-serve-ng-reduce-priority.patch
-        ];
-      });
-      secretKeyFile = "/var/cache-priv-key.pem";
-    };
+  services.nginx.virtualHosts."nix-binary-cache.phip1611.dev" = commonCfg // {
+    locations."/".proxyPass = "http://${net.host.ipv4}:${toString net.ports.nixServe}";
   };
 }

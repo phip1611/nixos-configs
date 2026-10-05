@@ -1,9 +1,15 @@
-# The internet-facing web services and the NixOS containers they run in.
+# Runs the internet-facing web services in NixOS containers. The host only
+# forwards HTTP(S) traffic to the edge container, where nginx terminates TLS
+# for all vhosts.
 #
 # Reference: https://nixos.org/manual/nixos/stable/#ch-containers
 {
   lib,
   pkgs,
+  # Flake inputs used by the containers' modules.
+  dd-systems-meetup-website,
+  slidev-slides,
+  wambo-web,
   ...
 }:
 
@@ -12,6 +18,22 @@ let
   externalIface = "ens3";
   # Host side of the edge container's link.
   edgeIface = "ve-edge";
+
+  forwardedPorts = [
+    {
+      proto = "tcp";
+      port = 80;
+    }
+    {
+      proto = "tcp";
+      port = 443;
+    }
+    # http3 / quic
+    {
+      proto = "udp";
+      port = 443;
+    }
+  ];
 
   # A web service container, as a module. `hostFiles` are bind-mounted
   # read-only; `network` holds the container's network options.
@@ -45,6 +67,10 @@ in
 {
   imports = [
     (mkContainer "edge" {
+      hostFiles = [ "/etc/dev.phip1611.monitor_basicauthfile" ];
+      specialArgs = {
+        inherit dd-systems-meetup-website slidev-slides wambo-web;
+      };
       modules = [ ./edge.nix ];
       # Point-to-point link to the host. nixos-container also sets up the
       # default routes via the host.
@@ -56,16 +82,15 @@ in
       };
     })
 
-    ./nginx.nix
-
-    # Hosted web projects
-    ./de.wambo-web
-    ./dev.phip1611.monitor
-    ./dev.phip1611.nix-binary-cache
-    ./dev.phip1611.slides
-    # ./dev.phip1611.webp
-    ./org.ukvly
+    ./dev.phip1611.nix-binary-cache/service.nix
   ];
+
+  # The container reports readiness only after its boot, which includes
+  # ordering missing or due ACME certificates. If that takes longer than the
+  # start timeout (many new certificates, or Let's Encrypt being slow or
+  # unreachable), systemd kills and restarts the container, taking nginx down
+  # with it. The default of 1min is too short for that.
+  containers.edge.timeoutStartSec = "5min";
 
   networking.nat = {
     enable = true;
@@ -73,6 +98,23 @@ in
     externalInterface = externalIface;
     # Outgoing traffic of the edge container, e.g., for ACME.
     internalInterfaces = [ edgeIface ];
+    # Keep the public IPs of the host, so no DNS changes are needed. This also
+    # preserves the client IPs for nginx.
+    forwardPorts = lib.concatMap (
+      { proto, port }:
+      [
+        {
+          inherit proto;
+          sourcePort = port;
+          destination = "${net.edge.ipv4}:${toString port}";
+        }
+        {
+          inherit proto;
+          sourcePort = port;
+          destination = "[${net.edge.ipv6}]:${toString port}";
+        }
+      ]
+    ) forwardedPorts;
   };
 
   # NAT enables IP forwarding. Only forward the port forwards and the edge
@@ -82,6 +124,13 @@ in
   # firewall.
   networking.nftables.enable = true;
   networking.firewall.filterForward = true;
+
+  # Host services nginx in the edge container proxies to.
+  networking.firewall.interfaces.${edgeIface}.allowedTCPPorts = [
+    net.ports.netdata
+    # Until nix-serve moves into its own container.
+    net.ports.nixServe
+  ];
 
   # The nixos-container scripts configure the veth. Otherwise, networkd applies
   # its stock 80-container-ve.network (DHCP server, masquerading, RAs).
