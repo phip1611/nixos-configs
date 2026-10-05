@@ -1,8 +1,8 @@
-# Addresses of the backend containers, within 10.231.1.0/24.
+# Addresses of the backend containers. Each one has a point-to-point link to
+# the host, which uses the same address on all of them.
 let
-  # Backend containers: only reachable from the host, and thus from the edge
-  # container, via the backend bridge. `id` is the last byte of the address
-  # and must be unique (2-254); `port` is the TCP port of the service.
+  # `id` is the last byte of the address and must be unique (2-254); `port` is
+  # the TCP port of the service.
   backends = {
     nixserve = {
       id = 2;
@@ -15,12 +15,7 @@ let
   };
 in
 {
-  # Bridge between the host and all backend containers.
-  backendBridge = {
-    name = "br-backends";
-    hostIpv4 = "10.231.1.1";
-    prefixLength = 24;
-  };
+  host = "10.231.1.1";
 
   backends = builtins.mapAttrs (
     _name:

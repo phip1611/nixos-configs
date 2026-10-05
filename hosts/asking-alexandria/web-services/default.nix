@@ -46,10 +46,9 @@ let
       systemd.services."container@${name}".unitConfig.AssertPathExists = hostFiles;
     };
 
-  # A backend container, as a module (see ./net.nix). It's attached to the
-  # backend bridge, and its firewall only lets the host connect to the
-  # service. The host doesn't forward packets, so the backend can't reach the
-  # internet.
+  # A backend container, as a module (see ./net.nix). Its only network is a
+  # point-to-point link to the host. The host doesn't forward packets, so a
+  # backend can reach neither the internet nor the other backends.
   mkBackend =
     name: args:
     let
@@ -60,17 +59,15 @@ let
       // {
         modules = args.modules ++ [
           {
-            # Like on the host; enables `extraInputRules`.
+            # Like on the host.
             networking.nftables.enable = true;
-            networking.firewall.extraInputRules = ''
-              ip saddr ${net.backendBridge.hostIpv4} tcp dport ${toString backend.port} accept
-            '';
+            networking.firewall.allowedTCPPorts = [ backend.port ];
           }
         ];
         network = {
           privateNetwork = true;
-          hostBridge = net.backendBridge.name;
-          localAddress = "${backend.ipv4}/${toString net.backendBridge.prefixLength}";
+          hostAddress = net.host;
+          localAddress = backend.ipv4;
         };
       }
     );
@@ -119,15 +116,12 @@ in
 
   networking.nftables.enable = true;
 
-  # The bridge between the host and the backend containers.
-  networking.bridges.${net.backendBridge.name}.interfaces = [ ];
-  networking.interfaces.${net.backendBridge.name} = {
-    useDHCP = false;
-    ipv4.addresses = [
-      {
-        address = net.backendBridge.hostIpv4;
-        inherit (net.backendBridge) prefixLength;
-      }
-    ];
+  # The nixos-container scripts configure the backends' veths. Otherwise,
+  # networkd applies its stock 80-container-ve.network: a DHCP server,
+  # forwarding, and masquerading, which would give the backends internet
+  # access.
+  systemd.network.networks."05-containers" = {
+    matchConfig.Name = "ve-*";
+    linkConfig.Unmanaged = true;
   };
 }
