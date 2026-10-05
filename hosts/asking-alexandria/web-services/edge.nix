@@ -2,6 +2,9 @@
 # sites, and proxies to the other web services. It's the only web service
 # container that is reachable from the internet and that can reach the
 # internet.
+let
+  net = import ./net.nix;
+in
 {
   imports = [
     ./nginx.nix
@@ -14,6 +17,16 @@
     ./dev.phip1611.webp
     ./org.ukvly
   ];
+
+  # On a bridge, nixos-container doesn't set up the default routes.
+  networking.defaultGateway = {
+    address = net.host.ipv4;
+    interface = "eth0";
+  };
+  networking.defaultGateway6 = {
+    address = net.host.ipv6;
+    interface = "eth0";
+  };
 
   # The host's resolver (dnscrypt-proxy) only listens on the host's loopback
   # interface, which is unreachable from the container's network namespace.

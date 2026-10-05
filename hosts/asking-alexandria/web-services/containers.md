@@ -6,7 +6,9 @@ defined in [`net.nix`](./net.nix), the containers in
 
 - The **edge** container runs nginx. It's the only container with a link to
   the host and thus the only one that is reachable from, and can reach, the
-  internet.
+  internet. Its link is a bridge on the host, whose host address exists
+  independently of the container. This way, the container's network already
+  works during its boot, e.g., for ACME.
 - The **backend** containers share a bridge with the edge container. The host
   has no address on it.
 
@@ -20,11 +22,11 @@ defined in [`net.nix`](./net.nix), the containers in
 |                                  |                                   |
 |                                  | DNAT to edge (IPv4 and IPv6)      |
 |                                  v                                   |
-|   ve-edge: 10.231.0.1, fd97:4b75:4af6::1      netdata :19999         |
+|   br-edge: 10.231.0.1, fd97:4b75:4af6::1      netdata :19999         |
 |                                  |                ^                  |
-|        point-to-point link to    |                |                  |
-|        the host; outgoing        |                |                  |
-|        traffic: NAT via ens3     |                |                  |
+|        bridge to the host;       |                |                  |
+|        outgoing traffic:         |                |                  |
+|        NAT via ens3              |                |                  |
 |              +-------------------+----------------+-----+            |
 |              | edge   10.231.0.2, fd97:4b75:4af6::2     |            |
 |              | nginx (TLS, ACME), static sites          |            |
