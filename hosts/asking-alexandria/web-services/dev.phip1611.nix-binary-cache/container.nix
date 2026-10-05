@@ -1,5 +1,5 @@
-# nix-serve, which serves the binary cache with the artifacts of this
-# project/repository.
+# nix-serve in the nixserve container. It serves the host's Nix store via the
+# host's Nix daemon, whose socket is bind-mounted into every NixOS container.
 #
 # Reference: https://nixos.wiki/wiki/Binary_Cache
 {
@@ -8,12 +8,14 @@
 }:
 
 let
-  net = import ../net.nix;
+  backend = (import ../net.nix).backends.nixserve;
 in
 {
   services.nix-serve = {
     enable = true;
-    port = net.ports.nixServe;
+    # Only listen on the backend bridge, not on all addresses.
+    bindAddress = backend.ipv4;
+    inherit (backend) port;
     # Drop-in replacement on steroids
     # https://github.com/aristanetworks/nix-serve-ng
     package = pkgs.nix-serve-ng.overrideAttrs (old: {
@@ -24,6 +26,7 @@ in
         ./nix-serve-ng-reduce-priority.patch
       ];
     });
+    # Bind-mounted from the host.
     secretKeyFile = "/var/cache-priv-key.pem";
   };
 }

@@ -1,6 +1,7 @@
 # Runs the internet-facing web services in NixOS containers. The host only
 # forwards HTTP(S) traffic to the edge container, where nginx terminates TLS
-# for all vhosts.
+# for all vhosts. nginx proxies to the backend containers (see ./net.nix),
+# which only the edge container can reach.
 #
 # Reference: https://nixos.org/manual/nixos/stable/#ch-containers
 {
@@ -63,6 +64,31 @@ let
       # Fail early with a clear message; nspawn's error is obscure.
       systemd.services."container@${name}".unitConfig.AssertPathExists = hostFiles;
     };
+
+  # A backend container, as a module (see ./net.nix). It's attached to the
+  # backend bridge, so it can neither reach the host nor the internet. Its
+  # firewall only lets the edge container connect to the service.
+  mkBackend =
+    name: args:
+    let
+      backend = net.backends.${name};
+    in
+    mkContainer name (
+      args
+      // {
+        modules = args.modules ++ [
+          {
+            networking.firewall.extraInputRules = ''
+              ip saddr ${net.backendBridge.edgeIpv4} tcp dport ${toString backend.port} accept
+            '';
+          }
+        ];
+        network = {
+          hostBridge = net.backendBridge.name;
+          localAddress = "${backend.ipv4}/${toString net.backendBridge.prefixLength}";
+        };
+      }
+    );
 in
 {
   imports = [
@@ -79,10 +105,18 @@ in
         localAddress = net.edge.ipv4;
         hostAddress6 = net.host.ipv6;
         localAddress6 = net.edge.ipv6;
+        # Link to the backend containers.
+        extraVeths.${net.backendBridge.edgeVeth} = {
+          hostBridge = net.backendBridge.name;
+          localAddress = "${net.backendBridge.edgeIpv4}/${toString net.backendBridge.prefixLength}";
+        };
       };
     })
 
-    ./dev.phip1611.nix-binary-cache/service.nix
+    (mkBackend "nixserve" {
+      hostFiles = [ "/var/cache-priv-key.pem" ];
+      modules = [ ./dev.phip1611.nix-binary-cache/container.nix ];
+    })
   ];
 
   # The container reports readiness only after its boot, which includes
@@ -91,6 +125,12 @@ in
   # unreachable), systemd kills and restarts the container, taking nginx down
   # with it. The default of 1min is too short for that.
   containers.edge.timeoutStartSec = "5min";
+
+  # The bridge between the edge container and the backend containers. The host
+  # has no address on it.
+  networking.bridges.${net.backendBridge.name}.interfaces = [ ];
+  networking.interfaces.${net.backendBridge.name}.useDHCP = false;
+  systemd.network.networks."40-${net.backendBridge.name}".networkConfig.LinkLocalAddressing = "no";
 
   networking.nat = {
     enable = true;
@@ -126,11 +166,7 @@ in
   networking.firewall.filterForward = true;
 
   # Host services nginx in the edge container proxies to.
-  networking.firewall.interfaces.${edgeIface}.allowedTCPPorts = [
-    net.ports.netdata
-    # Until nix-serve moves into its own container.
-    net.ports.nixServe
-  ];
+  networking.firewall.interfaces.${edgeIface}.allowedTCPPorts = [ net.ports.netdata ];
 
   # The nixos-container scripts configure the veth. Otherwise, networkd applies
   # its stock 80-container-ve.network (DHCP server, masquerading, RAs).
