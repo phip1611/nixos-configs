@@ -8,8 +8,7 @@ in
   config = {
     services.nginx.virtualHosts."monitor.phip1611.dev" = commonCfg // {
       locations."/".proxyPass = "http://127.0.0.1:${toString netdataPort}";
-      # Generated using `$ htpasswd -c <filename> <username>`. Bind-mounted
-      # from the host.
+      # Generated using `$ htpasswd -c <filename> <username>`
       basicAuthFile = "/etc/dev.phip1611.monitor_basicauthfile";
     };
   };

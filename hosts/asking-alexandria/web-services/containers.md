@@ -1,17 +1,18 @@
 # Web Service Containers of asking-alexandria
 
-The internet-facing web services run in NixOS containers. The containers are
-defined in [`default.nix`](./default.nix), the addresses of the backends in
-[`net.nix`](./net.nix). All containers use user namespaces: root in a
-container is an unprivileged user on the host.
+nginx runs on the host, in the sandbox of its systemd unit. It terminates TLS
+for all vhosts, serves the static sites, and proxies to the other web
+services. Those that hold secrets or process untrusted data run in NixOS
+containers, the **backends**. They are defined in
+[`default.nix`](./default.nix), their addresses in [`net.nix`](./net.nix).
 
-- The **edge** container runs nginx. It shares the host's network namespace,
-  which is the default for NixOS containers. nginx thus listens on the host's
-  addresses and uses the host's network like a process on the host, but the
-  container can't change the network configuration.
-- The **backend** containers have a private network: a point-to-point link to
-  the host, as described in the NixOS manual. The host doesn't forward
-  packets, so there is no NAT, bridge, or routing involved.
+Each backend container has
+
+- a user namespace: root in the container is an unprivileged user on the
+  host.
+- a private network: a point-to-point link to the host, as described in the
+  NixOS manual. The host doesn't forward packets, so there is no NAT, bridge,
+  or routing involved.
 
 ```
                               internet
@@ -19,12 +20,11 @@ container is an unprivileged user on the host.
                                  | TCP 80/443, UDP 443 (HTTP/3)
                                  v
 +--------------------------------+-----------------------------------+
-| host network namespace         |                                   |
+| host                           |                                   |
 |                                v                                   |
 |        +-------------------------------------+                     |
-|        | edge                                |     netdata         |
-|        | nginx (TLS, ACME), static sites     +---> 127.0.0.1:19999 |
-|        +--------+-------------------+--------+                     |
+|        | nginx (TLS, ACME), static sites     +---> netdata         |
+|        +--------+-------------------+--------+     127.0.0.1:19999 |
 |                 |                   |                              |
 |     ve-nixserve: 10.231.1.1      ve-webp: 10.231.1.1               |
 +-----------------+-------------------+------------------------------+
@@ -39,17 +39,12 @@ container is an unprivileged user on the host.
 
 ## Traffic
 
-- **Inbound:** nginx receives the traffic directly, as the host's firewall
-  opens TCP 80/443 and UDP 443 (HTTP/3).
-- **Outbound:** The edge container uses the host's network and resolver,
-  e.g., for ACME.
-- **Edge to backends and host:** nginx proxies to the backends via their
-  links and to netdata via the loopback interface. The edge container can
-  reach every service on the host, including those that only listen on the
-  loopback interface.
-- **Backends:** They can reach neither the internet nor each other, as the
-  host doesn't forward packets. On the host, they only reach the ports the
-  firewall opens for everyone, e.g., SSH.
+- **nginx:** It proxies to the backends via their links and to netdata via
+  the loopback interface.
+- **Backends:** Their firewalls only open the port of their service. They can
+  reach neither the internet nor each other, as the host doesn't forward
+  packets. On the host, they only reach the ports the firewall opens for
+  everyone, e.g., SSH.
 
 ## Access From the Host
 
@@ -59,7 +54,7 @@ this uses the container's namespaces, not the network:
 ```sh
 sudo nixos-container root-login nixserve
 sudo nixos-container run webp -- systemctl status img-to-webp-service
-journalctl -M edge -u nginx
+journalctl -M nixserve -u nix-serve
 ```
 
 ## Adding a Backend Container
@@ -69,4 +64,4 @@ journalctl -M edge -u nginx
 2. Add `mkBackend "<name>" { modules = [ ... ]; }` to `imports` in
    [`default.nix`](./default.nix).
 3. Proxy to `net.backends.<name>.url` in the vhost, and import the vhost in
-   [`edge.nix`](./edge.nix).
+   [`default.nix`](./default.nix).

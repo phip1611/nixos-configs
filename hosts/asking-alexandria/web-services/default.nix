@@ -1,15 +1,12 @@
-# Runs the internet-facing web services in NixOS containers. nginx runs in the
-# edge container, where it terminates TLS for all vhosts and proxies to the
-# backend containers (see ./net.nix).
+# The internet-facing web services. nginx runs on the host, where it
+# terminates TLS for all vhosts and proxies to the services in the backend
+# containers (see ./net.nix).
 #
 # Reference: https://nixos.org/manual/nixos/stable/#ch-containers
 {
   pkgs,
-  # Flake inputs used by the containers' modules.
-  dd-systems-meetup-website,
+  # Flake input used by a container's modules.
   img-to-webp-service,
-  slidev-slides,
-  wambo-web,
   ...
 }:
 
@@ -72,15 +69,17 @@ let
 in
 {
   imports = [
-    # Shares the host's network namespace (the default for NixOS containers).
-    (mkContainer "edge" {
-      hostFiles = [ "/etc/dev.phip1611.monitor_basicauthfile" ];
-      specialArgs = {
-        inherit dd-systems-meetup-website slidev-slides wambo-web;
-      };
-      modules = [ ./edge.nix ];
-    })
+    ./nginx.nix
 
+    # Hosted web projects
+    ./de.wambo-web
+    ./dev.phip1611.monitor
+    ./dev.phip1611.nix-binary-cache
+    ./dev.phip1611.slides
+    ./dev.phip1611.webp
+    ./org.ukvly
+
+    # Services nginx proxies to
     (mkBackend "nixserve" {
       hostFiles = [ "/var/cache-priv-key.pem" ];
       modules = [ ./dev.phip1611.nix-binary-cache/container.nix ];
@@ -92,25 +91,6 @@ in
       modules = [ ./dev.phip1611.webp/container.nix ];
     })
   ];
-
-  # The container reports readiness only after its boot, which includes
-  # ordering missing or due ACME certificates. If that takes longer than the
-  # start timeout (many new certificates, or Let's Encrypt being slow or
-  # unreachable), systemd kills and restarts the container, taking nginx down
-  # with it. The default of 1min is too short for that.
-  containers.edge.timeoutStartSec = "5min";
-
-  # nginx in the edge container listens in the host's network namespace.
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-  ];
-  networking.firewall.allowedUDPPorts = [
-    443 # http3 / quic
-  ];
-  # Root in the edge container is unprivileged on the host and thus can't bind
-  # ports below 1024 there.
-  boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
 
   # The nixos-container scripts configure the backends' veths. Otherwise,
   # networkd applies its stock 80-container-ve.network: a DHCP server,

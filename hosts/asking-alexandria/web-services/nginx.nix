@@ -11,6 +11,17 @@ let
   #};
 in
 {
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [
+      80
+      443
+    ];
+    allowedUDPPorts = [
+      443 # http3 / quic
+    ];
+  };
+
   # /var/lib/acme/.challenges must be writable by the ACME user
   # and readable by the Nginx user. The easiest way to achieve
   # this is to add the Nginx user to the ACME group.
