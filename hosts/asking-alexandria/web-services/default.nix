@@ -13,20 +13,28 @@
 let
   net = import ./net.nix;
 
-  # A web service container, as a module. `hostFiles` are bind-mounted
-  # read-only; `idmap` preserves their host ownership despite the container's
-  # user namespace. `network` holds the container's network options.
-  mkContainer =
+  # A backend container, as a module (see ./net.nix). Its only network is a
+  # point-to-point link to the host. The host doesn't forward packets, so a
+  # backend can reach neither the internet nor the other backends.
+  #
+  # `hostFiles` are bind-mounted read-only; `idmap` preserves their host
+  # ownership despite the container's user namespace.
+  mkBackend =
     name:
     {
       hostFiles ? [ ],
       specialArgs ? { },
       modules,
-      network ? { },
     }:
+    let
+      backend = net.backends.${name};
+    in
     {
-      containers.${name} = network // {
+      containers.${name} = {
         autoStart = true;
+        privateNetwork = true;
+        hostAddress = net.host;
+        localAddress = backend.ipv4;
         # Root in the container is an unprivileged user on the host.
         privateUsers = "pick";
         # `bindMounts` doesn't support mount options such as `idmap`.
@@ -36,36 +44,13 @@ let
           imports = modules;
           # Faster evaluation and the same overlays as on the host.
           nixpkgs.pkgs = pkgs;
+          networking.firewall.allowedTCPPorts = [ backend.port ];
           system.stateVersion = "26.05";
         };
       };
       # Fail early with a clear message; nspawn's error is obscure.
       systemd.services."container@${name}".unitConfig.AssertPathExists = hostFiles;
     };
-
-  # A backend container, as a module (see ./net.nix). Its only network is a
-  # point-to-point link to the host. The host doesn't forward packets, so a
-  # backend can reach neither the internet nor the other backends.
-  mkBackend =
-    name: args:
-    let
-      backend = net.backends.${name};
-    in
-    mkContainer name (
-      args
-      // {
-        modules = args.modules ++ [
-          {
-            networking.firewall.allowedTCPPorts = [ backend.port ];
-          }
-        ];
-        network = {
-          privateNetwork = true;
-          hostAddress = net.host;
-          localAddress = backend.ipv4;
-        };
-      }
-    );
 in
 {
   imports = [
