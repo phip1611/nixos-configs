@@ -16,15 +16,27 @@ in
     isNormalUser = true;
     createHome = true;
     description = username;
-    initialPassword = username;
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINmacK8ivbooOAUjJgK3Nu4C8pjo8BS13cPcyDvjoQx6 ci-builder@nix-binary-cache.phip1611.dev"
+      # `restrict`: no forwarding, no PTY, no ~/.ssh/rc.
+      "restrict ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINmacK8ivbooOAUjJgK3Nu4C8pjo8BS13cPcyDvjoQx6 ci-builder@nix-binary-cache.phip1611.dev"
     ];
   };
 
-  # Prevent the password login for this user, always.
+  services.openssh.settings.AllowUsers = [ username ];
+
+  # The CI only runs commands and copies files.
+  # - Public keys only: `PasswordAuthentication no` alone still allows
+  #   password logins via PAM (keyboard-interactive).
+  # - No forwarding: otherwise, the CI key could reach services that only
+  #   listen on localhost, such as netdata without its basic auth.
   services.openssh.extraConfig = ''
     Match User ${username}
-      PasswordAuthentication no
+      AuthenticationMethods publickey
+      AllowAgentForwarding no
+      AllowStreamLocalForwarding no
+      AllowTcpForwarding no
+      PermitTTY no
+      PermitTunnel no
+      X11Forwarding no
   '';
 }

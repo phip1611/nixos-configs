@@ -58,6 +58,9 @@
       "wheel"
     ];
     packages = with pkgs; [ ];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIByFlysjuSdICGBaDUYOq5wPSPQgPWOenBwal2PhBtd phip1611@phips-framework13"
+    ];
   };
 
   # Enable the OpenSSH daemon.
