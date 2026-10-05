@@ -9,6 +9,7 @@
   pkgs,
   # Flake inputs used by the containers' modules.
   dd-systems-meetup-website,
+  img-to-webp-service,
   slidev-slides,
   wambo-web,
   ...
@@ -116,6 +117,12 @@ in
     (mkBackend "nixserve" {
       hostFiles = [ "/var/cache-priv-key.pem" ];
       modules = [ ./dev.phip1611.nix-binary-cache/container.nix ];
+    })
+    (mkBackend "webp" {
+      specialArgs = {
+        inherit img-to-webp-service;
+      };
+      modules = [ ./dev.phip1611.webp/container.nix ];
     })
   ];
 

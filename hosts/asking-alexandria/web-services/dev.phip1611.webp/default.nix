@@ -1,27 +1,10 @@
-# img-to-webp-service
+# img-to-webp-service, which runs in the webp container (see ./container.nix).
+let
+  net = import ../net.nix;
+  commonCfg = import ../nginx-common-host-config.nix;
+in
 {
-  config,
-  lib,
-  pkgs,
-  img-to-webp-service,
-  ...
-}:
-
-{
-  imports = [
-    (img-to-webp-service.nixosModules.default)
-  ];
-  config = {
-    services.img-to-webp-service.enable = true;
-    services.img-to-webp-service.port = 8027;
-    services.nginx.virtualHosts."webp.phip1611.dev" =
-      let
-        port = toString config.services.img-to-webp-service.port;
-        commonCfg = import ../nginx-common-host-config.nix;
-      in
-      commonCfg
-      // {
-        locations."/".proxyPass = "http://localhost:${port}";
-      };
+  services.nginx.virtualHosts."webp.phip1611.dev" = commonCfg // {
+    locations."/".proxyPass = net.backends.webp.url;
   };
 }
