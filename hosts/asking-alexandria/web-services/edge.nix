@@ -1,10 +1,8 @@
 # The edge container: nginx terminates TLS for all vhosts, serves the static
-# sites, and proxies to the other web services. It's the only web service
-# container that is reachable from the internet and that can reach the
-# internet.
-let
-  net = import ./net.nix;
-in
+# sites, and proxies to the other web services. It shares the host's network
+# namespace, so nginx listens on the host's addresses and reaches the
+# internet, the host's services, and the backend containers like a process on
+# the host.
 {
   imports = [
     ./nginx.nix
@@ -18,24 +16,7 @@ in
     ./org.ukvly
   ];
 
-  # On a bridge, nixos-container doesn't set up the default routes.
-  networking.defaultGateway = {
-    address = net.host.ipv4;
-    interface = "eth0";
-  };
-  networking.defaultGateway6 = {
-    address = net.host.ipv6;
-    interface = "eth0";
-  };
-
-  # The host's resolver (dnscrypt-proxy) only listens on the host's loopback
-  # interface, which is unreachable from the container's network namespace.
-  networking.useHostResolvConf = false;
-  # Quad9 (DNSSEC-validating).
-  networking.nameservers = [
-    "9.9.9.9"
-    "149.112.112.112"
-    "2620:fe::fe"
-    "2620:fe::9"
-  ];
+  # The host's firewall covers the shared network namespace, which the
+  # container isn't allowed to configure.
+  networking.firewall.enable = false;
 }

@@ -1,11 +1,9 @@
-# Runs the internet-facing web services in NixOS containers. The host only
-# forwards HTTP(S) traffic to the edge container, where nginx terminates TLS
-# for all vhosts. nginx proxies to the backend containers (see ./net.nix),
-# which only the edge container can reach.
+# Runs the internet-facing web services in NixOS containers. nginx runs in the
+# edge container, where it terminates TLS for all vhosts and proxies to the
+# backend containers (see ./net.nix).
 #
 # Reference: https://nixos.org/manual/nixos/stable/#ch-containers
 {
-  lib,
   pkgs,
   # Flake inputs used by the containers' modules.
   dd-systems-meetup-website,
@@ -17,24 +15,6 @@
 
 let
   net = import ./net.nix;
-  externalIface = "ens3";
-  edgeBridge = net.edgeBridge.name;
-
-  forwardedPorts = [
-    {
-      proto = "tcp";
-      port = 80;
-    }
-    {
-      proto = "tcp";
-      port = 443;
-    }
-    # http3 / quic
-    {
-      proto = "udp";
-      port = 443;
-    }
-  ];
 
   # A web service container, as a module. `hostFiles` are bind-mounted
   # read-only; `idmap` preserves their host ownership despite the container's
@@ -45,21 +25,21 @@ let
       hostFiles ? [ ],
       specialArgs ? { },
       modules,
-      network,
+      network ? { },
     }:
     {
       containers.${name} = network // {
         autoStart = true;
-        privateNetwork = true;
         # Root in the container is an unprivileged user on the host.
         privateUsers = "pick";
         # `bindMounts` doesn't support mount options such as `idmap`.
         extraFlags = map (path: "--bind-ro=${path}:${path}:idmap") hostFiles;
         inherit specialArgs;
         config = {
-          imports = [ ./container-common.nix ] ++ modules;
+          imports = modules;
           # Faster evaluation and the same overlays as on the host.
           nixpkgs.pkgs = pkgs;
+          system.stateVersion = "26.05";
         };
       };
       # Fail early with a clear message; nspawn's error is obscure.
@@ -67,8 +47,9 @@ let
     };
 
   # A backend container, as a module (see ./net.nix). It's attached to the
-  # backend bridge, so it can neither reach the host nor the internet. Its
-  # firewall only lets the edge container connect to the service.
+  # backend bridge, and its firewall only lets the host connect to the
+  # service. The host doesn't forward packets, so the backend can't reach the
+  # internet.
   mkBackend =
     name: args:
     let
@@ -79,12 +60,15 @@ let
       // {
         modules = args.modules ++ [
           {
+            # Like on the host; enables `extraInputRules`.
+            networking.nftables.enable = true;
             networking.firewall.extraInputRules = ''
-              ip saddr ${net.backendBridge.edgeIpv4} tcp dport ${toString backend.port} accept
+              ip saddr ${net.backendBridge.hostIpv4} tcp dport ${toString backend.port} accept
             '';
           }
         ];
         network = {
+          privateNetwork = true;
           hostBridge = net.backendBridge.name;
           localAddress = "${backend.ipv4}/${toString net.backendBridge.prefixLength}";
         };
@@ -93,25 +77,13 @@ let
 in
 {
   imports = [
+    # Shares the host's network namespace (the default for NixOS containers).
     (mkContainer "edge" {
       hostFiles = [ "/etc/dev.phip1611.monitor_basicauthfile" ];
       specialArgs = {
         inherit dd-systems-meetup-website slidev-slides wambo-web;
       };
       modules = [ ./edge.nix ];
-      # Link to the host. Not a point-to-point veth with `hostAddress`:
-      # nixos-container would configure the host side only after the
-      # container's boot, which includes ordering ACME certificates.
-      network = {
-        hostBridge = edgeBridge;
-        localAddress = "${net.edge.ipv4}/${toString net.edgeBridge.prefixLength.ipv4}";
-        localAddress6 = "${net.edge.ipv6}/${toString net.edgeBridge.prefixLength.ipv6}";
-        # Link to the backend containers.
-        extraVeths.${net.backendBridge.edgeVeth} = {
-          hostBridge = net.backendBridge.name;
-          localAddress = "${net.backendBridge.edgeIpv4}/${toString net.backendBridge.prefixLength}";
-        };
-      };
     })
 
     (mkBackend "nixserve" {
@@ -133,69 +105,29 @@ in
   # with it. The default of 1min is too short for that.
   containers.edge.timeoutStartSec = "5min";
 
-  networking.bridges.${edgeBridge}.interfaces = [ ];
-  networking.interfaces.${edgeBridge} = {
+  # nginx in the edge container listens in the host's network namespace.
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+  ];
+  networking.firewall.allowedUDPPorts = [
+    443 # http3 / quic
+  ];
+  # Root in the edge container is unprivileged on the host and thus can't bind
+  # ports below 1024 there.
+  boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
+
+  networking.nftables.enable = true;
+
+  # The bridge between the host and the backend containers.
+  networking.bridges.${net.backendBridge.name}.interfaces = [ ];
+  networking.interfaces.${net.backendBridge.name} = {
     useDHCP = false;
     ipv4.addresses = [
       {
-        address = net.host.ipv4;
-        prefixLength = net.edgeBridge.prefixLength.ipv4;
-      }
-    ];
-    ipv6.addresses = [
-      {
-        address = net.host.ipv6;
-        prefixLength = net.edgeBridge.prefixLength.ipv6;
+        address = net.backendBridge.hostIpv4;
+        inherit (net.backendBridge) prefixLength;
       }
     ];
   };
-  # The bridge has no carrier until the container starts. Configure the host's
-  # addresses anyway, so that the container can reach the host during its boot.
-  systemd.network.networks."40-${edgeBridge}".networkConfig.ConfigureWithoutCarrier = true;
-
-  # The bridge between the edge container and the backend containers. The host
-  # has no address on it.
-  networking.bridges.${net.backendBridge.name}.interfaces = [ ];
-  networking.interfaces.${net.backendBridge.name}.useDHCP = false;
-  systemd.network.networks."40-${net.backendBridge.name}".networkConfig.LinkLocalAddressing = "no";
-
-  networking.nat = {
-    enable = true;
-    enableIPv6 = true;
-    externalInterface = externalIface;
-    # Outgoing traffic of the edge container, e.g., for ACME.
-    internalInterfaces = [ edgeBridge ];
-    # Keep the public IPs of the host, so no DNS changes are needed. This also
-    # preserves the client IPs for nginx.
-    forwardPorts = lib.concatMap (
-      { proto, port }:
-      [
-        {
-          inherit proto;
-          sourcePort = port;
-          destination = "${net.edge.ipv4}:${toString port}";
-        }
-        {
-          inherit proto;
-          sourcePort = port;
-          destination = "[${net.edge.ipv6}]:${toString port}";
-        }
-      ]
-    ) forwardedPorts;
-  };
-
-  # NAT enables IP forwarding. Only forward the port forwards and the edge
-  # container's outgoing traffic (both allowed by the NAT module), so that,
-  # e.g., neighbors in the same L2 segment can't route through this host or
-  # reach the container directly. `filterForward` requires the nftables-based
-  # firewall.
-  networking.nftables.enable = true;
-  networking.firewall.filterForward = true;
-
-  # Host services nginx in the edge container proxies to.
-  networking.firewall.interfaces.${edgeBridge}.allowedTCPPorts = [ net.ports.netdata ];
-
-  # With IPv6 forwarding enabled (by NAT), networkd ignores router
-  # advertisements by default, which removes the default IPv6 route.
-  systemd.network.networks."40-${externalIface}".networkConfig.IPv6AcceptRA = true;
 }
