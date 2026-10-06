@@ -1,9 +1,8 @@
-# Addresses of the web service containers, within 10.231.0.0/16 and
-# fd97:4b75:4af6::/48 (a randomly generated ULA, RFC 4193).
+# Addresses of the backend containers. Each one has a point-to-point link to
+# the host, which uses the same address on all of them.
 let
-  # Backend containers: only reachable from the edge container, via the
-  # backend bridge. `id` is the last byte of the address and must be unique
-  # (2-254); `port` is the TCP port of the service.
+  # `id` is the last byte of the address and must be unique (2-254); `port` is
+  # the TCP port of the service.
   backends = {
     nixserve = {
       id = 2;
@@ -16,39 +15,7 @@ let
   };
 in
 {
-  # Bridge between the host and the edge container. The host configures its
-  # address at boot, independent of the container.
-  edgeBridge = {
-    name = "br-edge";
-    prefixLength = {
-      ipv4 = 24;
-      ipv6 = 64;
-    };
-  };
-  host = {
-    ipv4 = "10.231.0.1";
-    ipv6 = "fd97:4b75:4af6::1";
-  };
-  edge = {
-    ipv4 = "10.231.0.2";
-    ipv6 = "fd97:4b75:4af6::2";
-  };
-
-  # Host services the edge container proxies to.
-  ports = {
-    # https://learn.netdata.cloud/docs/netdata-agent/securing-netdata-agents/web-server
-    netdata = 19999;
-  };
-
-  # Bridge between the edge container and all backend containers.
-  backendBridge = {
-    name = "br-backends";
-    # The edge container's veth on the bridge. Not `ve-*` or `vb-*`, which
-    # networkd's stock container profiles would configure.
-    edgeVeth = "backends";
-    edgeIpv4 = "10.231.1.1";
-    prefixLength = 24;
-  };
+  host = "10.231.1.1";
 
   backends = builtins.mapAttrs (
     _name:

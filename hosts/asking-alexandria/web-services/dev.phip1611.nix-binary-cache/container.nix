@@ -7,15 +7,10 @@
   ...
 }:
 
-let
-  backend = (import ../net.nix).backends.nixserve;
-in
 {
   services.nix-serve = {
     enable = true;
-    # Only listen on the backend bridge, not on all addresses.
-    bindAddress = backend.ipv4;
-    inherit (backend) port;
+    inherit ((import ../net.nix).backends.nixserve) port;
     # Drop-in replacement on steroids
     # https://github.com/aristanetworks/nix-serve-ng
     package = pkgs.nix-serve-ng.overrideAttrs (old: {

@@ -1,66 +1,50 @@
 # Web Service Containers of asking-alexandria
 
-The internet-facing web services run in NixOS containers. The addresses are
-defined in [`net.nix`](./net.nix), the containers in
-[`default.nix`](./default.nix).
+nginx runs on the host, in the sandbox of its systemd unit. It terminates TLS
+for all vhosts, serves the static sites, and proxies to the other web
+services. Those that hold secrets or process untrusted data run in NixOS
+containers, the **backends**. They are defined in
+[`default.nix`](./default.nix), their addresses in [`net.nix`](./net.nix).
 
-- The **edge** container runs nginx. It's the only container with a link to
-  the host and thus the only one that is reachable from, and can reach, the
-  internet. Its link is a bridge on the host, whose host address exists
-  independently of the container. This way, the container's network already
-  works during its boot, e.g., for ACME.
-- The **backend** containers share a bridge with the edge container. The host
-  has no address on it.
+Each backend container has
+
+- a user namespace: root in the container is an unprivileged user on the
+  host.
+- a private network: a point-to-point link to the host, as described in the
+  NixOS manual. The host doesn't forward packets, so there is no NAT, bridge,
+  or routing involved.
 
 ```
-                                internet
-                                   |
-                                   | TCP 80/443, UDP 443 (HTTP/3)
-                                   v
-+----------------------------------+-----------------------------------+
-| host       ens3: public IPv4 (DHCP), 2a03:4000:63:d3::1/64           |
-|                                  |                                   |
-|                                  | DNAT to edge (IPv4 and IPv6)      |
-|                                  v                                   |
-|   br-edge: 10.231.0.1, fd97:4b75:4af6::1      netdata :19999         |
-|                                  |                ^                  |
-|        bridge to the host;       |                |                  |
-|        outgoing traffic:         |                |                  |
-|        NAT via ens3              |                |                  |
-|              +-------------------+----------------+-----+            |
-|              | edge   10.231.0.2, fd97:4b75:4af6::2     |            |
-|              | nginx (TLS, ACME), static sites          |            |
-|              +------------------+-----------------------+            |
-|                                 | backends: 10.231.1.1               |
-|                                 |                                    |
-|                                 |  br-backends (no host address)     |
-|         +-----------------------+---------------+                    |
-|         | vb-nixserve                           | vb-webp            |
-|         |                                       |                    |
-|  +------+------------+               +----------+--------+           |
-|  | nixserve          |               | webp              |           |
-|  | 10.231.1.2        |               | 10.231.1.3        |           |
-|  | nix-serve :5000   |               | img-to-webp :8027 |           |
-|  | signing key       |               |                   |           |
-|  +-------------------+               +-------------------+           |
-+----------------------------------------------------------------------+
+                              internet
+                                 |
+                                 | TCP 80/443, UDP 443 (HTTP/3)
+                                 v
++--------------------------------+-----------------------------------+
+| host                           |                                   |
+|                                v                                   |
+|        +-------------------------------------+                     |
+|        | nginx (TLS, ACME), static sites     +---> netdata         |
+|        +--------+-------------------+--------+     127.0.0.1:19999 |
+|                 |                   |                              |
+|     ve-nixserve: 10.231.1.1      ve-webp: 10.231.1.1               |
++-----------------+-------------------+------------------------------+
+                  |                   |
+       +----------+--------+  +-------+-----------+
+       | nixserve          |  | webp              |
+       | 10.231.1.2        |  | 10.231.1.3        |
+       | nix-serve :5000   |  | img-to-webp :8027 |
+       | signing key       |  |                   |
+       +-------------------+  +-------------------+
 ```
 
 ## Traffic
 
-- **Inbound:** The host forwards TCP 80/443 and UDP 443 (HTTP/3) from `ens3`
-  via DNAT to the edge container, for IPv4 and IPv6. The client IPs are
-  preserved.
-- **Outbound:** Only the edge container can reach the internet, e.g., for
-  ACME. The host masquerades its traffic, i.e., replaces the private source
-  address with its public one. DNS goes directly to Quad9.
-- **Edge to backends and host:** nginx proxies to the backends via the
-  bridge. Their firewalls only accept the edge container. On the host, the
-  edge container can reach netdata and the ports the host opens on all
-  interfaces, e.g., SSH.
-- **Backends:** They can reach neither the host nor the internet.
-- **Forwarded traffic:** The host drops everything except the port forwards
-  and the edge container's outgoing traffic.
+- **nginx:** It proxies to the backends via their links and to netdata via
+  the loopback interface.
+- **Backends:** Their firewalls only open the port of their service. They can
+  reach neither the internet nor each other, as the host doesn't forward
+  packets. On the host, they only reach the ports the firewall opens for
+  everyone, e.g., SSH.
 
 ## Access From the Host
 
@@ -70,7 +54,7 @@ this uses the container's namespaces, not the network:
 ```sh
 sudo nixos-container root-login nixserve
 sudo nixos-container run webp -- systemctl status img-to-webp-service
-journalctl -M edge -u nginx
+journalctl -M nixserve -u nix-serve
 ```
 
 ## Adding a Backend Container
@@ -80,4 +64,4 @@ journalctl -M edge -u nginx
 2. Add `mkBackend "<name>" { modules = [ ... ]; }` to `imports` in
    [`default.nix`](./default.nix).
 3. Proxy to `net.backends.<name>.url` in the vhost, and import the vhost in
-   [`edge.nix`](./edge.nix).
+   [`default.nix`](./default.nix).
