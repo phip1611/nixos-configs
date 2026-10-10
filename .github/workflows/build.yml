@@ -192,7 +192,10 @@ jobs:
         timeout-minutes: 60
         with:
           hostname: homepc
+      # Also for failed and cancelled runs. Otherwise, the checkout stays on
+      # the remote builder, and its result links keep their outputs alive.
       - name: Cleanup on Remote Builder
+        if: always()
         timeout-minutes: 1
         run: |
           eval $(ssh-agent -s)
@@ -200,5 +203,5 @@ jobs:
 
           ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
             echo "[Remote Builder] Removing $REMOTE_CI_PWD"
-            rm -r "$REMOTE_CI_PWD"
+            rm -rf "$REMOTE_CI_PWD"
           EOF
