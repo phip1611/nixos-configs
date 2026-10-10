@@ -5,8 +5,6 @@
 # Reference: https://nixos.org/manual/nixos/stable/#ch-containers
 {
   pkgs,
-  # Flake input used by a container's modules.
-  img-to-webp-service,
   ...
 }:
 
@@ -23,7 +21,6 @@ let
     name:
     {
       hostFiles ? [ ],
-      specialArgs ? { },
       modules,
     }:
     let
@@ -39,7 +36,6 @@ let
         privateUsers = "pick";
         # `bindMounts` doesn't support mount options such as `idmap`.
         extraFlags = map (path: "--bind-ro=${path}:${path}:idmap") hostFiles;
-        inherit specialArgs;
         config = {
           imports = modules;
           # Faster evaluation and the same overlays as on the host.
@@ -68,12 +64,6 @@ in
     (mkBackend "nixserve" {
       hostFiles = [ "/var/cache-priv-key.pem" ];
       modules = [ ./dev.phip1611.nix-binary-cache/container.nix ];
-    })
-    (mkBackend "webp" {
-      specialArgs = {
-        inherit img-to-webp-service;
-      };
-      modules = [ ./dev.phip1611.webp/container.nix ];
     })
   ];
 

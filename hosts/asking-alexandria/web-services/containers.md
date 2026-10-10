@@ -2,9 +2,9 @@
 
 nginx runs on the host, in the sandbox of its systemd unit. It terminates TLS
 for all vhosts, serves the static sites, and proxies to the other web
-services. Those that hold secrets or process untrusted data run in NixOS
-containers, the **backends**. They are defined in
-[`default.nix`](./default.nix), their addresses in [`net.nix`](./net.nix).
+services. Those that hold secrets run in NixOS containers, the **backends**.
+They are defined in [`default.nix`](./default.nix), their addresses in
+[`net.nix`](./net.nix).
 
 Each backend container has
 
@@ -26,21 +26,23 @@ Each backend container has
 |        | nginx (TLS, ACME), static sites     +---> netdata         |
 |        +--------+-------------------+--------+     127.0.0.1:19999 |
 |                 |                   |                              |
-|     ve-nixserve: 10.231.1.1      ve-webp: 10.231.1.1               |
-+-----------------+-------------------+------------------------------+
-                  |                   |
-       +----------+--------+  +-------+-----------+
-       | nixserve          |  | webp              |
-       | 10.231.1.2        |  | 10.231.1.3        |
-       | nix-serve :5000   |  | img-to-webp :8027 |
-       | signing key       |  |                   |
-       +-------------------+  +-------------------+
+|                 |                   +---> img-to-webp              |
+|                 |                         127.0.0.1:8027           |
+|     ve-nixserve: 10.231.1.1                                        |
++-----------------+--------------------------------------------------+
+                  |
+       +----------+--------+
+       | nixserve          |
+       | 10.231.1.2        |
+       | nix-serve :5000   |
+       | signing key       |
+       +-------------------+
 ```
 
 ## Traffic
 
-- **nginx:** It proxies to the backends via their links and to netdata via
-  the loopback interface.
+- **nginx:** It proxies to the backends via their links and to netdata and
+  img-to-webp-service via the loopback interface.
 - **Backends:** Their firewalls only open the port of their service. They can
   reach neither the internet nor each other, as the host doesn't forward
   packets. On the host, they only reach the ports the firewall opens for
@@ -53,7 +55,7 @@ this uses the container's namespaces, not the network:
 
 ```sh
 sudo nixos-container root-login nixserve
-sudo nixos-container run webp -- systemctl status img-to-webp-service
+sudo nixos-container run nixserve -- systemctl status nix-serve
 journalctl -M nixserve -u nix-serve
 ```
 

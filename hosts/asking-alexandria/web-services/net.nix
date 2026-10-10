@@ -8,10 +8,6 @@ let
       id = 2;
       port = 5000;
     };
-    webp = {
-      id = 3;
-      port = 8027;
-    };
   };
 in
 {
