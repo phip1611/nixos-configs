@@ -91,6 +91,18 @@ in
               "/nix/var/nix/profiles/system"
             ];
           };
+          # Delete old user profiles. Without this, nothing deletes them, as
+          # `nix.gc` only handles the profiles of root. Newer home-manager
+          # versions no longer create the `home-manager` profile when used as
+          # NixOS module, but it may still exist from older ones.
+          user = {
+            keep-latest-n = 1;
+            keep-since = "14d";
+            profile-paths = [
+              "~/.local/state/nix/profiles/profile"
+              "~/.local/state/nix/profiles/home-manager"
+            ];
+          };
         };
         temporary-root-policies = {
           direnv = {
