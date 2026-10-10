@@ -17,8 +17,8 @@ in
     enable = lib.mkEnableOption "Enable the DDNS update timer using the ddns-update utility";
     configPath = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      # Should not be in Nix store due to the embedded secret!
-      # Ideally, this file is only readable as root for maximum security.
+      # Should not be in Nix store due to the embedded secret! It may be only
+      # readable by root, as the service gets it as a credential.
       description = "Absolute path to the config file";
       default = null;
       example = "/home/user/ddns-update.json";
@@ -39,7 +39,10 @@ in
       wants = [ "network-online.target" ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${lib.getExe pkg} --config ${cfg.configPath}";
+        ExecStart = "${lib.getExe pkg} --config %d/config";
+        LoadCredential = "config:${cfg.configPath}";
+        # An unprivileged user with a read-only view of the file system.
+        DynamicUser = true;
       };
     };
     systemd.timers.ddns-update = {
