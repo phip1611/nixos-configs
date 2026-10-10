@@ -52,14 +52,14 @@
     services.nix-verify-store.enable = true;
   };
 
-  # Turn stuff on that is deactivated by the server profile. This is not
-  # a regular server but one where we want to have a fully populated Nix
-  # store.
-  nix = {
-    settings = {
-      keep-outputs = lib.mkForce true;
-      keep-derivations = lib.mkForce true;
-    };
+  # The binary cache serves the Nix store of this host, including the CI
+  # builds, which have no GC roots. Thus, they stay in the cache until the next
+  # GC. Run it after the nightly auto-upgrades fetched the latest builds.
+  nix.gc.dates = lib.mkForce "Sun 04:00";
+  nix.settings = {
+    # In case CI fills the disk before the next GC.
+    min-free = lib.mkForce (30 * 1024 * 1024 * 1024); # 30 GiB
+    max-free = lib.mkForce (80 * 1024 * 1024 * 1024); # 80 GiB
   };
 
   # Set your time zone.
