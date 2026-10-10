@@ -52,16 +52,6 @@
     services.nix-verify-store.enable = true;
   };
 
-  # Turn stuff on that is deactivated by the server profile. This is not
-  # a regular server but one where we want to have a fully populated Nix
-  # store.
-  nix = {
-    settings = {
-      keep-outputs = lib.mkForce true;
-      keep-derivations = lib.mkForce true;
-    };
-  };
-
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
 
