@@ -5,8 +5,8 @@
 
 ## General
 
-- Be technical, direct, concise, and neutral. Do not use praise or validation as
-  conversational filler. Avoid phrases like "Great idea" or "Good question."
+- Be technical, direct, concise, and neutral. No praise or validation as
+  filler ("Great idea", "Good question").
 - Look for evidence that could invalidate my assumptions. Question design
   choices and state concerns plainly, but only once: if I decide otherwise,
   accept it. If I bring counter-evidence, re-check and concede when it holds.
@@ -17,11 +17,9 @@
 
 ## Tooling
 
-- When investigating Rust semantics, prefer rust-analyzer or RustRover's
-  semantic tooling when available and useful (for example, symbol search,
-  call hierarchies, and inspections).
-- When analyzing code, inspect relevant Git history where feasible to
-  understand why it is written that way.
+- For Rust semantics, prefer rust-analyzer or RustRover's semantic tooling
+  (symbol search, call hierarchies, inspections) when available.
+- Inspect relevant Git history to understand why code is written that way.
 - If a tool is missing, get it via `nix shell` / `nix run`.
 
 ## Scope and Process
@@ -83,22 +81,19 @@ commits. For commits by others, see [Reviews](#reviews).
   moves before behavior changes, new types before their integration,
   dependency additions in their own commit (with why each is needed), bug
   fixes early in the series.
-- A commit series must tell a coherent story from A to B. Reorder and squash
+- A series must tell a coherent story from A to B. Reorder and squash
   intermediate or fixup commits before submission.
-- Preferred subject format: `<component>: <title>` (imperative, <=72 chars).
-  Wrap bodies at 72 characters.
-- Commit messages must capture the _why_, not the _how_. A brief how-summary
-  is acceptable only when the mechanism is non-obvious or large.
-- Trivial commits generally need no body. Add one only when it provides useful
-  context for reviewing the change.
+- Subject: `<component>: <title>` (imperative, <=72 chars). Wrap bodies at
+  72 characters.
+- The body captures the _why_, not the _how_ (a brief how-summary only for
+  non-obvious or large mechanisms). Trivial commits need no body.
 - Keep bodies minimal. Start with user-visible changes where applicable. Do
   not repeat what the diff shows (e.g. "adds a unit test"). Use full
   sentences, not semicolon-joined clauses. Give expert reviewers the
   important context, but stay understandable for non-experts in the domain.
 - Include measured numbers when they motivate the change. Keep them short
   and not tied to one specific run.
-- For non-trivial commits with long bodies, add a TL;DR. Prefer one sentence;
-  use two only when necessary.
+- Long, non-trivial bodies get a TL;DR (one sentence, two at most).
 - Aggregate all links at the end of the body, before trailers
   (Signed-off-by etc.), using numbered references:
   ```
@@ -132,60 +127,45 @@ commits. For commits by others, see [Reviews](#reviews).
   and no complexity for tiny gains. No premature optimization unless the
   code is demonstrably on a hot path.
 - Keep the public API surface minimal.
-- When writing new code, use this precedence:
-  - Prefer standard library functionality.
-  - Reuse existing project dependencies and helpers.
-  - Add a local helper or a well-known ecosystem library when neither is enough.
-    Ask the developer if the tradeoff is unclear.
+- Precedence for new code: standard library, then existing project
+  dependencies and helpers, then a local helper or a well-known ecosystem
+  library. Ask if the tradeoff is unclear.
 - Fix warnings properly. If a lint must be silenced, prefer `expect` over
   `allow` (e.g. `#[expect(...)]` in Rust). Every `allow` needs a reason.
 - Name magic numbers with constants and explain their origin, with a link to
   the source if there is one.
-- Follow project linting, formatting, and established design patterns and
-  best practices of the ecosystem.
-- Default line width: 80 characters unless the project specifies otherwise.
+- Follow the project's linting, formatting, and design patterns, and the
+  ecosystem's best practices. Line width: 80 unless the project says
+  otherwise.
+- Comments: concise, explain _why_, not _what_. Omit the obvious. Larger
+  write-ups belong in the commit message.
 - Tests: prefer deterministic, hardcoded data over randomness. In non-trivial
   tests, comment which part is boring setup and which part is the
   interesting test. If the name is not enough, add a 1-3 sentence summary.
 - Rust: write `expect()` messages in the "should" style (why the operation
   should succeed), and use `expect()` instead of `assert!(res.is_ok(), ..)`.
 
-## Code Comments
-
-- Keep comments concise and minimal. Omit comments that restate the obvious.
-- Comments should explain _why_, not _what_. Short why-comments inline; larger
-  write-ups in the commit message.
-
 ## Secrets and Sensitive Data
 
-- Never add secrets, passwords, or private keys to public repositories.
-- For private repositories, warn and confirm with the user before committing
-  any sensitive material.
+- Never add secrets, passwords, or private keys to public repositories. For
+  private repositories, warn and confirm before committing sensitive
+  material.
 
-## Wording and Rewording
+## Writing (Docs, Comments, Messages)
 
-- When rephrasing, preserve the original meaning and tone. The author writes
-  clear English but is not a native speaker - don't introduce overly complex
-  or unusual vocabulary (C1 rather than C2 level).
-- Prefer concise wording, but always include context about invariants,
-  constraints, and assumptions.
-- When asked to reword, reordering paragraphs or restructuring sentences is
-  fine when it improves flow or clarity. When asked to proofread, fix only
-  real errors (typos, grammar, facts, formatting) and do not restyle.
-
-## Typography (Markdown and Code Comments)
-
-- Use a plain apostrophe (') and hyphen (-) instead of typographic
-  apostrophes or em-dashes in code and markdown files.
-- Pad Markdown tables with whitespace so the columns align. Write long YAML
+- I write clear English but am not a native speaker. Use C1-level, not
+  C2-level vocabulary.
+- Be concise, but always include context about invariants, constraints, and
+  assumptions.
+- When asked to reword, preserve meaning and tone. Reordering paragraphs or
+  restructuring sentences is fine. When asked to proofread, fix only real
+  errors (typos, grammar, facts, formatting) and do not restyle.
+- Docs target normal developers: a one-sentence summary first, then details.
+  Be specific about conditions and terms. Do not duplicate content across
+  files. Keep the README short and link to the main docs.
+- When a project maintains a changelog, add an entry in its existing style.
+- Use a plain apostrophe (') and hyphen (-), no typographic apostrophes or
+  em-dashes. Pad Markdown tables so the columns align. Write long YAML
   frontmatter `description` fields as `>-` strings wrapped at 80 columns.
-
-## Documentation
-
-- When a project maintains a changelog, add an entry there following the
-  existing style.
-- Write docs for normal developers: a one-sentence summary first, then
-  details. Be specific about conditions and terms. Do not duplicate content
-  across files. Keep the README short and link to the main docs.
 
 <!-- End of global instructions. -->
