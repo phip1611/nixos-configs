@@ -29,8 +29,6 @@ in
       settings = {
         connect-timeout = 3;
         log-lines = 25;
-        min-free = 268435456; # 256 MiB
-        max-free = 1073741824; # 1 GiB
         experimental-features = "nix-command flakes";
         fallback = true;
         warn-dirty = false;
@@ -59,10 +57,10 @@ in
       # Garbage Collection
       gc = {
         automatic = true;
-        dates = "daily";
-        # Runs normal garbage-collection plus removes all NixOS generations
-        # that are older than the specified amount.
-        options = lib.mkDefault "--delete-older-than 30d";
+        # `dates` is set per profile. Runs normal garbage-collection plus
+        # removes all NixOS generations that are older than the specified
+        # amount.
+        options = lib.mkDefault "--delete-older-than 14d";
       };
 
       # Scheduled systemd service that optimizes all paths in the nix store
