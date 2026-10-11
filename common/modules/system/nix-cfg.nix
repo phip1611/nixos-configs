@@ -29,8 +29,6 @@ in
       settings = {
         connect-timeout = 3;
         log-lines = 25;
-        min-free = 268435456; # 256 MiB
-        max-free = 1073741824; # 1 GiB
         experimental-features = "nix-command flakes";
         fallback = true;
         warn-dirty = false;

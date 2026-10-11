@@ -105,6 +105,10 @@ in
     nix = {
       gc.dates = "Mon 03:00";
       settings = {
+        # If a build drops the free space below min-free, Nix collects garbage
+        # until max-free is free. Sized for my servers (~256 GiB disks).
+        min-free = 16 * 1024 * 1024 * 1024; # 16 GiB
+        max-free = 32 * 1024 * 1024 * 1024; # 32 GiB
         # Save some disk space.
         keep-outputs = false;
         keep-derivations = false;

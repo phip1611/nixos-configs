@@ -49,8 +49,11 @@
       # The timer is persistent: a run missed while the machine was off
       # happens at the next boot.
       gc.dates = "weekly";
-      # Keep nix store populated for no/little wait times during typical work
       settings = {
+        # My developer machines have 1-2 TB disks.
+        min-free = 64 * 1024 * 1024 * 1024; # 64 GiB
+        max-free = 128 * 1024 * 1024 * 1024; # 128 GiB
+        # Keep nix store populated for no/little wait times during typical work
         keep-outputs = true;
         keep-derivations = true;
       };
