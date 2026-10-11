@@ -46,7 +46,9 @@
     };
 
     nix = {
-      gc.options = "--delete-older-than 14d";
+      # The timer is persistent: a run missed while the machine was off
+      # happens at the next boot.
+      gc.dates = "weekly";
       # Keep nix store populated for no/little wait times during typical work
       settings = {
         keep-outputs = true;

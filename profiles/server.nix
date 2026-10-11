@@ -103,6 +103,7 @@ in
     };
 
     nix = {
+      gc.dates = "Mon 03:00";
       settings = {
         # Save some disk space.
         keep-outputs = false;
