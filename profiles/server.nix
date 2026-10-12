@@ -58,6 +58,16 @@ in
     security.protectKernelImage = true;
 
     boot.kernel.sysctl = {
+      # BBR congestion control: higher throughput and lower latency than the
+      # default (cubic), especially on long-distance or lossy links. BBR is
+      # recommended to be used with the fq qdisc.
+      #
+      # TODO: Switch to BBRv2 (or its successor v3) once it is in mainline
+      # Linux. BBRv1 ignores packet loss and ECN, so it can cause many
+      # retransmissions and take an unfair share of the bandwidth from cubic
+      # flows. BBRv2/v3 react to both.
+      "net.core.default_qdisc" = "fq";
+      "net.ipv4.tcp_congestion_control" = "bbr";
       # Hide kernel logs and pointers, which help exploiting the kernel.
       "kernel.dmesg_restrict" = 1;
       "kernel.kptr_restrict" = 2;
@@ -72,12 +82,15 @@ in
       "net.ipv6.conf.default.accept_redirects" = 0;
     };
 
+    # BBR congestion control, see `boot.kernel.sysctl` above.
+    boot.kernelModules = [ "tcp_bbr" ];
+
     # Latest LTS kernel, not latest stable kernel.
     boot.kernelPackages = pkgs.linuxPackages;
 
     # Only wheel members can execute sudo at all, which reduces the attack
     # surface of the setuid binary for all other (service) users.
-    security.sudo.execWheelOnly = true;
+    security.sudo-rs.execWheelOnly = true;
 
     # Comes with a pre-configured configuration for ssh.
     services.fail2ban.enable = true;

@@ -7,9 +7,7 @@
 
 let
   cfg = config.phip1611.common.system;
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
+  inherit (pkgs) pkgsUnstable;
 in
 {
   imports = [
@@ -23,6 +21,7 @@ in
     ./nix-path-from-flake.nix
     ./printing.nix
     ./secure-dns.nix
+    ./smartd.nix
   ];
 
   options = {
@@ -90,8 +89,14 @@ in
         # as through a nix shell.
         programs.nix-ld.enable = true;
 
-        # Set sudo password timeout to 30 min instead of 5 min.
-        security.sudo.extraConfig = ''
+        # Creates users and groups with a small Rust program in a systemd
+        # service instead of the Perl activation script.
+        services.userborn.enable = true;
+
+        # Memory-safe sudo (and su) with a smaller, audited code base.
+        security.sudo-rs.enable = true;
+        # Set sudo password timeout to 30 min instead of 15 min.
+        security.sudo-rs.extraConfig = ''
           Defaults        timestamp_timeout=30
         '';
 
