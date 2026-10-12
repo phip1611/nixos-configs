@@ -4,13 +4,11 @@
   lib,
   pkgs,
   ...
-}@inputs:
+}:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
+  inherit (pkgs) pkgsUnstable;
   python3Toolchain = import ../_python3-toolchain.nix { pkgs = pkgsUnstable; };
 in
 {

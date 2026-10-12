@@ -7,9 +7,7 @@
 
 let
   cfg = config.phip1611.common.system;
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
+  inherit (pkgs) pkgsUnstable;
 in
 {
   imports = [
