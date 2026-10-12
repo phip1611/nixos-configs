@@ -88,8 +88,10 @@ in
         # as through a nix shell.
         programs.nix-ld.enable = true;
 
-        # Set sudo password timeout to 30 min instead of 5 min.
-        security.sudo.extraConfig = ''
+        # Memory-safe sudo (and su) with a smaller, audited code base.
+        security.sudo-rs.enable = true;
+        # Set sudo password timeout to 30 min instead of 15 min.
+        security.sudo-rs.extraConfig = ''
           Defaults        timestamp_timeout=30
         '';
 
