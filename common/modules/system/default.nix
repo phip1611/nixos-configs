@@ -21,6 +21,7 @@ in
     ./nix-path-from-flake.nix
     ./printing.nix
     ./secure-dns.nix
+    ./smartd.nix
   ];
 
   options = {
