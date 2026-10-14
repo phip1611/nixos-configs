@@ -3,7 +3,9 @@ on:
   merge_group:
   pull_request:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - nixos-26.05
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
