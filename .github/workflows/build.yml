@@ -1,7 +1,11 @@
 name: Build
-on: [push, pull_request, merge_group]
+on:
+  merge_group:
+  pull_request:
+  push:
+    branches: [ main ]
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 jobs:
   list-nixos-options-of-common-module:
@@ -105,8 +109,8 @@ jobs:
       - name: Check Remote Builder is available
         timeout-minutes: 1
         run: |
-          DEFAULT_MSG="File not found."
-          curl https://nix-binary-cache.phip1611.dev | grep -F "$DEFAULT_MSG"
+          DEFAULT_MSG="StoreDir: /nix/store"
+          curl https://nix-binary-cache.phip1611.dev/nix-cache-info | grep -F "$DEFAULT_MSG"
       # Prevent "broken pipe" in long-running SSH sessions
       - name: Prepare Local SSH Config
         run: |
