@@ -66,7 +66,9 @@ in
         ]
       ))
       ++ (lib.optionals cfg.withMedia (
-        with pkgsUnstable;
+        # TODO use unstable again once Qt build error is gone
+        # with pkgsUnstable;
+        with pkgs;
         [
           audacity
         ]
