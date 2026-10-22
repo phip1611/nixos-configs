@@ -101,11 +101,12 @@ in
         '';
 
         # Don't accumulate crap: Max 250mb or max 14 day old
-        services.journald.settings.Journal = ''
-          SystemMaxUse=250M
-          SystemMaxFileSize=50M
-          MaxRetentionSec=14day
-        '';
+        services.journald.settings.Journal = {
+          SystemMaxUse = "250M";
+          SystemMaxFileSize = "50M";
+          MaxRetentionSec = "14day";
+
+        };
 
         # zRam-based swap offers very responsive swapping when the memory usage
         # is high. It still makes sense to provide multiple GB of traditional

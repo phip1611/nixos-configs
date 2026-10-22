@@ -29,7 +29,10 @@ in
       settings = {
         connect-timeout = 3;
         log-lines = 25;
-        experimental-features = "nix-command flakes";
+        experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
         fallback = true;
         warn-dirty = false;
         # nix optimise the store after each and every build (for the built path)
