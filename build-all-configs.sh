@@ -20,7 +20,6 @@ _fn_build_nixos_system() {
 
   echo "Building NixOS system $system ..."
   $cmd --version
-  return 0
   $cmd build ".#nixosConfigurations.$system.config.system.build.toplevel"
   echo "✔️ Successfully built NixOS system $system"
 
