@@ -16,3 +16,16 @@ style = "Italic"
 [font.normal]
 family = "Source Code Pro"
 style = "Regular"
+
+[mouse]
+hide_when_typing = true
+
+[scrolling]
+history = 10000
+
+[selection]
+save_to_clipboard = true
+
+[window]
+dynamic_padding = true
+padding = { x = 4, y = 4 }
