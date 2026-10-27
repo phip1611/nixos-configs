@@ -32,6 +32,16 @@ in
       programs.tmux.enable = true;
       programs.tmux.plugins = with pkgs; [
         tmuxPlugins.sensible
+        # Save and restore sessions across tmux server restarts and reboots.
+        {
+          plugin = tmuxPlugins.resurrect;
+          extraConfig = "set -g @resurrect-capture-pane-contents 'on'";
+        }
+        # Must be loaded after resurrect.
+        {
+          plugin = tmuxPlugins.continuum;
+          extraConfig = "set -g @continuum-restore 'on'";
+        }
       ];
       programs.tmux.extraConfig = builtins.readFile ./tmux.cfg;
     };
