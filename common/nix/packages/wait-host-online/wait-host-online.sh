@@ -34,6 +34,8 @@ until ping -c 1 -W $argc_request_delay "$argc_host" >/dev/null; do
     echo "Timeout!"
     exit 1
   fi
+  # ping may fail immediately, e.g., for an unresolvable host name.
+  sleep "$argc_request_delay"
 done & # The "&" backgrounds it
 trap "kill $!; ping_cancelled=true" SIGINT
 wait $!       # Wait for the loop to exit, one way or another
