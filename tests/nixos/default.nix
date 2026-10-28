@@ -33,6 +33,7 @@ let
 in
 {
   base-system = runTest ./base-system.nix;
+  network-boot = runTest ./network-boot.nix;
   packages = runTest ./packages.nix;
   services = runTest ./services.nix;
 }
