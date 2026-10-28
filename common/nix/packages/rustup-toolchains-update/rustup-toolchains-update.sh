@@ -36,15 +36,20 @@ if ! is-network-unmetered; then
 fi
 
 # Updates all installed channel toolchains, also those not listed above.
-# The Nix-packaged rustup can't update itself.
-rustup update --no-self-update
+# The Nix-packaged rustup can't update itself. A failure, for example of one
+# toolchain, shouldn't prevent installing the missing ones below.
+update_failed=0
+rustup update --no-self-update || update_failed=1
 
 # Installs missing toolchains, targets, and components. For nightly, rustup
 # picks the latest nightly that has all requested components, as miri is
-# not available on every nightly.
+# not available on every nightly. If the installed nightly lacks miri,
+# that nightly can be older than the installed one, which needs
+# --allow-downgrade.
 for toolchain in "${TOOLCHAINS[@]}"; do
   args=(--no-self-update --profile default --target "$(join_by_comma "${TARGETS[@]}")")
   if [ "$toolchain" = nightly ]; then
+    args+=(--allow-downgrade)
     args+=(--component "$(join_by_comma "${NIGHTLY_COMPONENTS[@]}")")
   fi
   rustup toolchain install "$toolchain" "${args[@]}"
@@ -60,3 +65,9 @@ rustup --version 2>/dev/null | head -n 1
 for toolchain in $(rustup toolchain list --quiet); do
   echo "$toolchain: $(rustup run "$toolchain" rustc --version)"
 done
+
+if [ "$update_failed" -eq 1 ]; then
+  echo >&2
+  echo "rustup update failed, see above." >&2
+  exit 1
+fi

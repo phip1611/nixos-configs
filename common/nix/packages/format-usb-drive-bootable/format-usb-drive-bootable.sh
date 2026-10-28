@@ -113,8 +113,10 @@ show_affected_partitions() {
   lsblk --output PATH,TYPE,SIZE,FSTYPE,LABEL,MOUNTPOINTS "$1"
 }
 
-# Unmount only filesystems that belong to partitions on the selected drive.
-unmount_drive_partitions() {
+# Unmount all filesystems on the selected drive: on the whole disk, its
+# partitions, and devices on top of them. lsblk prints every mountpoint on its
+# own line, also further ones of the same device, and keeps spaces in them.
+unmount_drive() {
   local drive="$1"
   local mountpoint
 
@@ -122,8 +124,28 @@ unmount_drive_partitions() {
     [[ -z "$mountpoint" ]] && continue
     info "Unmounting $mountpoint"
     "$SUDO_BIN" -- umount "$mountpoint"
-  done < <(lsblk --list --noheadings --paths --output TYPE,MOUNTPOINTS "$drive" \
-    | awk '$1 == "part" && $2 != "" { print $2 }')
+  done < <(lsblk --list --noheadings --output MOUNTPOINTS "$drive")
+}
+
+# Refuse to write to a drive that is still in use, by a mount or by a device on
+# top of a partition, such as LUKS (crypt) or LVM, which umount doesn't close.
+ensure_drive_unused() {
+  local drive="$1"
+  local holders
+
+  if [[ -n "$(lsblk --list --noheadings --output MOUNTPOINTS "$drive")" ]]; then
+    error "$drive is still mounted; no changes were made."
+    show_affected_partitions "$drive"
+    exit 1
+  fi
+
+  holders=$(lsblk --list --noheadings --output TYPE "$drive" \
+    | awk '$1 != "disk" && $1 != "part"')
+  if [[ -n "$holders" ]]; then
+    error "$drive is in use, for example by LUKS or LVM; no changes were made."
+    show_affected_partitions "$drive"
+    exit 1
+  fi
 }
 
 # Find the one partition created by the preceding parted command.
@@ -209,11 +231,6 @@ else
 fi
 mount_dir="$mount_parent/$PROGRAM_NAME-$safe_label"
 
-if [[ -L "$mount_dir" ]] || mountpoint --quiet "$mount_dir" 2>/dev/null; then
-  error "The planned mount point is already in use: $mount_dir"
-  exit 1
-fi
-
 heading "Selected Drive"
 printf '  Drive:       %s\n' "$drive"
 printf '  Volume label: %s\n' "$volume_label"
@@ -234,7 +251,13 @@ if ! is_removable_disk "$drive"; then
 fi
 
 info "Sudo is requested only for the required privileged operations below."
-unmount_drive_partitions "$drive"
+unmount_drive "$drive"
+ensure_drive_unused "$drive"
+# Checked only now, as a previous run may have left the drive mounted there.
+if [[ -L "$mount_dir" ]] || mountpoint --quiet "$mount_dir" 2>/dev/null; then
+  error "The planned mount point is already in use: $mount_dir"
+  exit 1
+fi
 info "Creating a GPT partition table and FAT32 partition."
 "$SUDO_BIN" -- parted --script --align optimal "$drive" \
   mklabel gpt \
