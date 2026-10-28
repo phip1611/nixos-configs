@@ -28,7 +28,7 @@ ping_cancelled=false
 timestamp_begin=$(date +%s)
 
 echo "Waiting for host to become available ..."
-until ping -c 1 -W $argc_request_delay "$argc_host" >/dev/null 2>&1; do
+until ping -c 1 -W $argc_request_delay "$argc_host" >/dev/null; do
   DIFF=$(($(date +%s) - $timestamp_begin))
   if [ $DIFF -ge $argc_timeout ]; then
     echo "Timeout!"
