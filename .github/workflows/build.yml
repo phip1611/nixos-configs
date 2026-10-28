@@ -64,8 +64,8 @@ jobs:
           restore-keys: |
             ${{ github.job }}-local-nix-cache-
       # Performs some basic checks of the NixOS system configurations and runs
-      # all checks.
-      - run: nix flake check
+      # all checks. The build logs show which part of a NixOS VM test failed.
+      - run: nix flake check -L
   # Builds all Nix packages, shells, and NixOS systems of the flake. This uses
   # my host at nix-binary-cache.phip1611.dev as CI remote builder as:
   # 1) The GitHub CI is relatively slow
