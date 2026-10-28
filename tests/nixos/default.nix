@@ -32,6 +32,7 @@ let
     };
 in
 {
+  base-system = runTest ./base-system.nix;
   packages = runTest ./packages.nix;
   services = runTest ./services.nix;
 }
