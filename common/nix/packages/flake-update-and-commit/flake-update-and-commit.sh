@@ -78,6 +78,14 @@ git diff --quiet -- flake.lock || {
 }
 log_info "flake.lock has no pre-existing unstaged changes."
 
+# Refuse to run when flake.nix has staged or unstaged changes, because the
+# committed flake.lock would not match the committed flake.nix.
+git diff --quiet HEAD -- flake.nix || {
+  log_err "flake.nix has uncommitted changes."
+  exit 1
+}
+log_info "flake.nix has no uncommitted changes."
+
 tmpfile=$(mktemp)
 trap 'rm -f "$tmpfile"' EXIT
 
