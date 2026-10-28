@@ -29,12 +29,12 @@ class FTPHostConfig(TypedDict):
     description: str
 
 
-def generate_backup_path(host: str, description: str) -> Path:
+def generate_backup_paths(host: str, description: str) -> tuple[Path, Path]:
     """
-    Generates the path where the backup should be stored.
+    Generates the paths where the backup should be stored.
     :param host: Hostname (file path friendly)
     :param description: Description of the backup, e.g. "wordpress-xyz" (file path friendly)
-    :return: Path to the backup
+    :return: Path to the mirror directory and path to the archive
     """
     # Get current timestamp in the format yyyy-mm-dd
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -44,9 +44,12 @@ def generate_backup_path(host: str, description: str) -> Path:
         print(f"Creating directory: {backup_path}")
         backup_path.mkdir(parents=True)
 
-    final_path = backup_path / f"{timestamp}_{host}_{description}"
+    # The mirror is reused by every backup, so that only new and changed
+    # files are downloaded. Each backup gets its own archive.
+    mirror_path = backup_path / f"{host}_{description}"
+    archive_path = backup_path / f"{timestamp}_{host}_{description}.tar.zst"
 
-    return final_path
+    return mirror_path, archive_path
 
 
 def get_user_config_file() -> Path:
@@ -84,6 +87,13 @@ def read_config(file_path: Path) -> List[FTPHostConfig]:
     except json.JSONDecodeError as e:
         raise ConfigError(f"Invalid JSON in configuration file: {file_path}") from e
 
+    # The file contains the FTP passwords in plain text.
+    if os.stat(file_path).st_mode & 0o077:
+        raise ConfigError(
+            f"Configuration file is accessible by other users: {file_path}. "
+            f"Run: chmod 600 {file_path}"
+        )
+
     # Normalize reserved keyword
     for entry in config_data:
         if "pass" in entry:
@@ -93,6 +103,10 @@ def read_config(file_path: Path) -> List[FTPHostConfig]:
 
 
 def main():
+    # Backups often contain secrets, such as database credentials of a
+    # website.
+    os.umask(0o077)
+
     # Get file path from command line argument or use default.
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
@@ -109,7 +123,9 @@ def main():
         # Secrets are passed as environment variable to not appear in the
         # processlist.
         env = os.environ.copy()
-        backup_path = generate_backup_path(host["host"], host["description"])
+        mirror_path, archive_path = generate_backup_paths(
+            host["host"], host["description"]
+        )
         env["FTP_PASS"] = host["pass_"]
         result = subprocess.run(
             [
@@ -120,7 +136,9 @@ def main():
                 host["user"],
                 "--keep",
                 "--target",
-                backup_path,
+                mirror_path,
+                "--archive",
+                archive_path,
                 *host["dirs"],
             ],
             env=env,
