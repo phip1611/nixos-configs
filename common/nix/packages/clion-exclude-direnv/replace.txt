@@ -1,3 +1,0 @@
-<content url="file://$MODULE_DIR$">
-        <excludeFolder url="file://$MODULE_DIR$/.direnv" />
-    </content>

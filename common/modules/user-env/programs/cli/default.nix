@@ -59,15 +59,17 @@ in
       [
         # All my custom packages that are not too size-intensive and should
         # not live behind any special feature gate.
-        clion-exclude-direnv
         colortest
         ddns-update
         flake-prefetch
+        flake-update-and-commit
+        format-usb-drive-bootable
         ftp-backup
         keep-directory-diff
         link-to-copy
-        nix-shell-init
         normalize-file-permissions
+        rename-photos-by-date
+        repeat-cmd
         wait-host-online
         zsh-history-backup
       ]
