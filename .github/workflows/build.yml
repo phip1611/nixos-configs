@@ -161,8 +161,8 @@ jobs:
             set -euo pipefail
             cd $REMOTE_CI_PWD || exit 1
 
-            nix shell nixpkgs#jq --command bash -c "
-              nix flake show --json 2>/dev/null \
+            nix shell nixpkgs#jq --command bash -euo pipefail -c "
+              nix flake show --json \
                 | jq -r '.packages.\"x86_64-linux\" | keys[]' \
                 | xargs -I {} bash -c 'echo \"Building Package: {}\" && nix build .#{}'
             "
