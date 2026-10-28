@@ -1,8 +1,13 @@
 { writeShellScriptBin }:
 
-let
-  template = builtins.readFile ./nix-shell-init.template.txt;
-in
 writeShellScriptBin "nix-shell-init" ''
-  echo -n "${template}" > $PWD/shell.nix
+  set -euo pipefail
+
+  if [ -e "$PWD/shell.nix" ]; then
+    echo "$PWD/shell.nix already exists" >&2
+    exit 1
+  fi
+
+  cp ${./nix-shell-init.template.txt} "$PWD/shell.nix"
+  chmod u+w "$PWD/shell.nix"
 ''
