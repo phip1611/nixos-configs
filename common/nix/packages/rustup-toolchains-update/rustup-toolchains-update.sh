@@ -29,6 +29,12 @@ join_by_comma() {
   echo "$*"
 }
 
+# The systemd service checks this as well, but not a manual run.
+if ! is-network-unmetered; then
+  echo "No network or metered connection: skipping update." >&2
+  exit 1
+fi
+
 # Updates all installed channel toolchains, also those not listed above.
 # The Nix-packaged rustup can't update itself.
 rustup update --no-self-update
