@@ -7,12 +7,18 @@
 #
 # @describe Repeat a command until it fails (default) or succeeds.
 # @flag -i --invert Repeat until the command succeeds instead
-# @arg command+ Command and arguments to execute
+# @arg command~ Command and arguments to execute
 
 set -euo pipefail
 
 # Do the "argc" magic. Reference: https://github.com/sigoden/argc
 eval "$(argc --argc-eval "$0" "$@")"
+
+# argc can't mark "command~" as required.
+if [[ -z "${argc_command:-}" ]]; then
+  echo "error: missing command" >&2
+  exit 1
+fi
 
 iteration=1
 
