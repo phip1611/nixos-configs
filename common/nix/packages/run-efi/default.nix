@@ -44,7 +44,7 @@ writeShellScriptBin "run-efi" ''
   eval "$(argc --argc-eval "$0" "$@")"
 
   # Sanity check: Is the file valid?
-  if [[ "$(file --dereference --brief $argc_efi_image)" != *"EFI"*"x86-64"* ]]; then
+  if [[ "$(file --dereference --brief "$argc_efi_image")" != *"EFI"*"x86-64"* ]]; then
     echo -e "$(ansi bold)$(ansi red)Not an EFI x86-64 image!$(ansi reset)"
     exit 1
   fi
@@ -56,7 +56,7 @@ writeShellScriptBin "run-efi" ''
   # Volume: Add additional files (such as startup.nsh)
   for file in "''${argc_files[@]}"
   do
-    cp -r $file $TMPDIR
+    cp -r "$file" "$TMPDIR"
   done
 
   # Volume: Add main file to boot
@@ -77,7 +77,7 @@ writeShellScriptBin "run-efi" ''
   set -x
   qemu-system-x86_64 \
     -bios ${OVMF.fd}/FV/OVMF.fd \
-    -drive format=raw,file=fat:rw:$TMPDIR \
+    -drive "format=raw,file=fat:rw:$TMPDIR" \
     ''${COMMON_ARGS[*]} \
-    ''${argc_qemu_args[*]:-}; rm -rf $TMPDIR
+    ''${argc_qemu_args[*]:-}; rm -rf "$TMPDIR"
 ''
