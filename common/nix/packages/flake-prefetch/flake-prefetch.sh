@@ -101,7 +101,9 @@ if is_charging || battery_above 30; then
   for ATTR in "${ATTRIBUTES_TO_BUILD[@]}"; do
     log_info "Prefetching Nix flake attribute '$ATTR'."
     set +e -x
-    nice -n 19 -- nix build -L "$ATTR" --max-jobs "$(nproc --ignore=1)" --no-link
+    # The builds run in the Nix daemon, so `nice` has no effect on them.
+    # One job with all but one core keeps the system responsive.
+    nix build -L "$ATTR" --max-jobs 1 --cores "$(nproc --ignore=1)" --no-link
     set -e +x
   done
 else
