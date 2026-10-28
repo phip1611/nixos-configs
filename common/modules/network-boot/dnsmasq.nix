@@ -31,9 +31,11 @@ in
               echo "Creating tftp-root=${network.tftpRoot} if it doesn't exist ..."
               mkdir -m 0777 -p ${network.tftpRoot}
 
-              replace_if_not_exists ${ipxeNetworkBoot}/ipxe.efi ${network.tftpRoot}/${ipxeEfi}
+              # Always update iPXE to pick up a new version or embed script.
+              install -m 0777 ${ipxeNetworkBoot}/ipxe.efi ${network.tftpRoot}/${ipxeEfi}
               # For legacy BIOS network boot.
-              replace_if_not_exists ${ipxeNetworkBoot}/undionly.kpxe ${network.tftpRoot}/${ipxeBios}
+              install -m 0777 ${ipxeNetworkBoot}/undionly.kpxe ${network.tftpRoot}/${ipxeBios}
+              # Users may edit these files, so keep existing versions.
               replace_if_not_exists ${./ipxe.md} ${network.tftpRoot}/ipxe.md
               replace_if_not_exists ${./ipxe-default.cfg} ${network.tftpRoot}/${ipxeDefaultCfgFile}
             '')
