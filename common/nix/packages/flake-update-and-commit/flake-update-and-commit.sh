@@ -111,7 +111,9 @@ for input in $inputs; do
     log_info "Flake input '$input' changed: $old_date -> $new_date."
     echo "$input: $old_date -> $new_date" >>"$tmpfile"
     changed_inputs=$((changed_inputs + 1))
-  elif [[ "$old_date" == unknown && "$old_rev" != "$new_rev" ]]; then
+  # A new revision can have the same date, e.g. when it was committed in
+  # the same second.
+  elif [[ "$old_rev" != "$new_rev" ]]; then
     log_info "Flake input '$input' changed: $old_rev -> $new_rev."
     echo "$input: rev changed ($new_date)" >>"$tmpfile"
     changed_inputs=$((changed_inputs + 1))
@@ -126,7 +128,7 @@ log_info "Staging flake.lock."
 git add flake.lock
 
 # Only commit if there are changes
-if [[ $(wc -l <"$tmpfile") -gt 2 ]]; then
+if ! git diff --cached --quiet -- flake.lock; then
   log_info "Creating commit for $changed_inputs changed flake input(s)."
   echo "" >>"$tmpfile"
   echo "This commit was generated via:" >>"$tmpfile"
