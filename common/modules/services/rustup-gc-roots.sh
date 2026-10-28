@@ -6,7 +6,9 @@
 # Usage: rustup-gc-roots.sh <toolchains dir>...
 # Example: rustup-gc-roots.sh /home/user/.rustup/toolchains
 #
-# Missing toolchain directories are skipped.
+# Missing toolchain directories are skipped. If the home directory of one
+# (<home>/.rustup/toolchains) is missing, for example because it is not
+# mounted yet, no roots are removed.
 
 set -euo pipefail
 
@@ -15,9 +17,13 @@ ROOTS_DIR=/nix/var/nix/gcroots/rustup-toolchains
 mkdir -p "$ROOTS_DIR"
 
 toolchains=()
+missing_homes=()
 for dir in "$@"; do
+  home=$(dirname "$(dirname "$dir")")
   if [ -d "$dir" ]; then
     toolchains+=("$dir")
+  elif [ ! -d "$home" ]; then
+    missing_homes+=("$home")
   fi
 done
 
@@ -57,6 +63,13 @@ for path in $paths; do
     echo "$path is already gone; reinstall the toolchains that use it" >&2
   fi
 done
+
+# We can't know which roots the toolchains in a missing home directory
+# need. Removing them would let the GC break these toolchains.
+if [ ${#missing_homes[@]} -gt 0 ]; then
+  echo "Missing home directories, not removing roots: ${missing_homes[*]}" >&2
+  exit 0
+fi
 
 # Remove roots that no installed toolchain needs anymore, so that the
 # following GC can delete their store paths.
