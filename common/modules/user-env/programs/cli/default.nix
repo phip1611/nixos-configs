@@ -65,11 +65,13 @@ in
         flake-update-and-commit
         format-usb-drive-bootable
         ftp-backup
+        is-network-unmetered
         keep-directory-diff
         link-to-copy
         normalize-file-permissions
         rename-photos-by-date
         repeat-cmd
+        rustup-toolchains-update
         wait-host-online
         zsh-history-backup
       ]
