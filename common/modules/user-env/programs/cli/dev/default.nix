@@ -90,6 +90,8 @@ in
         );
         # Keeps the Nix store paths of rustup toolchains alive across Nix GC.
         phip1611.services.rustup-gc-roots.enable = true;
+        # Keeps the stable, beta, and nightly toolchains installed and fresh.
+        phip1611.services.rustup-toolchains-update.enable = true;
       })
       (lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = [
