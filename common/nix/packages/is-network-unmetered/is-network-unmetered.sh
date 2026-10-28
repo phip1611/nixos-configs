@@ -13,11 +13,16 @@ log() {
   printf '%s\n' "$*" >&2
 }
 
-# Find the name of the default network interface. awk reads all lines, as
-# closing the pipe early would kill `ip` with SIGPIPE if there are several
-# default routes.
-dev=$(ip route list default 2>/dev/null |
-  awk 'NR == 1 { for (i = 1; i <= NF; i++) if ($i == "dev") print $(i + 1) }')
+# Find the name of the default network interface: the one that the kernel
+# picks for an IPv4 address on the internet, or else for an IPv6 one. This
+# also covers multipath routes, which have no "dev" in their first line of
+# `ip route list default`. No packets are sent. awk reads all lines, as
+# closing the pipe early would kill `ip` with SIGPIPE.
+dev=$({
+  ip route get 1.1.1.1 2>/dev/null ||
+    ip -6 route get 2001:db8::1 2>/dev/null ||
+    true
+} | awk 'NR == 1 { for (i = 1; i <= NF; i++) if ($i == "dev") print $(i + 1) }')
 
 if [[ -z "$dev" ]]; then
   log "No default network route found."
