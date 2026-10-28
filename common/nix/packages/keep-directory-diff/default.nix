@@ -44,15 +44,21 @@ writeShellScriptBin "keep-directory-diff" ''
 
   # Find directories and regular files, don't follow symlinks.
   readarray -d "" BASE_FILES < <(cd "$argc_base" && fd --unrestricted --print0 --type file)
+  TARGET_DIR=$(realpath "$argc_target")
 
   for FILE in "''${BASE_FILES[@]}"; do
     # Check if the content of the file was changed.
-    TARGET_FILE=$(realpath "$argc_target/$FILE" --relative-to=$PWD)
-    FILE=$(realpath "$argc_base/$FILE" --relative-to=$PWD)
+    TARGET_FILE="$argc_target/$FILE"
+    FILE="$argc_base/$FILE"
     echo -e "base file  : $(ansi bold)$FILE$(ansi reset)"
     echo -e "target file: $(ansi bold)$TARGET_FILE$(ansi reset)"
-    if [ ! -f "$TARGET_FILE" ]; then
+    if [ -L "$TARGET_FILE" ]; then
+      echo -e "  Skipping   $(ansi bold)$TARGET_FILE$(ansi reset) as it is a symlink."
+    elif [ ! -f "$TARGET_FILE" ]; then
       echo -e "  Skipping   $(ansi bold)$TARGET_FILE$(ansi reset) as it doesn't exist."
+    # A symlinked parent directory may point outside of the target directory.
+    elif [[ "$(realpath "$TARGET_FILE")" != "$TARGET_DIR"/* ]]; then
+      echo -e "  Skipping   $(ansi bold)$TARGET_FILE$(ansi reset) as it is outside of the target directory."
     elif cmp -s "$FILE" "$TARGET_FILE"; then
       echo -e "  Removing   $(ansi bold)$TARGET_FILE$(ansi reset) as it hasn't changed."
       rm -f "$TARGET_FILE"
