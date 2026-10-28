@@ -116,10 +116,12 @@ fn_need_restore() {
     backup_size=$(wc -l <"$BACKUP_FILE_LATEST")
   fi
 
-  # We only need to restore the file when the file was truncated.
+  # We only need to restore the file when the file was truncated. ZSH
+  # regularly trims the file from up to ~1.2 * SAVEHIST to SAVEHIST lines,
+  # so only a drop below half of the backup counts as truncation.
   echo "current history size=$current_size"
   echo "backup history size =$backup_size"
-  if [ "$current_size" -lt "$backup_size" ]; then
+  if [ $((current_size * 2)) -lt "$backup_size" ]; then
     return "$RET_NEED_BACKUP_RESTORE"
   else
     return "$RET_NO_BACKUP_RESTORE"
