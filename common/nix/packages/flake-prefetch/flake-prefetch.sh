@@ -32,7 +32,8 @@ log_info() {
 # On systems without a battery, always returns 0 (safe AC fallback)
 is_charging() {
   local dev
-  dev=$(upower -e 2>/dev/null | grep -m1 battery)
+  # System batteries only, not peripherals such as mouse_hidpp_battery_0.
+  dev=$(upower -e 2>/dev/null | grep -m1 /battery_)
 
   # No battery → treat as “charging / plugged-in”
   [[ -z "$dev" ]] && return 0
@@ -54,13 +55,14 @@ is_charging() {
 battery_above() {
   local threshold="$1"
   local dev
-  dev=$(upower -e 2>/dev/null | grep -m1 battery)
+  dev=$(upower -e 2>/dev/null | grep -m1 /battery_)
 
   # No battery → fallback OK
   [[ -z "$dev" ]] && return 0
 
   local perc
-  perc=$(upower -i "$dev" | awk -F': *' '/percentage/ {gsub("%","",$2); print $2}')
+  # upower may report fractions, such as "57.3%".
+  perc=$(upower -i "$dev" | awk -F': *' '/percentage/ && $2 ~ /^[0-9]/ {print int($2)}')
 
   # Cannot read percentage → fallback OK
   [[ -z "$perc" ]] && return 0
