@@ -59,8 +59,9 @@ for directory in "${argc_source[@]}"; do
   echo -e "$(ansi bold)Mirroring '$directory' from '$argc_host' to '$target' using explicit FTPS$(ansi reset)"
 
   # Use explicit FTP. The user authentication details are exchanged after the
-  # TLS connection is established.
-  lftp -u $argc_user,$argc_pass -e "\
+  # TLS connection is established. The password goes via the environment, so
+  # that it doesn't appear in the process list.
+  LFTP_PASSWORD=$argc_pass lftp --env-password -u $argc_user -e "\
   	set ftp:ssl-force true \
   	set ftp:ssl-protect-data true \
   	" $argc_host <<EOF
