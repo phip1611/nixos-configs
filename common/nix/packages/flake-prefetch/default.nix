@@ -9,6 +9,7 @@
   git,
   nix,
   openssh, # for git+ssh dependencies
+  upower,
 }:
 
 let
@@ -19,6 +20,7 @@ let
     (callPackage ../is-network-unmetered { })
     nix
     openssh
+    upower
   ];
 in
 runCommand "flake-prefetch"
