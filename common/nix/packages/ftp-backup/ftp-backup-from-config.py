@@ -102,14 +102,16 @@ def main():
     # Read the config JSON.
     hosts = read_config(file_path)
 
-    # Iterate all FTP hosts and create a backup for each.
+    # Iterate all FTP hosts and create a backup for each. A failed backup
+    # doesn't stop the backups of the other hosts.
+    failed_hosts = []
     for host in hosts:
         # Secrets are passed as environment variable to not appear in the
         # processlist.
         env = os.environ.copy()
         backup_path = generate_backup_path(host["host"], host["description"])
         env["FTP_PASS"] = host["pass_"]
-        subprocess.run(
+        result = subprocess.run(
             [
                 "ftp-backup",
                 "--host",
@@ -123,6 +125,12 @@ def main():
             ],
             env=env,
         )
+        if result.returncode != 0:
+            failed_hosts.append(f"{host['host']} ({host['description']})")
+
+    if failed_hosts:
+        print(f"Backups failed: {', '.join(failed_hosts)}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
