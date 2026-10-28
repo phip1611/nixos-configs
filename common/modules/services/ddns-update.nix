@@ -40,6 +40,8 @@ in
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${lib.getExe pkg} --config %d/config";
+        # The timer does not start the service again while a run hangs.
+        TimeoutStartSec = "1min";
         LoadCredential = "config:${cfg.configPath}";
         # An unprivileged user with a read-only view of the file system.
         DynamicUser = true;
