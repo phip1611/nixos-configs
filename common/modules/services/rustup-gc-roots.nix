@@ -34,6 +34,14 @@ in
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${lib.getExe pkgs.bash} ${./rustup-gc-roots.sh} ${lib.escapeShellArgs toolchainDirs}";
+        # It runs as root but only reads the toolchains and writes the GC
+        # roots.
+        ProtectHome = "read-only";
+        ProtectSystem = "strict";
+        ReadWritePaths = [ "/nix/var/nix" ];
+        PrivateNetwork = true;
+        PrivateTmp = true;
+        NoNewPrivileges = true;
       };
     };
   };
