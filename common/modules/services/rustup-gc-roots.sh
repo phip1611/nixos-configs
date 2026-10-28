@@ -39,12 +39,16 @@ if [ ${#toolchains[@]} -gt 0 ]; then
   # each path once. Result: one store path per line.
   #
   # grep exits with 1 if a batch of files has no match, which is fine.
+  # Other errors, such as an unreadable file, must abort, or the roots
+  # of the paths in that file would be removed. xargs can't tell the
+  # exit codes apart, so a shell checks them per batch. sh is not in
+  # the PATH of the service, so we use the bash running this script.
+  store_path_re='/nix/store/[a-z0-9]{32}-[a-zA-Z0-9+._?=-]+'
+  # shellcheck disable=SC2016 # The inner shell expands them.
   paths=$(
     find "${toolchains[@]}" -type f \( -perm -u+x -o -name '*.so*' \) -print0 |
-      {
-        xargs -0 --no-run-if-empty \
-          grep -aohE '/nix/store/[a-z0-9]{32}-[a-zA-Z0-9+._?=-]+' || true
-      } |
+      xargs -0 --no-run-if-empty "$BASH" -c \
+        'grep -aohE "$0" "$@" || [ $? -eq 1 ]' "$store_path_re" |
       sort -u
   )
 fi
