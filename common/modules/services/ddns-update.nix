@@ -43,6 +43,8 @@ in
         LoadCredential = "config:${cfg.configPath}";
         # An unprivileged user with a read-only view of the file system.
         DynamicUser = true;
+        # systemd loads the credential before applying the sandbox.
+        ProtectHome = true;
       };
     };
     systemd.timers.ddns-update = {
