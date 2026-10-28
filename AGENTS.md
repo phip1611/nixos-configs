@@ -32,6 +32,8 @@ This is a Nix flake repository containing:
   - `homepc` - Personal desktop (x86\_64, Intel CPU).
 - **`profiles/`** - Shared NixOS profile modules (`server.nix`,
   `dev-machine.nix`) composed into host configurations.
+- **`tests/nixos/`** - NixOS VM tests for the modules, services, and packages,
+  one test per area. They run as `checks.<system>.nixos-<area>`.
 - **`utils/`** - Utility scripts and Nix expressions (e.g.
   `list-nixos-options.nix`).
 - **`flake.nix`** - Top-level entry point. Exports `checks`, `devShells`,
@@ -72,7 +74,7 @@ The shell provides `nixfmt`, `nixfmt-tree`, `nixos-rebuild`, `jq`,
 ## Running Checks and Tests
 
 ```sh
-# Run all unit tests and evaluate all NixOS configurations:
+# Run all unit and NixOS VM tests, and evaluate all NixOS configurations:
 nix flake check
 
 # Build all NixOS configs locally (more thorough than flake check):
@@ -81,8 +83,11 @@ nix flake check
 # Build all boot items:
 ./build-all-bootitems.sh
 
-# Run a specific check:
+# Run a specific check, e.g., a NixOS VM test (nixos-<area>):
 nix build .#checks.x86_64-linux.<name>
+
+# Debug a NixOS VM test interactively:
+nix run .#checks.x86_64-linux.nixos-<area>.driverInteractive
 
 # Build a specific NixOS configuration:
 nixos-rebuild build --flake .#<hostname>

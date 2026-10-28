@@ -39,9 +39,11 @@ applied, such as environment variables, fresher Linux kernel, etc.
 
 ## (Automated) Unit and Integration Testing
 
-In this repository, I test two aspects (in CI):
+In this repository, I test three aspects (in CI):
 
 - The unit tests of [`libutil`](/common/libutil/README.md) report success
+- The NixOS VM tests in [`tests/nixos`](/tests/nixos) for my modules, services,
+  and packages pass
 - The NixOS configurations evaluate successfully
 
 The [common module](./common/module/README.md) is transitively tested via the
@@ -55,8 +57,8 @@ that builds successfully.
 
 ### Run all Tests and Checks
 
-Just type `$ nix flake check`. This runs unit tests (`checks` attribute) and
-checks that the NixOS system configurations
+Just type `$ nix flake check`. This runs unit and NixOS VM tests (`checks`
+attribute) and checks that the NixOS system configurations
 [evaluate](https://github.com/NixOS/nix/blob/3c200da242d8f0ccda447866028bb757e0b0bbd9/src/nix/flake.cc#L488)
 to valid derivations. (Please note that some errors might only be caught when
 the NixOS configurations are actually build.)
