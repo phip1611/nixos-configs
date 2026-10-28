@@ -12,8 +12,6 @@ let
   networksByInterface = config.phip1611.network-boot;
   interfaceNames = builtins.attrNames networksByInterface;
 
-  hostIPs = map (n: n.hostIp) (builtins.attrValues networksByInterface);
-
   ipxeNetworkBoot = pkgs.callPackage ./ipxe.nix { };
   ipxeBios = "ipxe.kpxe";
   ipxeEfi = "ipxe.efi";
@@ -60,9 +58,14 @@ in
     services.dnsmasq =
       let
         # Specify the file the DHCP/BOOTP client should load via TFTP next.
-        dhcpBootLines =
-          map (hostIp: "tag:efi-x86_64,${ipxeEfi},${hostIp}") hostIPs
-          ++ map (hostIp: "tag:legacy-x86,${ipxeBios},${hostIp}") hostIPs;
+        # dnsmasq tags each request with the name of the receiving interface.
+        # The host IP is the TFTP server address (next-server) for iPXE.
+        dhcpBootLines = lib.concatLists (
+          lib.mapAttrsToList (interface: network: [
+            "tag:efi-x86_64,tag:${interface},${ipxeEfi},,${network.hostIp}"
+            "tag:legacy-x86,tag:${interface},${ipxeBios},,${network.hostIp}"
+          ]) networksByInterface
+        );
 
         dhcpRangeLines = lib.mapAttrsToList (
           interface: network: "${interface},${network.dhcpRange.from},${network.dhcpRange.to},infinite"
