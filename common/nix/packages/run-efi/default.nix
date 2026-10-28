@@ -5,6 +5,7 @@
   # runtime deps
   ansi,
   argc,
+  file,
   qemu,
 }:
 
@@ -34,6 +35,7 @@ writeShellScriptBin "run-efi" ''
     lib.makeBinPath ([
       ansi
       argc
+      file
       qemu
     ])
   }:$PATH"
