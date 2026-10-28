@@ -38,8 +38,8 @@ in
         lower = "03:00";
         upper = "03:00";
       };
-      # We run this additionally to the scheduled job.
-      runGarbageCollection = true;
+      # The global `nix.gc` settings apply. No additional GC trigger needed.
+      runGarbageCollection = false;
     };
   };
 }
