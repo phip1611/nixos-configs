@@ -4,6 +4,7 @@
   runCommand,
   # runtime deps
   bash,
+  coreutils, # for GNU date and mktemp
   git,
   jq,
   nix,
@@ -13,6 +14,7 @@
 let
   deps = [
     bash
+    coreutils
     git
     jq
     nix
