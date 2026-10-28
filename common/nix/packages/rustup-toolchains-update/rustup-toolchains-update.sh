@@ -41,10 +41,13 @@ rustup update --no-self-update
 
 # Installs missing toolchains, targets, and components. For nightly, rustup
 # picks the latest nightly that has all requested components, as miri is
-# not available on every nightly.
+# not available on every nightly. If the installed nightly lacks miri,
+# that nightly can be older than the installed one, which needs
+# --allow-downgrade.
 for toolchain in "${TOOLCHAINS[@]}"; do
   args=(--no-self-update --profile default --target "$(join_by_comma "${TARGETS[@]}")")
   if [ "$toolchain" = nightly ]; then
+    args+=(--allow-downgrade)
     args+=(--component "$(join_by_comma "${NIGHTLY_COMPONENTS[@]}")")
   fi
   rustup toolchain install "$toolchain" "${args[@]}"
