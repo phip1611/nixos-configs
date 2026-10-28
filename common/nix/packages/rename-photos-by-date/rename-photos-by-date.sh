@@ -17,7 +17,8 @@
 #
 # Only regular files directly inside the given directory are considered, and
 # only those with a jpg, jpeg, or heic extension (case-insensitive). Everything
-# else is ignored. Photos without an EXIF creation date are ignored as well.
+# else is ignored. Photos without an EXIF creation date, or with a blank or
+# zeroed one, are ignored as well.
 #
 # The renaming is conflict-free. It is performed in two phases (via temporary
 # names), so that photos already occupying a target name - including swaps such
@@ -192,6 +193,18 @@ readarray -t EXIF_LINES < <(
     -printFormat "\${$EXIF_DATE_TAG} \${Directory}/\${FileName}" \
     "${PHOTOS[@]}" || true
 )
+
+# A blank or zeroed date, such as "0000:00:00 00:00:00", passes the -if filter,
+# but -dateFormat can't convert it and prints it as it is, with spaces. Such
+# photos are treated like photos without a date.
+DATE_REGEX='^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$'
+VALID_EXIF_LINES=()
+for LINE in "${EXIF_LINES[@]}"; do
+  if [[ "${LINE%% *}" =~ $DATE_REGEX ]]; then
+    VALID_EXIF_LINES+=("$LINE")
+  fi
+done
+EXIF_LINES=("${VALID_EXIF_LINES[@]}")
 
 if [ "${#EXIF_LINES[@]}" -eq 0 ]; then
   echo "No photos with an EXIF creation date found. Nothing to do."
