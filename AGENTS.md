@@ -98,6 +98,18 @@ successfully. There is no separate test framework.
 
 ## Adding or Modifying Code
 
+### Tests
+
+New functionality must come with a test, e.g., a new module option, service,
+or package. Extend the NixOS VM test of the matching area in `tests/nixos/`,
+or add a new test there if no area fits. A bug fix must come with a test that
+fails without the fix. Test what the code does, not only that it builds or
+starts.
+
+The VM tests have no internet access. For code that downloads something,
+test the logic around the download, e.g., that it is skipped when it should
+be.
+
 ### Common modules (`common/modules/`)
 
 Each module lives in its own subdirectory and is referenced from `flake.nix`
