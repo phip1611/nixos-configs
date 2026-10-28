@@ -27,7 +27,12 @@ if [ -f "$ARG_CFG" ] || { [ -h "$ARG_CFG" ] && [ -f "$(readlink -e "$ARG_CFG")" 
   echo -e "$(ansi bold)User: $(ansi reset)$DDNS_USER"
   echo -e "$(ansi bold)Pass: $(ansi reset)***"
   echo "Invoking: $DDNS_SCHEME://$DDNS_HOST with user=$DDNS_USER and password=***.:"
-  OUTPUT=$(curl -s -u "$DDNS_USER:$DDNS_PASS" --basic "$DDNS_SCHEME://$DDNS_HOST")
+  # Pass the credentials via stdin, as arguments are visible to all users.
+  # Escape them for a quoted string in the curl config syntax.
+  CREDS="$DDNS_USER:$DDNS_PASS"
+  CREDS=${CREDS//\\/\\\\}
+  CREDS=${CREDS//\"/\\\"}
+  OUTPUT=$(curl -s -K - --basic "$DDNS_SCHEME://$DDNS_HOST" <<<"user = \"$CREDS\"")
   echo "Response:"
   echo $OUTPUT
   if [[ "$DDNS_EXPECT_MSG" != "" && "$DDNS_EXPECT_MSG" != "null" ]]; then
