@@ -132,6 +132,9 @@ let
         cp ${bootCfg} filesystem/limine.conf
         ${builtins.concatStringsSep "\n" copyBootitemsLines}
 
+        # xorriso stores the mtimes in the ISO.
+        find filesystem -exec touch -h -d @$SOURCE_DATE_EPOCH {} +
+
         # The following paths are relative to the root of the baked in file system.
         xorriso -as mkisofs -b limine-bios-cd.bin \
                 -no-emul-boot -boot-load-size 4 -boot-info-table \
