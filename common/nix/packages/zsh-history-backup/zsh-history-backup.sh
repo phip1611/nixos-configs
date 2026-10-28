@@ -89,7 +89,11 @@ fn_delete_outdated() {
 }
 
 fn_restore_backup() {
-  rm -f "$HIST_FILE"
+  # Keep the truncated file, as it may contain commands from after the
+  # truncation. The name must not match the "*.zstd" retention glob.
+  if [ -f "$HIST_FILE" ]; then
+    mv "$HIST_FILE" "$BACKUP_DIR/$TIMESTAMP-truncated-zsh-history"
+  fi
   cp "$BACKUP_FILE_LATEST" "$HIST_FILE"
   chmod u+w "$HIST_FILE"
 }
