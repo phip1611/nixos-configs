@@ -36,12 +36,14 @@
   Re-read `git status`, `git log`, and the reflog right before each step and
   build on my current version. Never discard my changes, and keep my wording
   and values unless asked to change them.
-- For active work (code changes, commits, experiments), use a dedicated
-  `git worktree` and branch in `/tmp` under a clear name (e.g.
-  `/tmp/<repo>-<branch>`). Put intermediate files there too. Tell me the
-  branch name and remove the worktree when done.
-- Put small standalone results, such as a `report.md`, directly into the
-  current directory. If anything else must persist, ask me where to put it.
+- For active work (code changes, commits, experiments), stay on my current
+  branch if its name or my in-flight changes show that the task directly
+  belongs to them. Otherwise, use a dedicated `git worktree` and branch in
+  `/tmp` under a clear name (e.g. `/tmp/<repo>-<branch>`), tell me the
+  branch name, and remove the worktree when done.
+- Put intermediate files in `/tmp` and small standalone results, such as a
+  `report.md`, directly into the current directory. If anything else must
+  persist, ask me where to put it.
 - Ask before long or heavy runs (integration tests, benchmarks, large
   builds). Estimate the duration up front and report progress unprompted.
 - Verification must not change the tree as a side effect (e.g. use
