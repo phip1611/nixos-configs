@@ -87,6 +87,9 @@ COMPRESSED="$argc_archive"
 echo -e "$(ansi bold)Compressing as '$COMPRESSED$(ansi reset)'"
 rm -f "$COMPRESSED"
 tar -acf "$COMPRESSED" "$argc_target"
+# Don't trust a backup that can't be read back.
+echo -e "$(ansi bold)Verifying '$COMPRESSED'$(ansi reset)"
+zstd -q --test "$COMPRESSED"
 
 if [ -z "${argc_keep:-}" ]; then
   echo -e "$(ansi bold)Removing directory '$argc_target$(ansi reset)'"
