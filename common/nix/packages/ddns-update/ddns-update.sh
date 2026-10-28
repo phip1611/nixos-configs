@@ -32,7 +32,7 @@ if [ -f "$ARG_CFG" ] || { [ -h "$ARG_CFG" ] && [ -f "$(readlink -e "$ARG_CFG")" 
   CREDS="$DDNS_USER:$DDNS_PASS"
   CREDS=${CREDS//\\/\\\\}
   CREDS=${CREDS//\"/\\\"}
-  OUTPUT=$(curl -s --connect-timeout 10 --max-time 30 -K - --basic "$DDNS_SCHEME://$DDNS_HOST" <<<"user = \"$CREDS\"")
+  OUTPUT=$(curl -fsS --connect-timeout 10 --max-time 30 -K - --basic "$DDNS_SCHEME://$DDNS_HOST" <<<"user = \"$CREDS\"")
   echo "Response:"
   echo $OUTPUT
   if [[ "$DDNS_EXPECT_MSG" != "" && "$DDNS_EXPECT_MSG" != "null" ]]; then
