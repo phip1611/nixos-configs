@@ -64,8 +64,8 @@ jobs:
           restore-keys: |
             ${{ github.job }}-local-nix-cache-
       # Performs some basic checks of the NixOS system configurations and runs
-      # all checks.
-      - run: nix flake check
+      # all checks. The build logs show which part of a NixOS VM test failed.
+      - run: nix flake check -L
   # Builds all Nix packages, shells, and NixOS systems of the flake. This uses
   # my host at nix-binary-cache.phip1611.dev as CI remote builder as:
   # 1) The GitHub CI is relatively slow
@@ -176,6 +176,23 @@ jobs:
             cd $REMOTE_CI_PWD || exit 1
 
             nix develop . --command bash -c "echo it works"
+          EOF
+      # The NixOS VM tests run in the "nix flake check" job, as this host has
+      # no KVM. Here, we only build their VMs to populate the binary cache.
+      - name: "Flake: Build NixOS VM Tests"
+        timeout-minutes: 60
+        run: |
+          echo "[GitHub CI] Building NixOS VM tests on remote ..."
+          ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+            set -euo pipefail
+            cd $REMOTE_CI_PWD || exit 1
+
+            nix eval --raw .#checks.x86_64-linux --apply '
+              checks: builtins.concatStringsSep "\n" (
+                builtins.filter (name: builtins.substring 0 6 name == "nixos-")
+                  (builtins.attrNames checks)
+              )
+            ' | xargs -I {} bash -c 'echo "Building NixOS VM test: {}" && nix build .#checks.x86_64-linux.{}.driver'
           EOF
       # TODO reintroduce once there is nested virtualization support
       # - name: "Flake: Check"

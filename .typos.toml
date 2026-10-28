@@ -14,3 +14,5 @@ extend-ignore-re = [
 [default.extend-words]
 
 [default.extend-identifiers]
+# vsftpd option
+allow_writeable_chroot = "allow_writeable_chroot"

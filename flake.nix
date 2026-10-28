@@ -214,21 +214,30 @@
         perSystem = {
           # $ nix build .\#checks.x86_64-linux.<attribute-name> or
           # `nix flake check` to run them all. But the latter also does more.
-          checks = forAllSystems (pkgs: rec {
-            inherit (initCommonNix pkgs) allTests;
+          checks = forAllSystems (
+            pkgs:
+            {
+              inherit (initCommonNix pkgs) allTests;
 
-            deadnix =
-              pkgs.runCommand "deadnix-check"
-                {
-                  src = ./.;
-                  nativeBuildInputs = [ pkgs.deadnix ];
-                }
-                ''
-                  set -euo pipefail
-                  deadnix -f -L $src
-                  touch $out
-                '';
-          });
+              deadnix =
+                pkgs.runCommand "deadnix-check"
+                  {
+                    src = ./.;
+                    nativeBuildInputs = [ pkgs.deadnix ];
+                  }
+                  ''
+                    set -euo pipefail
+                    deadnix -f -L $src
+                    touch $out
+                  '';
+            }
+            # NixOS VM tests, as checks.<system>.nixos-<name>.
+            // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux (
+              pkgs.lib.mapAttrs' (name: test: pkgs.lib.nameValuePair "nixos-${name}" test) (
+                import ./tests/nixos { inherit pkgs inputs; }
+              )
+            )
+          );
 
           devShells = forAllSystems (pkgs: {
             default = pkgs.mkShell {
