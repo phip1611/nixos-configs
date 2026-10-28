@@ -42,7 +42,7 @@ def generate_backup_path(host: str, description: str) -> Path:
     backup_path = Path.home() / "Downloads" / "FTP-Backups"
     if not backup_path.exists():
         print(f"Creating directory: {backup_path}")
-        backup_path.mkdir()
+        backup_path.mkdir(parents=True)
 
     final_path = backup_path / f"{timestamp}_{host}_{description}"
 
@@ -102,14 +102,16 @@ def main():
     # Read the config JSON.
     hosts = read_config(file_path)
 
-    # Iterate all FTP hosts and create a backup for each.
+    # Iterate all FTP hosts and create a backup for each. A failed backup
+    # doesn't stop the backups of the other hosts.
+    failed_hosts = []
     for host in hosts:
         # Secrets are passed as environment variable to not appear in the
         # processlist.
         env = os.environ.copy()
         backup_path = generate_backup_path(host["host"], host["description"])
         env["FTP_PASS"] = host["pass_"]
-        subprocess.run(
+        result = subprocess.run(
             [
                 "ftp-backup",
                 "--host",
@@ -119,9 +121,16 @@ def main():
                 "--keep",
                 "--target",
                 backup_path,
+                *host["dirs"],
             ],
             env=env,
         )
+        if result.returncode != 0:
+            failed_hosts.append(f"{host['host']} ({host['description']})")
+
+    if failed_hosts:
+        print(f"Backups failed: {', '.join(failed_hosts)}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

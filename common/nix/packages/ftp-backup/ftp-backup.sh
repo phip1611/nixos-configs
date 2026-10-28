@@ -55,16 +55,17 @@ for directory in "${argc_source[@]}"; do
   # realpath: get rid of unnecessary trailing "/" or "//". The target doesn't
   # exist yet.
   target=$(realpath -m "$argc_target/$directory")
-  mkdir -p $target
+  mkdir -p "$target"
   echo -e "$(ansi bold)Mirroring '$directory' from '$argc_host' to '$target' using explicit FTPS$(ansi reset)"
 
   # Use explicit FTP. The user authentication details are exchanged after the
-  # TLS connection is established.
-  lftp -u $argc_user,$argc_pass -e "\
+  # TLS connection is established. The password goes via the environment, so
+  # that it doesn't appear in the process list.
+  LFTP_PASSWORD=$argc_pass lftp --env-password -u "$argc_user" -e "\
   	set ftp:ssl-force true \
   	set ftp:ssl-protect-data true \
-  	" $argc_host <<EOF
-  mirror --continue --parallel=$argc_connections --verbose=3 $directory $target
+  	" "$argc_host" <<EOF
+  mirror --continue --parallel=$argc_connections --verbose=3 "$directory" "$target"
   quit
 EOF
 done
