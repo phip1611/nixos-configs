@@ -20,13 +20,15 @@ _fn_build_nixos_system() {
 
   echo "Building NixOS system $system ..."
   $cmd --version
-  return 0
   $cmd build ".#nixosConfigurations.$system.config.system.build.toplevel"
   echo "✔️ Successfully built NixOS system $system"
 
-  echo "Populating the Nix binary cache at $binary_cache_host"
-  NIX_SSHOPTS="-p $binary_cache_ssh_port" nix copy --to ssh://$binary_cache_user@$binary_cache_host --substitute-on-destination ./result
-  echo "✔️ Populated the Nix binary cache at $binary_cache_host"
+  # Populates the Nix binary cache, when not running in CI.
+  if [ "$ARG" != "--ci" ]; then
+    echo "Populating the Nix binary cache at $binary_cache_host"
+    NIX_SSHOPTS="-p $binary_cache_ssh_port" nix copy --to ssh://$binary_cache_user@$binary_cache_host --substitute-on-destination ./result
+    echo "✔️ Populated the Nix binary cache at $binary_cache_host"
+  fi
 }
 
 # Reads the NixOS systems it should build line by line from stdin and performs
@@ -38,6 +40,6 @@ fn_build_nixos_system() {
   done
 }
 
-nix flake show --json 2>/dev/null | jq -r '.nixosConfigurations | keys[]' | fn_build_nixos_system
+nix flake show --json | jq -r '.nixosConfigurations | keys[]' | fn_build_nixos_system
 
 rm -rf ./result

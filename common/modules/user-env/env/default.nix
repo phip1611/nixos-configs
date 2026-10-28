@@ -28,10 +28,10 @@ in
 
     # https://nix-community.github.io/home-manager/options.xhtml
     home-manager.useGlobalPkgs = true;
-    # If this is true, GUI apps that are added by the programs.*.enable options
-    # (such as Alacritty) are only accessible from the PATH but not from the
-    # desktop environment anymore.
-    home-manager.useUserPackages = false;
+    # Install the packages via `users.users.<name>.packages`. Otherwise,
+    # home-manager installs them into the user's Nix profile and creates a new
+    # profile generation on almost every system switch, which nothing deletes.
+    home-manager.useUserPackages = true;
 
     home-manager.users."${cfg.username}" = {
       home.stateVersion = stateVersion;

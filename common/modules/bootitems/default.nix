@@ -3,16 +3,14 @@
   lib,
   pkgs,
   ...
-}@inputs:
+}:
 
 let
   cfg = config.phip1611.bootitems;
   bootitems = pkgs.phip1611.bootitems;
   libutil = pkgs.phip1611.libutil;
 
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
+  inherit (pkgs) pkgsUnstable;
 
   tinyToyKernelElf64 = libutil.builders.flattenDrv {
     drv = bootitems.tinytoykernel;

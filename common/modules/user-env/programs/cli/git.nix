@@ -3,13 +3,11 @@
   lib,
   pkgs,
   ...
-}@inputs:
+}:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
+  inherit (pkgs) pkgsUnstable;
 in
 {
   options.phip1611.common.user-env = {
@@ -46,6 +44,34 @@ in
       programs.git = {
         enable = true;
         package = pkgsUnstable.git;
+        # Improve the git diff for various languages
+        attributes = [
+          # Source code
+          "*.rs        diff=rust"
+          "*.c         diff=cpp"
+          "*.h         diff=cpp"
+          "*.cc        diff=cpp"
+          "*.cpp       diff=cpp"
+          "*.hpp       diff=cpp"
+          "*.sh        diff=bash"
+
+          # Documentation/configuration
+          "*.md        diff=markdown"
+          "*.ini       diff=ini"
+
+          # INI-like configuration
+          "*.ini       diff=ini"
+          "*.toml      diff=ini"
+          "*.service   diff=ini"
+          "*.socket    diff=ini"
+          "*.target    diff=ini"
+          "*.timer     diff=ini"
+          "*.mount     diff=ini"
+
+          # Device trees
+          "*.dts       diff=dts"
+          "*.dtsi      diff=dts"
+        ];
         ignores = [
           "*.iml"
           ".direnv/"
@@ -56,6 +82,11 @@ in
           "/.codex"
           "cmake-build-*/"
         ];
+        signing = {
+          format = "ssh";
+          key = lib.mkDefault "~/.ssh/id_ed25519.pub";
+          signByDefault = true;
+        };
         settings = {
           alias = {
             hist = "log --graph --decorate --oneline";
@@ -77,6 +108,9 @@ in
           fetch = {
             writeCommitGraph = true;
           };
+          # Falls back to the default SSH key.
+          # This works fine as I typically do not have multiple keys.
+          # gpg.ssh.defaultKeyCommand = lib.mkDefault "ssh-add -L";
           init = {
             defaultBranch = "main";
           };

@@ -1,0 +1,212 @@
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0, 0, 0);
+
+# The NixOS Plymouth module exposes boot.plymouth.logo at this special path.
+logo.original_image = Image("special://logo");
+logo.sprite = Sprite(logo.original_image);
+logo.width = 0;
+logo.height = 0;
+
+prompt.card_image = Image("prompt-card.png");
+prompt.card_sprite = Sprite(prompt.card_image);
+prompt.label_image = Image.Text(
+  "Unlock Disk", 1, 1, 1, 1, "Open Sans 26", "center"
+);
+prompt.label_sprite = Sprite(prompt.label_image);
+prompt.entry_image = Image("entry.png");
+prompt.entry_sprite = Sprite(prompt.entry_image);
+prompt.card_sprite.SetOpacity(0);
+prompt.label_sprite.SetOpacity(0);
+prompt.entry_sprite.SetOpacity(0);
+prompt.bullet_image = Image("bullet.png");
+prompt.horizontal_padding = 20;
+prompt.bullet_gap = 6;
+prompt.bullet_spacing = prompt.bullet_image.GetWidth() + prompt.bullet_gap;
+prompt.max_bullets = Math.Int(
+  (prompt.entry_image.GetWidth() - 2 * prompt.horizontal_padding + prompt.bullet_gap) /
+  prompt.bullet_spacing
+);
+
+# Keep normal boot progress below the image, reserving the center for the logo.
+spinner.bullet_image = Image("bullet.png");
+# Keep the boot state useful before an encrypted-disk prompt is requested.
+spinner.visible = 1;
+spinner.frame = 0;
+spinner.refresh_count = 0;
+spinner.refreshes_per_frame = 5;
+spinner.dot_count = 12;
+spinner.bottom_margin = 64;
+
+for (index = 0; index < spinner.dot_count; index++)
+  {
+    spinner.dot[index].sprite = Sprite(spinner.bullet_image);
+    spinner.dot[index].sprite.SetOpacity(0);
+  }
+
+fun layout ()
+  {
+    # Fit rather than crop the configured logo on every display.
+    scale_x = Window.GetWidth() / logo.original_image.GetWidth();
+    scale_y = Window.GetHeight() / logo.original_image.GetHeight();
+    scale = Math.Min(scale_x, scale_y);
+    width = Math.Int(logo.original_image.GetWidth() * scale);
+    height = Math.Int(logo.original_image.GetHeight() * scale);
+
+    if (width != logo.width || height != logo.height)
+      {
+        logo.image = logo.original_image.Scale(width, height);
+        logo.sprite.SetImage(logo.image);
+        logo.width = width;
+        logo.height = height;
+      }
+
+    logo.sprite.SetPosition(
+      Window.GetX() + Window.GetWidth() / 2 - logo.width / 2,
+      Window.GetY() + Window.GetHeight() / 2 - logo.height / 2,
+      0
+    );
+
+    # The prompt is overlaid only while input is active, so it remains centered
+    # at any resolution without affecting the normal boot logo layout.
+    prompt.card_x = Window.GetX() + Window.GetWidth() / 2 - prompt.card_image.GetWidth() / 2;
+    prompt.card_y = Window.GetY() + Window.GetHeight() / 2 - prompt.card_image.GetHeight() / 2;
+    prompt.entry_x = Window.GetX() + Window.GetWidth() / 2 - prompt.entry_image.GetWidth() / 2;
+    prompt.entry_y = prompt.card_y + 86;
+    prompt.label_x = Window.GetX() + Window.GetWidth() / 2 - prompt.label_image.GetWidth() / 2;
+    prompt.label_y = prompt.card_y + 28;
+
+    prompt.card_sprite.SetPosition(prompt.card_x, prompt.card_y, 100);
+    prompt.label_sprite.SetPosition(prompt.label_x, prompt.label_y, 102);
+    prompt.entry_sprite.SetPosition(prompt.entry_x, prompt.entry_y, 102);
+
+    for (index = 0; index < prompt.max_bullets; index++)
+      {
+        if (prompt.bullets[index])
+          prompt.bullets[index].sprite.SetPosition(
+            prompt.entry_x + prompt.horizontal_padding + index * prompt.bullet_spacing,
+            prompt.entry_y + prompt.entry_image.GetHeight() / 2 - prompt.bullet_image.GetHeight() / 2,
+            103
+          );
+      }
+
+    spinner.center_x = Window.GetX() + Window.GetWidth() / 2;
+    spinner.diameter = Math.Min(Window.GetWidth() / 5, 102);
+    spinner.radius = Math.Int(spinner.diameter / 2);
+    spinner.center_y = Window.GetY() + Window.GetHeight() - spinner.bottom_margin - spinner.radius;
+    for (index = 0; index < spinner.dot_count; index++)
+      {
+        angle = 2 * Math.Pi * index / spinner.dot_count;
+        spinner.dot[index].sprite.SetPosition(
+          spinner.center_x + Math.Cos(angle) * spinner.radius - spinner.bullet_image.GetWidth() / 2,
+          spinner.center_y + Math.Sin(angle) * spinner.radius - spinner.bullet_image.GetHeight() / 2,
+          100
+        );
+      }
+  }
+
+fun set_prompt_opacity (opacity)
+  {
+    prompt.card_sprite.SetOpacity(opacity);
+    prompt.label_sprite.SetOpacity(opacity);
+    prompt.entry_sprite.SetOpacity(opacity);
+
+    for (index = 0; index < prompt.max_bullets; index++)
+      {
+        if (prompt.bullets[index])
+          prompt.bullets[index].sprite.SetOpacity(opacity);
+      }
+  }
+
+fun set_spinner_opacity (opacity)
+  {
+    for (index = 0; index < spinner.dot_count; index++)
+      spinner.dot[index].sprite.SetOpacity(opacity);
+  }
+
+fun refresh_spinner ()
+  {
+    if (spinner.visible)
+      {
+        # Plymouth may refresh faster than the desired animation cadence.
+        spinner.refresh_count = spinner.refresh_count + 1;
+        if (spinner.refresh_count >= spinner.refreshes_per_frame)
+          {
+            spinner.frame = spinner.frame + 1;
+            spinner.refresh_count = 0;
+            if (spinner.frame >= spinner.dot_count)
+              spinner.frame = 0;
+          }
+
+        for (index = 0; index < spinner.dot_count; index++)
+          {
+            distance = index - spinner.frame;
+            if (distance < 0)
+              distance = distance + spinner.dot_count;
+            spinner.dot[index].sprite.SetOpacity(1 - distance / spinner.dot_count * 0.85);
+          }
+      }
+  }
+
+fun refresh_callback ()
+  {
+    layout();
+    refresh_spinner();
+  }
+
+fun progress_callback (duration, progress)
+  {
+    # Some initrds report progress before emitting a display-state transition.
+    layout();
+  }
+
+fun display_normal_callback ()
+  {
+    # Return to the boot-progress state after Plymouth dismisses the prompt.
+    layout();
+    set_prompt_opacity(0);
+    spinner.visible = 1;
+    refresh_spinner();
+  }
+
+fun display_password_callback (ignored_prompt, bullets)
+  {
+    # Do not render the device-specific passphrase prompt.
+    spinner.visible = 0;
+    set_spinner_opacity(0);
+    layout();
+    set_prompt_opacity(1);
+
+    for (index = 0; index < prompt.max_bullets; index++)
+      {
+        # Sprites are retained between callbacks so a retry stays stable.
+        if (!prompt.bullets[index])
+          {
+            prompt.bullets[index].sprite = Sprite(prompt.bullet_image);
+            prompt.bullets[index].sprite.SetPosition(
+              prompt.entry_x + prompt.horizontal_padding + index * prompt.bullet_spacing,
+              prompt.entry_y + prompt.entry_image.GetHeight() / 2 - prompt.bullet_image.GetHeight() / 2,
+              103
+            );
+          }
+
+        if (index < bullets)
+          prompt.bullets[index].sprite.SetOpacity(1);
+        else
+          prompt.bullets[index].sprite.SetOpacity(0);
+      }
+  }
+
+fun display_message_callback (ignored_message)
+  {
+    # Keep device-specific status messages out of the minimal theme.
+  }
+
+Plymouth.SetRefreshFunction(refresh_callback);
+Plymouth.SetBootProgressFunction(progress_callback);
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+Plymouth.SetDisplayMessageFunction(display_message_callback);
+
+# Render the normal boot state even if Plymouth has no display-state transition.
+layout();
+refresh_spinner();

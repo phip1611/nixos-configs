@@ -16,8 +16,11 @@
     # received in the initial packet.
     quic_retry on;
 
+    # Without `always`, nginx only adds headers to 2xx and 3xx responses, so
+    # error pages would lack them.
+
     # Advertise http3, not done by NixOS option http3=true yet
-    add_header Alt-Svc 'h3=":443"; ma=86400';
+    add_header Alt-Svc 'h3=":443"; ma=86400' always;
 
     # Add HSTS header with preloading to HTTPS requests.
     # Adding this header to HTTP requests is discouraged
@@ -26,15 +29,15 @@
     #   https 'max-age=31536000; includeSubdomains; preload';
     # }
     # add_header Strict-Transport-Security $hsts_header;
-    add_header Strict-Transport-Security 'max-age=31536000; includeSubdomains; preload';
+    add_header Strict-Transport-Security 'max-age=31536000; includeSubdomains; preload' always;
 
     # Minimize information leaked to other domains
-    add_header 'Referrer-Policy' 'origin-when-cross-origin';
+    add_header 'Referrer-Policy' 'origin-when-cross-origin' always;
 
     # Disable embedding as a frame
-    add_header X-Frame-Options DENY;
+    add_header X-Frame-Options DENY always;
 
     # Prevent injection of code in other mime types (XSS Attacks)
-    add_header X-Content-Type-Options nosniff;
+    add_header X-Content-Type-Options nosniff always;
   '';
 }

@@ -12,6 +12,10 @@
 
 {
   config = {
+    users.users.${config.phip1611.common.user-env.username}.extraGroups = [
+      "dialout" # use serial interfaces(e.g. via minicom) without sudo
+    ];
+
     phip1611 = {
       bootitems.enable = true;
       common = {
@@ -29,6 +33,7 @@
         system = {
           enable = true;
           withBleedingEdgeLinux = true;
+          withBootscreen = true;
           withDockerRootless = true;
           withSecureDns = true;
         };
@@ -41,9 +46,14 @@
     };
 
     nix = {
-      gc.options = "--delete-older-than 14d";
-      # Keep nix store populated for no/little wait times during typical work
+      # The timer is persistent: a run missed while the machine was off
+      # happens at the next boot.
+      gc.dates = "weekly";
       settings = {
+        # My developer machines have 1-2 TB disks.
+        min-free = 64 * 1024 * 1024 * 1024; # 64 GiB
+        max-free = 128 * 1024 * 1024 * 1024; # 128 GiB
+        # Keep nix store populated for no/little wait times during typical work
         keep-outputs = true;
         keep-derivations = true;
       };

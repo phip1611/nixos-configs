@@ -74,8 +74,6 @@ in
     systemd.user.services.flake-prefetch = {
       enable = true;
       description = "Nix flake-prefetch user service";
-      after = [ "network-online.target" ];
-      wants = [ "network-online.target" ];
       environment =
         let
           # Function that builds a list of fully qualified Nix flake attribute
@@ -101,13 +99,17 @@ in
         };
       serviceConfig = {
         Type = "oneshot";
+        # Skip the run without network or on a metered connection.
+        ExecCondition = "${lib.getExe pkgs.phip1611.packages.is-network-unmetered}";
         ExecStart = "${lib.getExe pkg}";
       };
     };
     systemd.user.timers.flake-prefetch = {
       wantedBy = [ "timers.target" ];
       timerConfig = {
-        OnBootSec = "0m";
+        # The user manager has no network-online.target. Give the network
+        # some time after login instead.
+        OnStartupSec = "2m";
         OnUnitActiveSec = "${toString cfg.intervalMinutes}m";
         Unit = "flake-prefetch.service";
       };

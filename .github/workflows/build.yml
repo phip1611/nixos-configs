@@ -1,32 +1,46 @@
 name: Build
-on: [push, pull_request, merge_group]
+on:
+  merge_group:
+  pull_request:
+  push:
+    branches:
+      - main
+      - nixos-26.05
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 jobs:
   list-nixos-options-of-common-module:
     name: run "listNixosOptions" utility
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
+      # Cache for Nix evaluations, Nix tarballs, and Nix git fetches.
       - name: Restore Nix cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/nix
-          key: ${{ github.job }}-local-nix-cache
+          # Hashing over flake.lock is an approximation and good enough.
+          key: ${{ github.job }}-local-nix-cache-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            ${{ github.job }}-local-nix-cache-
       - run: nix run .\#listNixosOptions
   nix-fmt:
     name: Check Nix formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
+      # Cache for Nix evaluations, Nix tarballs, and Nix git fetches.
       - name: Restore Nix cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/nix
-          key: ${{ github.job }}-local-nix-cache
+          # Hashing over flake.lock is an approximation and good enough.
+          key: ${{ github.job }}-local-nix-cache-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            ${{ github.job }}-local-nix-cache-
       - name: Check Nix formatting
         run: nix fmt -- --ci
   # Nix flake checks. This runs on GitHub infrastructure and not by remote
@@ -38,15 +52,19 @@ jobs:
     name: nix flake check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
+      # Cache for Nix evaluations, Nix tarballs, and Nix git fetches.
       - name: Restore Nix cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/nix
-          key: ${{ github.job }}-local-nix-cache
-          # Performs some basic checks of the NixOS system configurations and runs
-          # all checks.
+          # Hashing over flake.lock is an approximation and good enough.
+          key: ${{ github.job }}-local-nix-cache-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            ${{ github.job }}-local-nix-cache-
+      # Performs some basic checks of the NixOS system configurations and runs
+      # all checks.
       - run: nix flake check
   # Builds all Nix packages, shells, and NixOS systems of the flake. This uses
   # my host at nix-binary-cache.phip1611.dev as CI remote builder as:
@@ -64,7 +82,7 @@ jobs:
       CI_BUILDER_PRIV_KEY: ${{ secrets.CI_BUILDER_PRIV_KEY }}
       REMOTE_CI_PWD: /tmp/github-ci-run--${{ github.EVENT_NAME }}--${{ github.REF_TYPE }}--${{ github.RUN_ID }}--${{ github.RUN_ATTEMPT }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         # Utilize the GitHub-specific local git repository so we do not have to
         # replicate any implementation details for the remote CI builder's
         # project checkout.
@@ -93,8 +111,8 @@ jobs:
       - name: Check Remote Builder is available
         timeout-minutes: 1
         run: |
-          DEFAULT_MSG="File not found."
-          curl https://nix-binary-cache.phip1611.dev | grep -F "$DEFAULT_MSG"
+          DEFAULT_MSG="StoreDir: /nix/store"
+          curl https://nix-binary-cache.phip1611.dev/nix-cache-info | grep -F "$DEFAULT_MSG"
       # Prevent "broken pipe" in long-running SSH sessions
       - name: Prepare Local SSH Config
         run: |
@@ -143,8 +161,8 @@ jobs:
             set -euo pipefail
             cd $REMOTE_CI_PWD || exit 1
 
-            nix shell nixpkgs#jq --command bash -c "
-              nix flake show --json 2>/dev/null \
+            nix shell nixpkgs#jq --command bash -euo pipefail -c "
+              nix flake show --json \
                 | jq -r '.packages.\"x86_64-linux\" | keys[]' \
                 | xargs -I {} bash -c 'echo \"Building Package: {}\" && nix build .#{}'
             "
@@ -180,13 +198,30 @@ jobs:
         timeout-minutes: 60
         with:
           hostname: homepc
+      # Also for failed and cancelled runs. Otherwise, the checkout stays on
+      # the remote builder, and its result links keep their outputs alive.
       - name: Cleanup on Remote Builder
+        if: always()
         timeout-minutes: 1
         run: |
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/key
 
           ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+            # Processes of cancelled steps keep running, as SSH sessions
+            # without a PTY get no SIGHUP. Only kill the processes in the
+            # directory of this run, as concurrent runs share the user.
+            echo "[Remote Builder] Killing processes in $REMOTE_CI_PWD"
+            for proc in /proc/[0-9]*; do
+              [ -O "\$proc" ] || continue
+              cwd=\$(readlink "\$proc/cwd" 2>/dev/null) || continue
+              case "\$cwd" in
+                "$REMOTE_CI_PWD" | "$REMOTE_CI_PWD"/*)
+                  kill "\${proc#/proc/}" 2>/dev/null || true
+                  ;;
+              esac
+            done
+
             echo "[Remote Builder] Removing $REMOTE_CI_PWD"
-            rm -r "$REMOTE_CI_PWD"
+            rm -rf "$REMOTE_CI_PWD"
           EOF

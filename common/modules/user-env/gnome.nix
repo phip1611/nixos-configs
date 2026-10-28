@@ -27,7 +27,6 @@ in
       gnome-calculator
       gnome-characters
       gnome-connections
-      gnome-console
       gnome-contacts
       gnome-logs
       gnome-maps

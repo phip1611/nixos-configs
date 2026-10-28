@@ -4,13 +4,11 @@
   lib,
   pkgs,
   ...
-}@inputs:
+}:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
+  inherit (pkgs) pkgsUnstable;
   python3Toolchain = import ../_python3-toolchain.nix { pkgs = pkgsUnstable; };
 in
 {
@@ -36,17 +34,16 @@ in
         );
       })
       (lib.mkIf cfg.withDevNix {
-        users.users."${cfg.username}".packages =
-          (with pkgsUnstable; [
+        users.users."${cfg.username}".packages = (
+          with pkgsUnstable;
+          [
             deadnix
             nixos-option
             nix-output-monitor
-            # already there by default, here only for completeness
-            nixos-rebuild
-          ])
-          ++ (with pkgs; [
-            nixos-rebuild-ng
-          ]);
+            # already there by default
+            # nixos-rebuild
+          ]
+        );
       })
       (lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = (
@@ -78,19 +75,23 @@ in
             cargo-careful
             cargo-deny
             cargo-expand
+            cargo-fuzz
             cargo-license
             cargo-msrv
             cargo-nextest
             cargo-outdated
             cargo-release
             cargo-update
-            cargo-watch
 
             # Rustup can't auto-update itself but manage installed Rust
             # toolchains.
             rustup
           ]
         );
+        # Keeps the Nix store paths of rustup toolchains alive across Nix GC.
+        phip1611.services.rustup-gc-roots.enable = true;
+        # Keeps the stable, beta, and nightly toolchains installed and fresh.
+        phip1611.services.rustup-toolchains-update.enable = true;
       })
       (lib.mkIf cfg.withDevCAndRust {
         users.users."${cfg.username}".packages = [

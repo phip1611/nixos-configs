@@ -4,7 +4,9 @@
   runCommand,
   # runtime deps
   bash,
+  coreutils, # for GNU date and mktemp
   git,
+  jq,
   nix,
   openssh, # for git+ssh dependencies
 }:
@@ -12,7 +14,9 @@
 let
   deps = [
     bash
+    coreutils
     git
+    jq
     nix
     openssh
   ];

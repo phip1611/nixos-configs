@@ -3,13 +3,8 @@
   lib,
   pkgs,
   ...
-}@inputs:
+}:
 
-let
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
-in
 {
   networking.firewall = {
     enable = true;
@@ -28,7 +23,9 @@ in
   users.users.nginx.extraGroups = [ "acme" ];
 
   services.nginx.enable = true;
-  services.nginx.package = pkgsUnstable.nginx;
+  # TODO reintroduce once nginx derivation from stable is compatible again
+  # (in 26.11?). Caused by https://github.com/NixOS/nixpkgs/pull/545717.
+  # services.nginx.package = pkgs.pkgsUnstable.nginx;
 
   services.nginx.recommendedOptimisation = true;
   services.nginx.recommendedTlsSettings = true;
@@ -39,6 +36,17 @@ in
   services.nginx.recommendedGzipSettings = true;
 
   services.nginx.serverNamesHashBucketSize = 128;
+
+  # Reject requests for unknown host names, e.g., from scanners that only know
+  # the IP, instead of serving them by the first vhost. `rejectSSL` aborts the
+  # TLS handshake, so no certificate reveals the hosted domains. QUIC makes
+  # this the default for HTTP/3 as well.
+  services.nginx.virtualHosts."_" = {
+    default = true;
+    rejectSSL = true;
+    quic = true;
+    locations."/".return = "444";
+  };
 
   security.acme = {
     acceptTerms = true;

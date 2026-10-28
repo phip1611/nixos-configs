@@ -3,13 +3,11 @@
   lib,
   pkgs,
   ...
-}@inputs:
+}:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
+  inherit (pkgs) pkgsUnstable;
 in
 {
   config = lib.mkIf cfg.enable {

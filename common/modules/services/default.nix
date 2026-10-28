@@ -14,6 +14,8 @@
     ./ddns-update.nix
     ./flake-prefetch.nix
     ./nix-verify-store.nix
+    ./rustup-gc-roots.nix
+    ./rustup-toolchains-update.nix
     ./zsh-history-backup.nix
   ];
 }

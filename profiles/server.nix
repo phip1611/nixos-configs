@@ -9,8 +9,28 @@
   ...
 }:
 
+let
+  username = config.phip1611.common.user-env.username;
+in
 {
   config = {
+    assertions = [
+      {
+        assertion = config.users.users.${username}.openssh.authorizedKeys.keys != [ ];
+        message = "Servers only allow SSH public key authentication: declare a key for ${username}.";
+      }
+    ];
+
+    # Public keys only. `KbdInteractiveAuthentication` must be disabled as
+    # well, as it accepts passwords via PAM.
+    services.openssh.settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+      # Hosts add further (service) users as needed.
+      AllowUsers = [ username ];
+      PermitRootLogin = "no";
+    };
+
     phip1611 = {
       common = {
         user-env = {
@@ -30,11 +50,56 @@
       services.zsh-history-backup.enable = true;
     };
 
+    # Otherwise, anyone with access to the (VNC) console can edit the kernel
+    # command line at boot, e.g., `init=/bin/sh`, and gain root.
+    boot.loader.systemd-boot.editor = false;
+
+    # No kexec and no hibernation: both allow replacing the running kernel.
+    security.protectKernelImage = true;
+
+    boot.kernel.sysctl = {
+      # BBR congestion control: higher throughput and lower latency than the
+      # default (cubic), especially on long-distance or lossy links. BBR is
+      # recommended to be used with the fq qdisc.
+      #
+      # TODO: Switch to BBRv2 (or its successor v3) once it is in mainline
+      # Linux. BBRv1 ignores packet loss and ECN, so it can cause many
+      # retransmissions and take an unfair share of the bandwidth from cubic
+      # flows. BBRv2/v3 react to both.
+      "net.core.default_qdisc" = "fq";
+      "net.ipv4.tcp_congestion_control" = "bbr";
+      # Hide kernel logs and pointers, which help exploiting the kernel.
+      "kernel.dmesg_restrict" = 1;
+      "kernel.kptr_restrict" = 2;
+      "net.core.bpf_jit_harden" = 2;
+      # Servers don't act on or send ICMP redirects. This also matters for
+      # servers that forward traffic, e.g., to containers.
+      "net.ipv4.conf.all.accept_redirects" = 0;
+      "net.ipv4.conf.default.accept_redirects" = 0;
+      "net.ipv4.conf.all.send_redirects" = 0;
+      "net.ipv4.conf.default.send_redirects" = 0;
+      "net.ipv6.conf.all.accept_redirects" = 0;
+      "net.ipv6.conf.default.accept_redirects" = 0;
+    };
+
+    # BBR congestion control, see `boot.kernel.sysctl` above.
+    boot.kernelModules = [ "tcp_bbr" ];
+
     # Latest LTS kernel, not latest stable kernel.
     boot.kernelPackages = pkgs.linuxPackages;
 
+    # Only wheel members can execute sudo at all, which reduces the attack
+    # surface of the setuid binary for all other (service) users.
+    security.sudo-rs.execWheelOnly = true;
+
     # Comes with a pre-configured configuration for ssh.
     services.fail2ban.enable = true;
+    # Ban repeat offenders for increasingly long times.
+    services.fail2ban.bantime-increment.enable = true;
+
+    # Servers only run software from this flake, which never needs the
+    # compatibility layer for unpatched binaries.
+    programs.nix-ld.enable = lib.mkForce false;
 
     # Shrink system closure size. Don't require perl.
     programs.command-not-found.enable = false;
@@ -51,10 +116,19 @@
     };
 
     nix = {
-      # Save some disk space.
+      gc.dates = "Mon 03:00";
       settings = {
+        # If a build drops the free space below min-free, Nix collects garbage
+        # until max-free is free. Sized for my servers (~256 GiB disks).
+        min-free = 16 * 1024 * 1024 * 1024; # 16 GiB
+        max-free = 32 * 1024 * 1024 * 1024; # 32 GiB
+        # Save some disk space.
         keep-outputs = false;
         keep-derivations = false;
+        # Trusted users are root-equivalent (they can, e.g., import arbitrary
+        # store paths), but without the sudo password. Servers are deployed
+        # locally via sudo or auto-upgrade, which don't need that.
+        trusted-users = lib.mkForce [ "root" ];
       };
     };
   };

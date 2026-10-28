@@ -9,6 +9,8 @@
 
 {
   imports = [
+    ./ci-user.nix
+    ./netdata.nix
     ./web-services
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -20,7 +22,45 @@
 
   # Networking
   networking.networkmanager.enable = false;
-  networking.interfaces.ens3.useDHCP = true;
+  # My server obtains a IPv4 address by DHCP but not an IPv6 address. For IPv6,
+  # Netcup provides me an IPv6 "/64" net. I picked the first possible IP.
+  networking.interfaces.ens3 = {
+    useDHCP = true; # obtain IPv4 address
+    ipv6.addresses = [
+      {
+        address = "2a03:4000:63:d3::1";
+        prefixLength = 64;
+      }
+    ];
+  };
+
+  phip1611 = {
+    common = {
+      user-env = {
+        username = "phip1611";
+        git.username = "Philipp Schuster";
+        git.email = "phip1611@gmail.com";
+      };
+    };
+    # This machine hosts my Nix binary cache, so it shouldn't use it itself.
+    nix-binary-cache.enable = lib.mkForce false;
+    # This machine acts as my CI remote builder and as my Nix binary cache.
+    # Therefore, We should verify (and repair) the store frequently.
+    #
+    # Unlikely that ever there is something that actually needs to be repaired
+    # but better be safe.
+    services.nix-verify-store.enable = true;
+  };
+
+  # The binary cache serves the Nix store of this host, including the CI
+  # builds, which have no GC roots. Thus, they stay in the cache until the next
+  # GC. Run it after the nightly auto-upgrades fetched the latest builds.
+  nix.gc.dates = lib.mkForce "Sun 04:00";
+  nix.settings = {
+    # In case CI fills the disk before the next GC.
+    min-free = lib.mkForce (30 * 1024 * 1024 * 1024); # 30 GiB
+    max-free = lib.mkForce (80 * 1024 * 1024 * 1024); # 80 GiB
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -58,6 +98,9 @@
       "wheel"
     ];
     packages = with pkgs; [ ];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIByFlysjuSdICGBaDUYOq5wPSPQgPWOenBwal2PhBtd phip1611@phips-framework13"
+    ];
   };
 
   # Enable the OpenSSH daemon.
