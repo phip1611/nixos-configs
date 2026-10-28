@@ -3,6 +3,7 @@
 # the script and the NodeJS/ZX-script content as parameters.
 
 {
+  writeShellScriptBin,
   writeTextFile,
   zx,
 }:
@@ -21,12 +22,9 @@ let
     '';
   };
 in
-# Shebang script enables to call the zx-script without the .mjs version.
-writeTextFile {
-  name = "${name}";
-  executable = true;
-  destination = "/bin/${name}";
-  text = ''
-    #!${mjsBin}/bin/${name}.mjs
-  '';
-}
+# Wrapper enables to call the zx-script without the .mjs extension. It
+# calls zx directly, as a script as shebang interpreter passes the path of
+# the wrapper as additional argument and doesn't work on macOS.
+writeShellScriptBin name ''
+  exec ${zx}/bin/zx ${mjsBin}/bin/${name}.mjs "$@"
+''

@@ -12,8 +12,6 @@ let
   networksByInterface = config.phip1611.network-boot;
   interfaceNames = builtins.attrNames networksByInterface;
 
-  hostIPs = map (n: n.hostIp) (builtins.attrValues networksByInterface);
-
   ipxeNetworkBoot = pkgs.callPackage ./ipxe.nix { };
   ipxeBios = "ipxe.kpxe";
   ipxeEfi = "ipxe.efi";
@@ -29,11 +27,13 @@ in
           (lib.mapAttrsToList (
             (_interface: network: ''
               echo "Creating tftp-root=${network.tftpRoot} if it doesn't exist ..."
-              mkdir -m 0777 -p ${network.tftpRoot}
+              mkdir -m 0755 -p ${network.tftpRoot}
 
-              replace_if_not_exists ${ipxeNetworkBoot}/ipxe.efi ${network.tftpRoot}/${ipxeEfi}
+              # Always update iPXE to pick up a new version or embed script.
+              install -m 0644 ${ipxeNetworkBoot}/ipxe.efi ${network.tftpRoot}/${ipxeEfi}
               # For legacy BIOS network boot.
-              replace_if_not_exists ${ipxeNetworkBoot}/undionly.kpxe ${network.tftpRoot}/${ipxeBios}
+              install -m 0644 ${ipxeNetworkBoot}/undionly.kpxe ${network.tftpRoot}/${ipxeBios}
+              # Users may edit these files, so keep existing versions.
               replace_if_not_exists ${./ipxe.md} ${network.tftpRoot}/ipxe.md
               replace_if_not_exists ${./ipxe-default.cfg} ${network.tftpRoot}/${ipxeDefaultCfgFile}
             '')
@@ -48,7 +48,7 @@ in
 
           if ! [ -f "$dest" ]; then
             echo installing "$file" to "$dest"
-            install -m 0777 "$file" "$dest"
+            install -m 0644 "$file" "$dest"
           fi
         }
 
@@ -58,12 +58,17 @@ in
     services.dnsmasq =
       let
         # Specify the file the DHCP/BOOTP client should load via TFTP next.
-        dhcpBootLines =
-          map (hostIp: "tag:efi-x86_64,${ipxeEfi},${hostIp}") hostIPs
-          ++ map (hostIp: "tag:legacy-x86,${ipxeBios},${hostIp}") hostIPs;
+        # dnsmasq tags each request with the name of the receiving interface.
+        # The host IP is the TFTP server address (next-server) for iPXE.
+        dhcpBootLines = lib.concatLists (
+          lib.mapAttrsToList (interface: network: [
+            "tag:efi-x86_64,tag:${interface},${ipxeEfi},,${network.hostIp}"
+            "tag:legacy-x86,tag:${interface},${ipxeBios},,${network.hostIp}"
+          ]) networksByInterface
+        );
 
         dhcpRangeLines = lib.mapAttrsToList (
-          interface: network: "${interface},${network.dhcpRange.from},${network.dhcpRange.to},infinite"
+          interface: network: "${interface},${network.dhcpRange.from},${network.dhcpRange.to},1h"
         ) networksByInterface;
 
         tftpRootLines = lib.mapAttrsToList (
@@ -104,12 +109,19 @@ in
           # Don't cache nothing.
           cache-size = 0;
 
-          # TODO match also non efi etc
-          dhcp-match = "set:efi-x86_64,option:client-arch,7";
+          # Client system architecture types from RFC 4578.
+          dhcp-match = [
+            "set:legacy-x86,option:client-arch,0"
+            "set:efi-x86_64,option:client-arch,7"
+            "set:efi-x86_64,option:client-arch,9"
+          ];
           dhcp-boot = dhcpBootLines;
 
           # Answer DHCP requests with given IPv4 addresses:
           dhcp-range = dhcpRangeLines;
+          # Firmware, iPXE, and the booted OS identify differently. Identify a
+          # machine only by its MAC so that it keeps its address in small ranges.
+          dhcp-ignore-clid = true;
         }
         // lib.attrsets.optionalAttrs (lib.lists.length tftpRootLines > 0) {
           # Serve network boot files.
