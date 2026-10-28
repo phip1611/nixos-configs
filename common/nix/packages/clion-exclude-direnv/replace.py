@@ -8,6 +8,8 @@ with open(FILE, mode="r+") as f:
     content = f.read()
     if REPLACE in content:
         print(f".direnv seems to be already excluded {FILE}")
+    elif SEARCH not in content:
+        sys.exit(f"Could not find '{SEARCH}' in {FILE}; nothing changed")
     else:
         f.seek(0)
         f.write(content.replace(SEARCH, REPLACE))
