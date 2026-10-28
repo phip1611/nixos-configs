@@ -106,8 +106,12 @@ in
           # Don't cache nothing.
           cache-size = 0;
 
-          # TODO match also non efi etc
-          dhcp-match = "set:efi-x86_64,option:client-arch,7";
+          # Client system architecture types from RFC 4578.
+          dhcp-match = [
+            "set:legacy-x86,option:client-arch,0"
+            "set:efi-x86_64,option:client-arch,7"
+            "set:efi-x86_64,option:client-arch,9"
+          ];
           dhcp-boot = dhcpBootLines;
 
           # Answer DHCP requests with given IPv4 addresses:
