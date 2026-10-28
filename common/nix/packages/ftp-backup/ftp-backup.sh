@@ -36,6 +36,9 @@
 
 set -euo pipefail
 
+# Backups often contain secrets, such as database credentials of a website.
+umask 077
+
 # Do the "argc" magic. Reference: https://github.com/sigoden/argc
 eval "$(argc --argc-eval "$0" "$@")"
 

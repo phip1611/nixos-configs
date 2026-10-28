@@ -96,6 +96,10 @@ def read_config(file_path: Path) -> List[FTPHostConfig]:
 
 
 def main():
+    # Backups often contain secrets, such as database credentials of a
+    # website.
+    os.umask(0o077)
+
     # Get file path from command line argument or use default.
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
