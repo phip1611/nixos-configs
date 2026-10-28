@@ -5,6 +5,7 @@
   # runtime deps
   bash,
   git,
+  jq,
   nix,
   openssh, # for git+ssh dependencies
 }:
@@ -13,6 +14,7 @@ let
   deps = [
     bash
     git
+    jq
     nix
     openssh
   ];
