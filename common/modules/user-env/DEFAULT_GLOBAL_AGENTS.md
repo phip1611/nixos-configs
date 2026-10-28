@@ -170,6 +170,7 @@ commits. For commits by others, see [Reviews](#reviews).
   Be specific about conditions and terms. Do not duplicate content across
   files. Keep the README short and link to the main docs.
 - When a project maintains a changelog, add an entry in its existing style.
+- Use the Oxford comma ("A, B, and C").
 - Use a plain apostrophe (') and hyphen (-), no typographic apostrophes or
   em-dashes. Pad Markdown tables so the columns align. Write long YAML
   frontmatter `description` fields as `>-` strings wrapped at 80 columns.
