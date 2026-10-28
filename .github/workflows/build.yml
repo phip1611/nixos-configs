@@ -208,6 +208,20 @@ jobs:
           ssh-add ~/.ssh/key
 
           ssh ci-builder@nix-binary-cache.phip1611.dev $SSHOPTS <<EOF
+            # Processes of cancelled steps keep running, as SSH sessions
+            # without a PTY get no SIGHUP. Only kill the processes in the
+            # directory of this run, as concurrent runs share the user.
+            echo "[Remote Builder] Killing processes in $REMOTE_CI_PWD"
+            for proc in /proc/[0-9]*; do
+              [ -O "\$proc" ] || continue
+              cwd=\$(readlink "\$proc/cwd" 2>/dev/null) || continue
+              case "\$cwd" in
+                "$REMOTE_CI_PWD" | "$REMOTE_CI_PWD"/*)
+                  kill "\${proc#/proc/}" 2>/dev/null || true
+                  ;;
+              esac
+            done
+
             echo "[Remote Builder] Removing $REMOTE_CI_PWD"
             rm -rf "$REMOTE_CI_PWD"
           EOF
