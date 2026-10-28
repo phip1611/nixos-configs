@@ -89,13 +89,17 @@ fn_delete_outdated() {
 }
 
 fn_restore_backup() {
+  local tmp_file
+  # Copy next to the history file, so that the final mv is atomic.
+  tmp_file=$(mktemp "$HIST_FILE.XXXXXX")
+  cp "$BACKUP_FILE_LATEST" "$tmp_file"
+  chmod u+w "$tmp_file"
   # Keep the truncated file, as it may contain commands from after the
   # truncation. The name must not match the "*.zstd" retention glob.
   if [ -f "$HIST_FILE" ]; then
-    mv "$HIST_FILE" "$BACKUP_DIR/$TIMESTAMP-truncated-zsh-history"
+    cp "$HIST_FILE" "$BACKUP_DIR/$TIMESTAMP-truncated-zsh-history"
   fi
-  cp "$BACKUP_FILE_LATEST" "$HIST_FILE"
-  chmod u+w "$HIST_FILE"
+  mv -f "$tmp_file" "$HIST_FILE"
 }
 
 # Checks if we need to restore the backup.
