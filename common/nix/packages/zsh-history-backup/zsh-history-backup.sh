@@ -89,9 +89,17 @@ fn_delete_outdated() {
 }
 
 fn_restore_backup() {
-  rm -f "$HIST_FILE"
-  cp "$BACKUP_FILE_LATEST" "$HIST_FILE"
-  chmod u+w "$HIST_FILE"
+  local tmp_file
+  # Copy next to the history file, so that the final mv is atomic.
+  tmp_file=$(mktemp "$HIST_FILE.XXXXXX")
+  cp "$BACKUP_FILE_LATEST" "$tmp_file"
+  chmod u+w "$tmp_file"
+  # Keep the truncated file, as it may contain commands from after the
+  # truncation. The name must not match the "*.zstd" retention glob.
+  if [ -f "$HIST_FILE" ]; then
+    cp "$HIST_FILE" "$BACKUP_DIR/$TIMESTAMP-truncated-zsh-history"
+  fi
+  mv -f "$tmp_file" "$HIST_FILE"
 }
 
 # Checks if we need to restore the backup.
@@ -116,10 +124,12 @@ fn_need_restore() {
     backup_size=$(wc -l <"$BACKUP_FILE_LATEST")
   fi
 
-  # We only need to restore the file when the file was truncated.
+  # We only need to restore the file when the file was truncated. ZSH
+  # regularly trims the file from up to ~1.2 * SAVEHIST to SAVEHIST lines,
+  # so only a drop below half of the backup counts as truncation.
   echo "current history size=$current_size"
   echo "backup history size =$backup_size"
-  if [ "$current_size" -lt "$backup_size" ]; then
+  if [ $((current_size * 2)) -lt "$backup_size" ]; then
     return "$RET_NEED_BACKUP_RESTORE"
   else
     return "$RET_NO_BACKUP_RESTORE"

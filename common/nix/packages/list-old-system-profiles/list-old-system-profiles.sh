@@ -7,7 +7,7 @@
 # prints their file paths.
 #
 # To delete all old generations you may run:
-#   `list-old-system-profiles | sudo xargs rm -rf`
+#   `list-old-system-profiles | sudo xargs -d '\n' rm -rf`
 #
 # @option -n --skip=3
 # Number of newest generations to keep
@@ -19,9 +19,27 @@ eval "$(argc --argc-eval "$0" "$@")"
 
 set -euo pipefail
 
+# Never list the current generation (e.g., after a rollback) or the booted
+# one, even if they are older than the newest `n` entries.
+current=""
+if [ -L "$argc_dir/system" ]; then
+  current=$(basename "$(readlink "$argc_dir/system")")
+fi
+booted=""
+if [ -L /run/booted-system ]; then
+  booted=$(readlink /run/booted-system)
+fi
+
 find "$argc_dir" -maxdepth 1 -type l -name 'system-*-link' |
   sed -E 's#.*/system-([0-9]+)-link#\1 &#' |
   sort -nr |
   awk -v skip="$argc_skip" 'NR > skip { print }' |
   sort -n |
-  awk '{ print $2 }'
+  cut -d' ' -f2- |
+  while IFS= read -r link; do
+    if [ "$(basename "$link")" = "$current" ] ||
+      [ "$(readlink "$link")" = "$booted" ]; then
+      continue
+    fi
+    echo "$link"
+  done

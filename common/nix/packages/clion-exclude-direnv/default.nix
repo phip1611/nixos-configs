@@ -34,11 +34,16 @@ writeShellScriptBin "clion-exclude-direnv" ''
   # Do the "argc" magic. Reference: https://github.com/sigoden/argc
   eval "$(argc --argc-eval "$0" "$@")"
 
-  PROJECT_FILE=$(fd --min-depth=1 --maxdepth=1 --extension=iml -u . ./.idea)
+  readarray -t PROJECT_FILES < <(fd --min-depth=1 --maxdepth=1 --extension=iml -u . ./.idea)
+  if [ "''${#PROJECT_FILES[@]}" -ne 1 ]; then
+    echo "Expected exactly one .iml file in $PWD/.idea, found ''${#PROJECT_FILES[@]}" >&2
+    exit 1
+  fi
+  PROJECT_FILE="''${PROJECT_FILES[0]}"
   SEARCH=$(cat ${./search.txt})
   REPLACE=$(cat ${./replace.txt})
 
-  echo "PROJECT_FILE = $(realpath $PROJECT_FILE)"
+  echo "PROJECT_FILE = $(realpath "$PROJECT_FILE")"
 
   python ${./replace.py} "$PROJECT_FILE" "$SEARCH" "$REPLACE"
 ''
