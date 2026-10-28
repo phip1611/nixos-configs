@@ -119,6 +119,7 @@ def main():
                 "--keep",
                 "--target",
                 backup_path,
+                *host["dirs"],
             ],
             env=env,
         )
