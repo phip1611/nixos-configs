@@ -87,6 +87,13 @@ def read_config(file_path: Path) -> List[FTPHostConfig]:
     except json.JSONDecodeError as e:
         raise ConfigError(f"Invalid JSON in configuration file: {file_path}") from e
 
+    # The file contains the FTP passwords in plain text.
+    if os.stat(file_path).st_mode & 0o077:
+        raise ConfigError(
+            f"Configuration file is accessible by other users: {file_path}. "
+            f"Run: chmod 600 {file_path}"
+        )
+
     # Normalize reserved keyword
     for entry in config_data:
         if "pass" in entry:
