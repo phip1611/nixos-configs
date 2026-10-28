@@ -32,5 +32,6 @@ let
     };
 in
 {
+  packages = runTest ./packages.nix;
   services = runTest ./services.nix;
 }
