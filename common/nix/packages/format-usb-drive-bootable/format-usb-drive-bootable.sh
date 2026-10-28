@@ -231,11 +231,6 @@ else
 fi
 mount_dir="$mount_parent/$PROGRAM_NAME-$safe_label"
 
-if [[ -L "$mount_dir" ]] || mountpoint --quiet "$mount_dir" 2>/dev/null; then
-  error "The planned mount point is already in use: $mount_dir"
-  exit 1
-fi
-
 heading "Selected Drive"
 printf '  Drive:       %s\n' "$drive"
 printf '  Volume label: %s\n' "$volume_label"
@@ -258,6 +253,11 @@ fi
 info "Sudo is requested only for the required privileged operations below."
 unmount_drive "$drive"
 ensure_drive_unused "$drive"
+# Checked only now, as a previous run may have left the drive mounted there.
+if [[ -L "$mount_dir" ]] || mountpoint --quiet "$mount_dir" 2>/dev/null; then
+  error "The planned mount point is already in use: $mount_dir"
+  exit 1
+fi
 info "Creating a GPT partition table and FAT32 partition."
 "$SUDO_BIN" -- parted --script --align optimal "$drive" \
   mklabel gpt \
