@@ -36,12 +36,14 @@
   Re-read `git status`, `git log`, and the reflog right before each step and
   build on my current version. Never discard my changes, and keep my wording
   and values unless asked to change them.
-- For active work (code changes, commits, experiments), use a dedicated
-  `git worktree` and branch in `/tmp` under a clear name (e.g.
-  `/tmp/<repo>-<branch>`). Put intermediate files there too. Tell me the
-  branch name and remove the worktree when done.
-- Put small standalone results, such as a `report.md`, directly into the
-  current directory. If anything else must persist, ask me where to put it.
+- For active work (code changes, commits, experiments), stay on my current
+  branch if its name or my in-flight changes show that the task directly
+  belongs to them. Otherwise, use a dedicated `git worktree` and branch in
+  `/tmp` under a clear name (e.g. `/tmp/<repo>-<branch>`), tell me the
+  branch name, and remove the worktree when done.
+- Put intermediate files in `/tmp` and small standalone results, such as a
+  `report.md`, directly into the current directory. If anything else must
+  persist, ask me where to put it.
 - Ask before long or heavy runs (integration tests, benchmarks, large
   builds). Estimate the duration up front and report progress unprompted.
 - Verification must not change the tree as a side effect (e.g. use
@@ -168,6 +170,7 @@ commits. For commits by others, see [Reviews](#reviews).
   Be specific about conditions and terms. Do not duplicate content across
   files. Keep the README short and link to the main docs.
 - When a project maintains a changelog, add an entry in its existing style.
+- Use the Oxford comma ("A, B, and C").
 - Use a plain apostrophe (') and hyphen (-), no typographic apostrophes or
   em-dashes. Pad Markdown tables so the columns align. Write long YAML
   frontmatter `description` fields as `>-` strings wrapped at 80 columns.
