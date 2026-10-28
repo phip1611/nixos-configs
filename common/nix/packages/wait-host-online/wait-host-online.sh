@@ -10,13 +10,18 @@
 # when starting a VM or live-migrating a VM to another host.
 #
 # @arg host!
-# @option --timeout=60 Timeout in seconds
+# @option --timeout=60 Timeout in whole seconds
 # @option --request-delay=0.05 Delay between requests in seconds. Increase for rate limiting. Must not be less than the minimal amount of time needed for a roundtrip.
 
 set -euo pipefail
 
 # argc CLI magic
 eval "$(argc --argc-eval "$0" "$@")" # Must appear after all "@cmd" directives!
+
+if [[ ! "$argc_timeout" =~ ^[0-9]+$ ]]; then
+  echo "--timeout must be a non-negative integer, got '$argc_timeout'" >&2
+  exit 2
+fi
 
 ping_cancelled=false
 # seconds since UNIX epoch
