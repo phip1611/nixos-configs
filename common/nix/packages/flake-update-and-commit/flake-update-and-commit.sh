@@ -23,7 +23,9 @@ last_modified_date() {
   local input="$1"
   local last_modified
 
-  last_modified=$(jq --arg input "$input" -r '.nodes[$input].locked.lastModified // empty' flake.lock)
+  # root.inputs maps input names to node names, which may differ (e.g.
+  # "nixpkgs_2" when a dependency also has an input called "nixpkgs").
+  last_modified=$(jq --arg input "$input" -r '.nodes[.nodes.root.inputs[$input]].locked.lastModified // empty' flake.lock)
   if [[ ! "$last_modified" =~ ^[0-9]+$ ]]; then
     log_err "Missing or invalid lastModified field for flake input '$input'."
     return 1
