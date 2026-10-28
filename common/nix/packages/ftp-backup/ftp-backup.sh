@@ -67,11 +67,17 @@ for directory in "${argc_source[@]}"; do
 
   # Use explicit FTP. The user authentication details are exchanged after the
   # TLS connection is established. The password goes via the environment, so
-  # that it doesn't appear in the process list.
-  LFTP_PASSWORD=$argc_pass lftp --env-password -u "$argc_user" -e "\
-  	set ftp:ssl-force true \
-  	set ftp:ssl-protect-data true \
-  	" "$argc_host" <<EOF
+  # that it doesn't appear in the process list. Unreachable hosts fail after a
+  # few minutes, while lftp's defaults (5m timeout, 1000 retries) would block
+  # the backup for hours.
+  #
+  # lftp only connects for the first command that needs a connection, so the
+  # settings apply before the login.
+  LFTP_PASSWORD=$argc_pass lftp --env-password -u "$argc_user" "$argc_host" <<EOF
+  set ftp:ssl-force true
+  set ftp:ssl-protect-data true
+  set net:timeout 30
+  set net:max-retries 3
   mirror --continue --delete --parallel=$argc_connections --verbose=3 "$directory" "$target"
   quit
 EOF
