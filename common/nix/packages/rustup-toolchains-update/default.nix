@@ -1,4 +1,5 @@
 {
+  callPackage,
   lib,
   makeWrapper,
   runCommand,
@@ -12,6 +13,7 @@ let
   deps = [
     bash
     coreutils
+    (callPackage ../is-network-unmetered { })
     rustup
   ];
 in
