@@ -52,8 +52,9 @@ fi
 
 # Downloads every file into target/source
 for directory in "${argc_source[@]}"; do
-  # realpath: get rid of unnecessary trailing "/" or "//"
-  target=$(realpath "$argc_target/$directory")
+  # realpath: get rid of unnecessary trailing "/" or "//". The target doesn't
+  # exist yet.
+  target=$(realpath -m "$argc_target/$directory")
   mkdir -p $target
   echo -e "$(ansi bold)Mirroring '$directory' from '$argc_host' to '$target' using explicit FTPS$(ansi reset)"
 
