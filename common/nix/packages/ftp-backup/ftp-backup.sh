@@ -6,7 +6,9 @@
 # FTPS Backup using lftp. Parallel recursive downloads of an FTP directory using
 # explicit FTP over TLS. The downloaded archive is compressed as tar.zst (zstd).
 # The underlying lftp command is smart enough to continue a mirroring when some
-# of the files are already locally available.
+# of the files are already locally available. When the target directory is
+# reused, only new and changed files are downloaded, and files that were
+# deleted on the remote are deleted locally.
 # The password SHOULD be passed as FTP_PASS environment variable so that it
 # doesn't appear in the process list.
 #
@@ -27,8 +29,10 @@
 # Directory to backup on remote. "/" by default. Can also be "foo/bar bar".
 # @option --target=<yyyy-mm-dd_ftp-backup>
 # Target directory on local machine.
+# @option --archive=<target>.tar.zst
+# Path of the compressed archive.
 # @flag --keep
-# Keep the downloaded directory (next to the compressed archive).
+# Keep the downloaded directory, e.g., to reuse it for the next backup.
 
 set -euo pipefail
 
@@ -49,6 +53,9 @@ fi
 if [ "$argc_target" = "<yyyy-mm-dd_ftp-backup>" ]; then
   argc_target=$(date +%Y-%m-%d_%H%M)_ftp-backup
 fi
+if [ "$argc_archive" = "<target>.tar.zst" ]; then
+  argc_archive="$argc_target".tar.zst
+fi
 
 # Downloads every file into target/source
 for directory in "${argc_source[@]}"; do
@@ -65,12 +72,12 @@ for directory in "${argc_source[@]}"; do
   	set ftp:ssl-force true \
   	set ftp:ssl-protect-data true \
   	" "$argc_host" <<EOF
-  mirror --continue --parallel=$argc_connections --verbose=3 "$directory" "$target"
+  mirror --continue --delete --parallel=$argc_connections --verbose=3 "$directory" "$target"
   quit
 EOF
 done
 
-COMPRESSED="$argc_target".tar.zst
+COMPRESSED="$argc_archive"
 echo -e "$(ansi bold)Compressing as '$COMPRESSED$(ansi reset)'"
 rm -f "$COMPRESSED"
 tar -acf "$COMPRESSED" "$argc_target"
