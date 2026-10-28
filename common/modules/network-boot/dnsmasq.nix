@@ -68,7 +68,7 @@ in
         );
 
         dhcpRangeLines = lib.mapAttrsToList (
-          interface: network: "${interface},${network.dhcpRange.from},${network.dhcpRange.to},infinite"
+          interface: network: "${interface},${network.dhcpRange.from},${network.dhcpRange.to},1h"
         ) networksByInterface;
 
         tftpRootLines = lib.mapAttrsToList (
@@ -119,6 +119,9 @@ in
 
           # Answer DHCP requests with given IPv4 addresses:
           dhcp-range = dhcpRangeLines;
+          # Firmware, iPXE, and the booted OS identify differently. Identify a
+          # machine only by its MAC so that it keeps its address in small ranges.
+          dhcp-ignore-clid = true;
         }
         // lib.attrsets.optionalAttrs (lib.lists.length tftpRootLines > 0) {
           # Serve network boot files.
