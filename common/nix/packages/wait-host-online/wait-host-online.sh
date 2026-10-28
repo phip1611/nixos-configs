@@ -21,7 +21,6 @@ eval "$(argc --argc-eval "$0" "$@")" # Must appear after all "@cmd" directives!
 ping_cancelled=false
 # seconds since UNIX epoch
 timestamp_begin=$(date +%s)
-DIFF=0
 
 echo "Waiting for host to become available ..."
 until ping -c 1 -W $argc_request_delay "$argc_host" >/dev/null 2>&1; do
@@ -34,4 +33,5 @@ done & # The "&" backgrounds it
 trap "kill $!; ping_cancelled=true" SIGINT
 wait $!       # Wait for the loop to exit, one way or another
 trap - SIGINT # Remove the trap, now we're done with it
+DIFF=$(($(date +%s) - timestamp_begin))
 echo "Host is available (took ${DIFF}s)"
