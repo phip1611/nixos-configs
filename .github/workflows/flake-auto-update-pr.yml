@@ -28,7 +28,7 @@ jobs:
       - name: Check for changes
         run: |
           if git diff --quiet; then
-            echo "No changes from `nix flake update`."
+            echo 'No changes from `nix flake update`.'
             echo "skip=true" >> $GITHUB_ENV
           else
             echo "Changes detected."
