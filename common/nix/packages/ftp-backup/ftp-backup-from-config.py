@@ -42,7 +42,7 @@ def generate_backup_path(host: str, description: str) -> Path:
     backup_path = Path.home() / "Downloads" / "FTP-Backups"
     if not backup_path.exists():
         print(f"Creating directory: {backup_path}")
-        backup_path.mkdir()
+        backup_path.mkdir(parents=True)
 
     final_path = backup_path / f"{timestamp}_{host}_{description}"
 
