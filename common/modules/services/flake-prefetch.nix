@@ -101,6 +101,8 @@ in
         };
       serviceConfig = {
         Type = "oneshot";
+        # Skip the run without network or on a metered connection.
+        ExecCondition = "${lib.getExe pkgs.phip1611.packages.is-network-unmetered}";
         ExecStart = "${lib.getExe pkg}";
       };
     };

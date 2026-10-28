@@ -1,4 +1,5 @@
 {
+  callPackage,
   lib,
   makeWrapper,
   runCommand,
@@ -6,8 +7,6 @@
   bash,
   gawk,
   git,
-  iproute2,
-  networkmanager,
   nix,
   openssh, # for git+ssh dependencies
 }:
@@ -17,8 +16,7 @@ let
     bash
     gawk
     git
-    networkmanager
-    iproute2
+    (callPackage ../is-network-unmetered { })
     nix
     openssh
   ];
