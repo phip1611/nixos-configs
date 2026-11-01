@@ -152,6 +152,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1789264731,
+        "narHash": "sha256-llGJbC0CcU8DfROr6mZjRJgMLQd/SKwfpzxJH/2lHO4=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "02f5696b0e6097e589076d886b317b83ff0437d7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "dd-systems-meetup-website": "dd-systems-meetup-website",
@@ -167,16 +183,14 @@
     },
     "slidev-slides": {
       "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1793003705,
+        "lastModified": 1793541454,
         "narHash": "sha256-FDlKIdSFMOfiAzYLvE1a0/WS8bcSnEjVkmVmJrj63LM=",
         "owner": "phip1611",
         "repo": "slidev-slides",
-        "rev": "01bbaad8859ffb5fbf04d9eaa0afc2d2ca7c26e1",
+        "rev": "c586ffaec7e458aff5935ee64619d5fdd6cefb3b",
         "type": "github"
       },
       "original": {
