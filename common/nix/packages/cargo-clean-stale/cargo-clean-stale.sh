@@ -113,10 +113,24 @@ unused_units() {
 }
 
 # Removes the unused artifacts in a profile directory. Prints the freed
-# bytes.
-sweep_profile() {
+# bytes. It runs in a subshell, which releases the cargo lock at its end.
+sweep_profile() (
   local profile=$1 unused bytes
   local -a paths
+
+  # Cargo holds this lock during a build. Removing artifacts during a build
+  # could break it.
+  # TODO: The lock is internal to cargo and may change. Cargo 1.99 already
+  # also creates .cargo-build-lock and .cargo-artifact-lock.
+  if [ ! -f "$profile/.cargo-lock" ]; then
+    log_error "$profile: no cargo lock, skipping"
+    return 1
+  fi
+  exec 9<"$profile/.cargo-lock"
+  if ! flock --nonblock 9; then
+    echo "$profile: cargo is running, skipping" >&2
+    return 1
+  fi
 
   if ! unused=$(unused_units "$profile"); then
     log_error "$profile: can't find unused artifacts, skipping"
@@ -137,7 +151,7 @@ sweep_profile() {
     fi
   fi
   echo "$bytes"
-}
+)
 
 # Removes the unused artifacts in all profile directories of a project, such
 # as target/debug and target/x86_64-unknown-uefi/release. Prints the freed
