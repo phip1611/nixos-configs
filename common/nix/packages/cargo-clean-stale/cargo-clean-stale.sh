@@ -8,7 +8,7 @@
 #
 # It checks the projects directly in the given directories, by default
 # ~/dev and ~/dev/other, but not deeper. An error only skips the affected
-# project.
+# project. At the end, it prints how much space it freed.
 
 set -euo pipefail
 shopt -s nullglob
@@ -18,6 +18,16 @@ MAX_AGE_DAYS=7
 
 log_error() {
   echo "error: $*" >&2
+}
+
+human_size() {
+  numfmt --to=iec-i --suffix=B --round=nearest "$1"
+}
+
+# Prints the total size in bytes of the given paths. Hard-linked files count
+# once.
+size_of() {
+  printf '%s\0' "$@" | du -scb --files0-from=- | tail -n 1 | cut -f 1
 }
 
 # Returns success if the directory is a Rust project with a target directory
@@ -39,10 +49,11 @@ was_built_recently() {
   [ -n "$recent" ]
 }
 
-# Runs `cargo clean` for a project.
+# Runs `cargo clean` for a project. Prints the freed bytes.
 clean_project() {
-  local project=$1
+  local project=$1 bytes
 
+  bytes=$(size_of "$project/target")
   # This is cargo without rustup, so a rust-toolchain.toml doesn't make it
   # install the pinned toolchain first. `cargo clean` needs no rustc.
   # --frozen keeps it from touching Cargo.lock and the network.
@@ -53,11 +64,12 @@ clean_project() {
     log_error "$project: cargo clean failed, skipping"
     return 1
   fi
+  echo "$bytes"
 }
 
 main() {
   local -a dirs
-  local dir project
+  local dir project bytes freed_bytes=0 cleaned=0
 
   dirs=("$@")
   if [ ${#dirs[@]} -eq 0 ]; then
@@ -72,11 +84,17 @@ main() {
       if was_built_recently "$project/target"; then
         continue
       fi
-      if clean_project "$project"; then
-        echo "$project: cleaned, not built in the last $MAX_AGE_DAYS days"
+      if bytes=$(clean_project "$project"); then
+        echo "$project: cleaned $(human_size "$bytes")," \
+          "not built in the last $MAX_AGE_DAYS days"
+        cleaned=$((cleaned + 1))
+        freed_bytes=$((freed_bytes + bytes))
       fi
     done
   done
+
+  echo
+  echo "Freed $(human_size "$freed_bytes") in $cleaned projects."
 }
 
 main "$@"

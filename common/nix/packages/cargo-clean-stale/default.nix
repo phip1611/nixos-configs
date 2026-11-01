@@ -5,6 +5,7 @@
   # runtime deps
   bash,
   cargo,
+  coreutils,
   findutils,
   gnugrep,
 }:
@@ -13,6 +14,7 @@ let
   deps = [
     bash
     cargo
+    coreutils
     findutils
     gnugrep
   ];
