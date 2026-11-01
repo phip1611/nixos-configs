@@ -126,9 +126,10 @@ in
         keep-outputs = false;
         keep-derivations = false;
         # Trusted users are root-equivalent (they can, e.g., import arbitrary
-        # store paths), but without the sudo password. Servers are deployed
-        # locally via sudo or auto-upgrade, which don't need that.
-        trusted-users = lib.mkForce [ "root" ];
+        # store paths), but without the sudo password. We still keep the
+        # default trusted users (root, @wheel, and my user):
+        # `build-all-configs.sh` pushes locally built, unsigned store paths
+        # into the binary cache via `nix copy`, which requires a trusted user.
       };
     };
   };
