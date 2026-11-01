@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
 
-# Lists Rust projects and whether they were built in the last 7 days, as a
-# base to free the disk space of their target directories.
+# Frees disk space in the target directories of Rust projects. Projects
+# without a build in the last 7 days get a `cargo clean`, as I'm likely not
+# actively working on them.
 #
 # Usage: cargo-clean-stale [<dir>...]
 #
 # It checks the projects directly in the given directories, by default
-# ~/dev and ~/dev/other, but not deeper.
+# ~/dev and ~/dev/other, but not deeper. An error only skips the affected
+# project.
 
 set -euo pipefail
 shopt -s nullglob
 
 # Projects without a build in this time are inactive.
 MAX_AGE_DAYS=7
+
+log_error() {
+  echo "error: $*" >&2
+}
 
 # Returns success if the directory is a Rust project with a target directory
 # that cargo created. Other build systems, such as Maven, also use target
@@ -33,6 +39,22 @@ was_built_recently() {
   [ -n "$recent" ]
 }
 
+# Runs `cargo clean` for a project.
+clean_project() {
+  local project=$1
+
+  # This is cargo without rustup, so a rust-toolchain.toml doesn't make it
+  # install the pinned toolchain first. `cargo clean` needs no rustc.
+  # --frozen keeps it from touching Cargo.lock and the network.
+  # --target-dir makes sure that it removes the checked directory, also if
+  # CARGO_TARGET_DIR or a cargo config points to another one.
+  if ! cargo clean --quiet --frozen --target-dir "$project/target" \
+    --manifest-path "$project/Cargo.toml"; then
+    log_error "$project: cargo clean failed, skipping"
+    return 1
+  fi
+}
+
 main() {
   local -a dirs
   local dir project
@@ -48,9 +70,10 @@ main() {
       is_cargo_project "$project" || continue
 
       if was_built_recently "$project/target"; then
-        echo "$project: built in the last $MAX_AGE_DAYS days"
-      else
-        echo "$project: not built in the last $MAX_AGE_DAYS days"
+        continue
+      fi
+      if clean_project "$project"; then
+        echo "$project: cleaned, not built in the last $MAX_AGE_DAYS days"
       fi
     done
   done
