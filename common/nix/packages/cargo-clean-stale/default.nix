@@ -4,12 +4,14 @@
   runCommand,
   # runtime deps
   bash,
+  findutils,
   gnugrep,
 }:
 
 let
   deps = [
     bash
+    findutils
     gnugrep
   ];
 in
