@@ -6,7 +6,8 @@
 #   working on them.
 # - In the other projects, it removes the build artifacts that no build
 #   used, similar to `cargo sweep --time 7` [0]. Examples are old versions
-#   of dependencies, other feature sets, and other profiles.
+#   of dependencies, other feature sets, and other profiles. It also removes
+#   unused incremental caches, which cargo-sweep keeps.
 #
 # Usage: cargo-clean-stale [--dry-run] [<dir>...]
 #
@@ -112,6 +113,33 @@ unused_units() {
   done
 }
 
+# Prints the incremental caches in a profile directory that no build used
+# recently. One per line.
+#
+# rustc keeps one cache per crate in incremental/<crate>-<hash>/ and only
+# reads it when it compiles that crate. Without the cache, rustc compiles
+# the crate from scratch once.
+unused_incremental_caches() {
+  local profile=$1 recent_files file cache
+  local -A used_caches=()
+
+  [ -d "$profile/incremental" ] || return 0
+  recent_files=$(find "$profile/incremental" -mindepth 2 -type f \
+    -atime -"$MAX_AGE_DAYS" -printf '%P\n') || return 1
+  while read -r file; do
+    if [ -n "$file" ]; then
+      used_caches[${file%%/*}]=1
+    fi
+  done <<<"$recent_files"
+
+  for cache in "$profile"/incremental/*/; do
+    cache=${cache%/}
+    if [ -z "${used_caches[${cache##*/}]:-}" ]; then
+      echo "$cache"
+    fi
+  done
+}
+
 # Removes the unused artifacts in a profile directory. Prints the freed
 # bytes. It runs in a subshell, which releases the cargo lock at its end.
 sweep_profile() (
@@ -132,7 +160,8 @@ sweep_profile() (
     return 1
   fi
 
-  if ! unused=$(unused_units "$profile"); then
+  if ! unused=$(unused_units "$profile" &&
+    unused_incremental_caches "$profile"); then
     log_error "$profile: can't find unused artifacts, skipping"
     return 1
   fi
