@@ -8,6 +8,7 @@
   coreutils,
   findutils,
   gnugrep,
+  util-linux,
 }:
 
 let
@@ -17,6 +18,7 @@ let
     coreutils
     findutils
     gnugrep
+    util-linux
   ];
 in
 runCommand "cargo-clean-stale"
