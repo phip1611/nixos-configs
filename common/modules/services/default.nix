@@ -11,6 +11,7 @@
 
 {
   imports = [
+    ./cargo-clean-stale.nix
     ./ddns-update.nix
     ./flake-prefetch.nix
     ./nix-verify-store.nix
