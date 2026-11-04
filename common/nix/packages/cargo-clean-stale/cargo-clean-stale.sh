@@ -15,7 +15,9 @@
 #
 # It checks the projects directly in the given directories, by default
 # ~/dev and ~/dev/other, but not deeper. An error only skips the affected
-# project or profile. At the end, it prints how much space it freed.
+# project or profile, but makes it exit with status 1 at the end. This marks
+# the systemd service as failed. At the end, it prints how much space it
+# freed.
 #
 # [0]: https://github.com/holmgr/cargo-sweep
 # [1]: https://github.com/rust-lang/cargo/issues/15010
@@ -192,7 +194,8 @@ sweep_profile() (
     exec {lock_fd}<"$lock"
     if ! flock --nonblock "$lock_fd"; then
       echo "$profile: cargo is running, skipping" >&2
-      return 1
+      echo 0
+      return 0
     fi
   done
 
@@ -226,20 +229,20 @@ sweep_profile() (
 
 # Removes the unused artifacts in all profile directories of a project, such
 # as target/debug and target/x86_64-unknown-uefi/release. Prints the freed
-# bytes.
+# bytes. Fails if it had to skip a profile due to an error.
 #
 # TODO: The sweep relies on the internal layouts of cargo's target directory,
 # which change over time. Replace it once cargo can remove unused build
 # artifacts itself [2].
 sweep_project() {
-  local project=$1 profile bytes total=0
+  local project=$1 profile bytes total=0 status=0
 
   # The lists of unused artifacts have one path per line. A newline in the
   # path would make them remove the wrong files.
   if [[ $project == *$'\n'* ]]; then
     log_error "$project: newline in the path, skipping"
     echo 0
-    return 0
+    return 1
   fi
 
   # Each profile directory has a .cargo-lock, in all layouts.
@@ -249,14 +252,17 @@ sweep_project() {
     [ -f "$profile/.cargo-lock" ] || continue
     if bytes=$(sweep_profile "$profile"); then
       total=$((total + bytes))
+    else
+      status=1
     fi
   done < <(find "$project/target" -type f -name .cargo-lock -printf '%h\0')
   echo "$total"
+  return "$status"
 }
 
 main() {
   local -a dirs
-  local dir project bytes freed_bytes=0 cleaned=0 swept=0
+  local dir project bytes freed_bytes=0 cleaned=0 swept=0 failed=0
 
   if [ "${1:-}" = --dry-run ]; then
     DRY_RUN=1
@@ -273,7 +279,9 @@ main() {
       is_cargo_project "$project" || continue
 
       if was_built_recently "$project/target"; then
-        bytes=$(sweep_project "$project")
+        if ! bytes=$(sweep_project "$project"); then
+          failed=$((failed + 1))
+        fi
         if [ "$bytes" -gt 0 ]; then
           echo "$project: swept $(human_size "$bytes")"
           swept=$((swept + 1))
@@ -284,6 +292,8 @@ main() {
           "not built in the last $MAX_AGE_DAYS days"
         cleaned=$((cleaned + 1))
         freed_bytes=$((freed_bytes + bytes))
+      else
+        failed=$((failed + 1))
       fi
     done
   done
@@ -294,6 +304,10 @@ main() {
   fi
   echo "Freed $(human_size "$freed_bytes") in $((cleaned + swept))" \
     "projects ($cleaned cleaned, $swept swept)."
+  if [ "$failed" -gt 0 ]; then
+    log_error "$failed projects had errors, see above"
+    return 1
+  fi
 }
 
 main "$@"
