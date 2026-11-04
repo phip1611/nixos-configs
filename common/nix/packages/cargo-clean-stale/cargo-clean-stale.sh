@@ -143,22 +143,27 @@ unused_incremental_caches() {
 # Removes the unused artifacts in a profile directory. Prints the freed
 # bytes. It runs in a subshell, which releases the cargo lock at its end.
 sweep_profile() (
-  local profile=$1 unused bytes
+  local profile=$1 lock lock_fd unused bytes
   local -a paths
 
-  # Cargo holds this lock during a build. Removing artifacts during a build
-  # could break it.
-  # TODO: The lock is internal to cargo and may change. Cargo 1.99 already
-  # also creates .cargo-build-lock and .cargo-artifact-lock.
+  # Cargo holds these locks during a build, some only shared. Removing
+  # artifacts during a build could break it. Newer versions of cargo also
+  # use .cargo-build-lock and .cargo-artifact-lock, and which of the locks
+  # they hold exclusively depends on the version and on
+  # -Zfine-grain-locking. Holding all of them exclusively works for all.
+  # TODO: The locks are internal to cargo and may change.
   if [ ! -f "$profile/.cargo-lock" ]; then
     log_error "$profile: no cargo lock, skipping"
     return 1
   fi
-  exec 9<"$profile/.cargo-lock"
-  if ! flock --nonblock 9; then
-    echo "$profile: cargo is running, skipping" >&2
-    return 1
-  fi
+  for lock in "$profile"/.cargo-{,build-,artifact-}lock; do
+    [ -f "$lock" ] || continue
+    exec {lock_fd}<"$lock"
+    if ! flock --nonblock "$lock_fd"; then
+      echo "$profile: cargo is running, skipping" >&2
+      return 1
+    fi
+  done
 
   if ! unused=$(unused_units "$profile" &&
     unused_incremental_caches "$profile"); then
