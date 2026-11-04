@@ -150,6 +150,17 @@ unused_v2_units() {
   done
 }
 
+# Returns success if a profile directory has build artifacts, but no units in
+# a known layout. Without this check, the sweep would silently remove nothing
+# after cargo changes its layout again.
+has_unknown_layout() {
+  local profile=$1
+  local -a v2_units=("$profile"/build/*/*/fingerprint/)
+  local -a artifacts=("$profile"/{build,deps}/*)
+  [ ! -d "$profile/.fingerprint" ] && [ ${#v2_units[@]} -eq 0 ] &&
+    [ ${#artifacts[@]} -gt 0 ]
+}
+
 # Prints the incremental caches in a profile directory that no build used
 # recently. One per line.
 #
@@ -198,6 +209,11 @@ sweep_profile() (
       return 0
     fi
   done
+
+  if has_unknown_layout "$profile"; then
+    log_error "$profile: unknown layout, skipping"
+    return 1
+  fi
 
   # A profile can have both layouts after a cargo update.
   if ! unused=$(
