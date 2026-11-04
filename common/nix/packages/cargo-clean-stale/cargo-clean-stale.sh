@@ -7,7 +7,9 @@
 # - In the other projects, it removes the build artifacts that no build
 #   used, similar to `cargo sweep --time 7` [0]. Examples are old versions
 #   of dependencies, other feature sets, and other profiles. It also removes
-#   unused incremental caches, which cargo-sweep keeps.
+#   unused incremental caches, which cargo-sweep keeps. It supports the
+#   legacy layout of target directories and the build-dir layout v2 [1],
+#   the default from cargo 1.100 on.
 #
 # Usage: cargo-clean-stale [--dry-run] [<dir>...]
 #
@@ -16,6 +18,8 @@
 # project or profile. At the end, it prints how much space it freed.
 #
 # [0]: https://github.com/holmgr/cargo-sweep
+# [1]: https://github.com/rust-lang/cargo/issues/15010
+# [2]: https://github.com/rust-lang/cargo/issues/5026
 
 set -euo pipefail
 shopt -s nullglob
@@ -24,8 +28,9 @@ shopt -s nullglob
 # use in this time are unused.
 MAX_AGE_DAYS=7
 
-# Cargo appends the hash of a build unit to the names of its files and
-# directories, such as deps/libfoo-0123456789abcdef.rlib. Captures the hash.
+# In the legacy layout, cargo appends the hash of a build unit to the names
+# of its files and directories, such as deps/libfoo-0123456789abcdef.rlib.
+# Captures the hash.
 UNIT_HASH_RE='^[^.]*-([0-9a-f]{16})(\.|$)'
 
 DRY_RUN=0
@@ -86,13 +91,14 @@ clean_project() {
 }
 
 # Prints the files and directories of the build units in a profile
-# directory, such as target/debug, that no build used recently. One per line.
+# directory with the legacy layout, such as target/debug, that no build used
+# recently. One per line.
 #
 # On each build, cargo reads the files in .fingerprint/<name>-<hash>/ of
 # every unit in the build graph, which updates their access times. This
 # requires a file system without noatime. Cargo rebuilds a removed unit when
 # it needs it again.
-unused_units() {
+unused_legacy_units() {
   local profile=$1 recent_units unit path
   local -A used_hashes=()
 
@@ -109,6 +115,35 @@ unused_units() {
     if [[ ${path##*/} =~ $UNIT_HASH_RE ]] &&
       [ -z "${used_hashes[${BASH_REMATCH[1]}]:-}" ]; then
       echo "$path"
+    fi
+  done
+}
+
+# Prints the build units in a profile directory with the build-dir layout
+# v2 that no build used recently. One per line.
+#
+# Each unit has its own directory build/<name>/<hash>/. On each build, cargo
+# reads the files in its fingerprint/ directory, like in the legacy layout.
+# Units without a fingerprint/ directory are kept, as it's unclear whether a
+# build uses them.
+unused_v2_units() {
+  local profile=$1 recent_files file unit
+  local -A used_units=()
+
+  [ -d "$profile/build" ] || return 0
+  recent_files=$(find "$profile/build" -mindepth 4 -maxdepth 4 -type f \
+    -atime -"$MAX_AGE_DAYS" -printf '%P\n') || return 1
+  while read -r file; do
+    if [[ $file == */*/fingerprint/* ]]; then
+      used_units[${file%/fingerprint/*}]=1
+    fi
+  done <<<"$recent_files"
+
+  for unit in "$profile"/build/*/*/fingerprint/; do
+    unit=${unit%/fingerprint/}
+    if [[ ${unit##*/} =~ ^[0-9a-f]{16}$ ]] &&
+      [ -z "${used_units[${unit#"$profile/build/"}]:-}" ]; then
+      echo "$unit"
     fi
   done
 }
@@ -152,10 +187,6 @@ sweep_profile() (
   # they hold exclusively depends on the version and on
   # -Zfine-grain-locking. Holding all of them exclusively works for all.
   # TODO: The locks are internal to cargo and may change.
-  if [ ! -f "$profile/.cargo-lock" ]; then
-    log_error "$profile: no cargo lock, skipping"
-    return 1
-  fi
   for lock in "$profile"/.cargo-{,build-,artifact-}lock; do
     [ -f "$lock" ] || continue
     exec {lock_fd}<"$lock"
@@ -165,8 +196,14 @@ sweep_profile() (
     fi
   done
 
-  if ! unused=$(unused_units "$profile" &&
-    unused_incremental_caches "$profile"); then
+  # A profile can have both layouts after a cargo update.
+  if ! unused=$(
+    if [ -d "$profile/.fingerprint" ]; then
+      unused_legacy_units "$profile"
+    fi &&
+      unused_v2_units "$profile" &&
+      unused_incremental_caches "$profile"
+  ); then
     log_error "$profile: can't find unused artifacts, skipping"
     return 1
   fi
@@ -191,12 +228,11 @@ sweep_profile() (
 # as target/debug and target/x86_64-unknown-uefi/release. Prints the freed
 # bytes.
 #
-# TODO: The sweep relies on the internal layout of cargo's target directory,
-# which may change. For example, with -Zbuild-dir-new-layout of cargo 1.99,
-# there are no .fingerprint directories, and the sweep removes nothing.
-# Replace it once cargo can remove unused build artifacts itself.
+# TODO: The sweep relies on the internal layouts of cargo's target directory,
+# which change over time. Replace it once cargo can remove unused build
+# artifacts itself [2].
 sweep_project() {
-  local project=$1 fingerprint_dir bytes total=0
+  local project=$1 profile bytes total=0
 
   # The lists of unused artifacts have one path per line. A newline in the
   # path would make them remove the wrong files.
@@ -206,11 +242,15 @@ sweep_project() {
     return 0
   fi
 
-  while IFS= read -r -d '' fingerprint_dir; do
-    if bytes=$(sweep_profile "${fingerprint_dir%/.fingerprint}"); then
+  # Each profile directory has a .cargo-lock, in all layouts.
+  while IFS= read -r -d '' profile; do
+    # The sweep of another profile can remove a nested one, such as the
+    # target directory of a cargo invocation in a build script.
+    [ -f "$profile/.cargo-lock" ] || continue
+    if bytes=$(sweep_profile "$profile"); then
       total=$((total + bytes))
     fi
-  done < <(find "$project/target" -type d -name .fingerprint -prune -print0)
+  done < <(find "$project/target" -type f -name .cargo-lock -printf '%h\0')
   echo "$total"
 }
 
