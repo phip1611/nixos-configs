@@ -33,5 +33,8 @@ in
     # network. The persistent queues of cups-browsed stay selectable when the
     # printer is out of reach and retry jobs until it is reachable again.
     services.printing.browsed.enable = false;
+
+    # Avahi handles mDNS. A second mDNS stack makes mDNS unreliable.
+    services.resolved.settings.Resolve.MulticastDNS = false;
   };
 }
