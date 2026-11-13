@@ -22,6 +22,12 @@ in
       # Hide kernel logs, which help exploiting the kernel.
       "kernel.dmesg_restrict" = 1;
       "net.core.bpf_jit_harden" = 2;
+      # Root can't replace the running kernel with kexec. Unlike
+      # `security.protectKernelImage`, this keeps hibernation working.
+      "kernel.kexec_load_disabled" = 1;
+      # Unprivileged eBPF is already disabled by default (2), but root could
+      # enable it again at runtime.
+      "kernel.unprivileged_bpf_disabled" = 1;
       # Don't act on or send ICMP redirects. Otherwise, anyone on the local
       # network, such as a public Wi-Fi, can reroute our traffic. This also
       # matters for machines that forward traffic, e.g., to containers.
