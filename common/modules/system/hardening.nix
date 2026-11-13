@@ -18,6 +18,40 @@ in
     # command line at boot, e.g., `init=/bin/sh`, and gain root.
     boot.loader.systemd-boot.editor = false;
 
+    # The kernel loads these modules on demand, e.g., when an unprivileged
+    # user opens a socket of such a protocol or the desktop auto-mounts a
+    # (malicious) USB drive. They are rarely used and maintained, so they are
+    # a common source of exploitable bugs. `modprobe <name>` still loads them.
+    #
+    # Taken from the removed `profiles/hardened.nix` of nixpkgs, without
+    # modules that NixOS or I use: erofs (`system.etc.overlay`) and ntfs
+    # (Windows partitions, the new read-write driver in recent kernels).
+    boot.blacklistedKernelModules = [
+      # Obscure network protocols. nixpkgs only builds them before Linux 7.1.
+      "ax25"
+      "netrom"
+      "rose"
+      # Rare filesystems.
+      "adfs"
+      "affs"
+      "befs"
+      "bfs"
+      "cramfs"
+      "efs"
+      "f2fs"
+      "freevxfs"
+      "hfs"
+      "hpfs"
+      "jfs"
+      "minix"
+      "nilfs2"
+      "omfs"
+      "qnx4"
+      "qnx6"
+      "sysv"
+      "ufs"
+    ];
+
     boot.kernel.sysctl = {
       # Hide kernel logs, which help exploiting the kernel.
       "kernel.dmesg_restrict" = 1;
