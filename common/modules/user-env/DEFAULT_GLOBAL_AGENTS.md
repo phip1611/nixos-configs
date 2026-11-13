@@ -36,6 +36,8 @@
   Re-read `git status`, `git log`, and the reflog right before each step and
   build on my current version. Never discard my changes, and keep my wording
   and values unless asked to change them.
+- Never put a slash in branch names (no `feat/`, `ci/`, ...), unless the
+  project's conventions require it.
 - For active work (code changes, commits, experiments), stay on my current
   branch if its name or my in-flight changes show that the task directly
   belongs to them. Otherwise, use a dedicated `git worktree` and branch in
@@ -95,8 +97,8 @@ commits. For commits by others, see [Reviews](#reviews).
   non-obvious or large mechanisms). Trivial commits need no body.
 - Keep bodies minimal. Start with user-visible changes where applicable. Do
   not repeat what the diff shows (e.g. "adds a unit test"). Use full
-  sentences, not semicolon-joined clauses. Give expert reviewers the
-  important context, but stay understandable for non-experts in the domain.
+  sentences. Give expert reviewers the important context, but stay
+  understandable for non-experts in the domain.
 - Include measured numbers when they motivate the change. Keep them short
   and not tied to one specific run.
 - Long, non-trivial bodies get a TL;DR (one sentence, two at most).
@@ -171,6 +173,9 @@ commits. For commits by others, see [Reviews](#reviews).
   files. Keep the README short and link to the main docs.
 - When a project maintains a changelog, add an entry in its existing style.
 - Use the Oxford comma ("A, B, and C").
+- Avoid joining sentences with a semicolon. Prefer "and", a colon, or a
+  period and a new sentence. Exceptions are fine where semicolons fit the
+  existing text, e.g. when making small edits to text that uses them.
 - Use a plain apostrophe ('), hyphen (-), and `->` over `→`, no typographic
   apostrophes or em-dashes. Pad Markdown tables so the columns align. Write long
   YAML frontmatter `description` fields as `>-` strings wrapped at 80 columns.
