@@ -43,16 +43,13 @@ in
           withAutoUpgrade = true;
           # Stability is king
           withBleedingEdgeLinux = false;
+          withHardening = true;
           withSecureDns = true;
         };
       };
       nix-binary-cache.enable = true;
       services.zsh-history-backup.enable = true;
     };
-
-    # Otherwise, anyone with access to the (VNC) console can edit the kernel
-    # command line at boot, e.g., `init=/bin/sh`, and gain root.
-    boot.loader.systemd-boot.editor = false;
 
     # No kexec and no hibernation: both allow replacing the running kernel.
     security.protectKernelImage = true;
@@ -68,18 +65,10 @@ in
       # flows. BBRv2/v3 react to both.
       "net.core.default_qdisc" = "fq";
       "net.ipv4.tcp_congestion_control" = "bbr";
-      # Hide kernel logs and pointers, which help exploiting the kernel.
-      "kernel.dmesg_restrict" = 1;
+      # Also hide kernel pointers from root, which help exploiting the
+      # kernel. This breaks kernel symbols in `perf`, which servers don't
+      # need.
       "kernel.kptr_restrict" = 2;
-      "net.core.bpf_jit_harden" = 2;
-      # Servers don't act on or send ICMP redirects. This also matters for
-      # servers that forward traffic, e.g., to containers.
-      "net.ipv4.conf.all.accept_redirects" = 0;
-      "net.ipv4.conf.default.accept_redirects" = 0;
-      "net.ipv4.conf.all.send_redirects" = 0;
-      "net.ipv4.conf.default.send_redirects" = 0;
-      "net.ipv6.conf.all.accept_redirects" = 0;
-      "net.ipv6.conf.default.accept_redirects" = 0;
     };
 
     # BBR congestion control, see `boot.kernel.sysctl` above.
