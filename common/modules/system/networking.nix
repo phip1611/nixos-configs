@@ -19,6 +19,13 @@ in
       5201 # iperf3
     ];
 
+    # Use a different MAC address per Wi-Fi network, so that networks and
+    # their operators can't track the machine across locations. Unlike
+    # "stable", the address is derived from the SSID, not from the connection
+    # profile. It stays the same when I forget and re-add a network, so DHCP
+    # reservations keep working.
+    networking.networkmanager.wifi.macAddress = "stable-ssid";
+
     # Recommended by the docs. Also, I had so often trouble with a failing
     # wait-online service, although everything was operating properly.
     # Therefore, lets deactivate it.
