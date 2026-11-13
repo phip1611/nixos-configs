@@ -33,6 +33,8 @@ in
       withBootscreen = lib.mkEnableOption "Enable my cool bootscreen (background)";
       withDockerRootless = lib.mkEnableOption "Enable rootless Docker";
       withSecureDns = lib.mkEnableOption "Enable secure DNS (DNSSec, DoH)";
+      # CPU side channels can be exploited by any local, unprivileged code.
+      withoutCpuMitigations = lib.mkEnableOption "Disable CPU vulnerability mitigations for more performance";
     };
   };
 
@@ -125,10 +127,12 @@ in
           priority = 100;
         };
       }
-      # Use latest stable kernel and disable mitigations.
+      # Use latest stable kernel.
       (lib.mkIf cfg.withBleedingEdgeLinux {
         # To reset to default, set to `lib.mkForce pkgs.linuxPackages`.
         boot.kernelPackages = pkgsUnstable.linuxPackages_latest;
+      })
+      (lib.mkIf cfg.withoutCpuMitigations {
         # Living on the edge. 2-5% faster compilation times.
         boot.kernelParams = [ "mitigations=off" ];
       })

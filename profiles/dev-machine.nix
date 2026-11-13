@@ -36,6 +36,7 @@
           withBootscreen = true;
           withDockerRootless = true;
           withSecureDns = true;
+          withoutCpuMitigations = true;
         };
       };
       nix-binary-cache.enable = true;
