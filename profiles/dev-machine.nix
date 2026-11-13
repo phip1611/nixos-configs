@@ -35,7 +35,9 @@
           withBleedingEdgeLinux = true;
           withBootscreen = true;
           withDockerRootless = true;
+          withHardening = true;
           withSecureDns = true;
+          withoutCpuMitigations = true;
         };
       };
       nix-binary-cache.enable = true;
