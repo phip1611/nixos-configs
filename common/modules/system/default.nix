@@ -48,11 +48,6 @@ in
         boot.loader.grub.configurationLimit = 7;
         boot.loader.systemd-boot.configurationLimit = 7;
 
-        # Less weird shell scripts in initrd. Probably the default soon.
-        # No more multiple initrds for different specialisations (that have
-        # specific networking options).
-        boot.initrd.systemd.enable = true;
-
         # Don't accumulate crap.
         boot.tmp.cleanOnBoot = true;
 
@@ -105,11 +100,11 @@ in
         '';
 
         # Don't accumulate crap: Max 250mb or max 14 day old
-        services.journald.settings.Journal = ''
-          SystemMaxUse=250M
-          SystemMaxFileSize=50M
-          MaxRetentionSec=14day
-        '';
+        services.journald.settings.Journal = {
+          SystemMaxUse = "250M";
+          SystemMaxFileSize = "50M";
+          MaxRetentionSec = "14day";
+        };
 
         # zRam-based swap offers very responsive swapping when the memory usage
         # is high. It still makes sense to provide multiple GB of traditional
