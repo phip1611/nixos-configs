@@ -54,6 +54,11 @@ in
     # No kexec and no hibernation: both allow replacing the running kernel.
     security.protectKernelImage = true;
 
+    # debugfs exposes many kernel internals with little access control and
+    # is only meant for debugging. Netdata loses its memory fragmentation
+    # charts, which rely on it.
+    boot.kernelParams = [ "debugfs=off" ];
+
     boot.kernel.sysctl = {
       # BBR congestion control: higher throughput and lower latency than the
       # default (cubic), especially on long-distance or lossy links. BBR is
