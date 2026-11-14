@@ -147,9 +147,15 @@ commits. For commits by others, see [Reviews](#reviews).
   otherwise.
 - Comments: concise, explain _why_, not _what_. Omit the obvious. Larger
   write-ups belong in the commit message.
-- Tests: prefer deterministic, hardcoded data over randomness. In non-trivial
-  tests, comment which part is boring setup and which part is the
-  interesting test. If the name is not enough, add a 1-3 sentence summary.
+- Tests: writing a new test case should be pleasant and fast. Build convenient,
+  reusable fixtures and mocks (builders, factory functions, default configs) so
+  that the test body focuses on the property under test. Inline setup is fine
+  in small tests (under roughly 12 lines). In larger tests, move it into
+  fixtures instead of repeating boilerplate.
+- Test cases use deterministic, hardcoded data instead of randomness. If the
+  name is not enough to explain what a test checks, add a 1-3 sentence summary.
+  Explain non-obvious invariants with short inline comments, ideally one line
+  each.
 - Rust: write `expect()` messages in the "should" style (why the operation
   should succeed), and use `expect()` instead of `assert!(res.is_ok(), ..)`.
 
