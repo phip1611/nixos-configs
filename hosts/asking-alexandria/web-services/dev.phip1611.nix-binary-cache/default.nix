@@ -23,6 +23,7 @@ in
       # way, the default NixOS cache, which has a priority of 40, is always
       # preferred over my own cache.
       priority = 100;
+      enable_compression = true;
     };
   };
 
