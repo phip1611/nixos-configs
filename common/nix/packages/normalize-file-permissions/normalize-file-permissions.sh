@@ -54,5 +54,7 @@ fi
 chgrp -R "$ARG_GROUP" "$ARG_DIRECTORY"
 chown -R "$ARG_USER" "$ARG_DIRECTORY"
 
-fd --type=directory --exec-batch sh -c "chmod $DEFAULT_DIR_PERMISSION {}" "$ARG_DIRECTORY"
-fd --type=file --exec-batch sh -c "chmod $DEFAULT_FILE_PERMISSION {}" "$ARG_DIRECTORY"
+# Everything after --exec-batch belongs to the command, so the directory must
+# come before it.
+fd --type=directory . "$ARG_DIRECTORY" --exec-batch chmod "$DEFAULT_DIR_PERMISSION"
+fd --type=file . "$ARG_DIRECTORY" --exec-batch chmod "$DEFAULT_FILE_PERMISSION"

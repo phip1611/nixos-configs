@@ -1,43 +1,32 @@
-# Hosts the binary cache with the artifacts of this project/repository.
+# The binary cache with the artifacts of this project/repository. harmonia
+# serves the host's Nix store via the host's Nix daemon.
 #
-# Reference: https://nixos.wiki/wiki/Binary_Cache
-
+# Reference: https://github.com/nix-community/harmonia
 {
-  config,
-  lib,
-  pkgs,
   ...
 }:
 
 let
   commonCfg = import ../nginx-common-host-config.nix;
+  port = 5000;
 in
 {
-  imports = [
-    ./ci-user.nix
-  ];
-
-  config = {
-    # All but the Host hosting the cache itself should use it. Deactivate it.
-    phip1611.nix-binary-cache.enable = lib.mkForce false;
-
-    services.nginx.virtualHosts."nix-binary-cache.phip1611.dev" = commonCfg // {
-      locations."/".proxyPass = with config.services.nix-serve; "http://${bindAddress}:${toString port}";
+  # The NixOS module already confines harmonia: it runs as a dynamic user
+  # without network access (socket activation) and only gets the signing key
+  # as a systemd credential.
+  services.harmonia.cache = {
+    enable = true;
+    signKeyPaths = [ "/var/cache-priv-key.pem" ];
+    settings = {
+      bind = "127.0.0.1:${toString port}";
+      # Lower than the default of 30 (higher value => lower priority). This
+      # way, the default NixOS cache, which has a priority of 40, is always
+      # preferred over my own cache.
+      priority = 100;
     };
+  };
 
-    services.nix-serve = {
-      enable = true;
-      # Drop-in replacement on steroids
-      # https://github.com/aristanetworks/nix-serve-ng
-      package = pkgs.nix-serve-ng.overrideAttrs (old: {
-        # I reduce the default priority of 30 by setting it to 100
-        # (higher value => lower priority). This way, the default NixOS cache,
-        # which has a priority of 40, is always preferred over my own cache.
-        patches = (old.patches or [ ]) ++ [
-          ./nix-serve-ng-reduce-priority.patch
-        ];
-      });
-      secretKeyFile = "/var/cache-priv-key.pem";
-    };
+  services.nginx.virtualHosts."nix-binary-cache.phip1611.dev" = commonCfg // {
+    locations."/".proxyPass = "http://127.0.0.1:${toString port}";
   };
 }

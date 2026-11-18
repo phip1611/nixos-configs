@@ -28,5 +28,13 @@ in
     services.avahi.nssmdns4 = true;
     services.avahi.nssmdns6 = true;
     services.avahi.openFirewall = true;
+
+    # CUPS creates temporary queues for printers visible on the current
+    # network. The persistent queues of cups-browsed stay selectable when the
+    # printer is out of reach and retry jobs until it is reachable again.
+    services.printing.browsed.enable = false;
+
+    # Avahi handles mDNS. A second mDNS stack makes mDNS unreliable.
+    services.resolved.settings.Resolve.MulticastDNS = false;
   };
 }

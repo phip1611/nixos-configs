@@ -6,10 +6,6 @@ set -euo pipefail
 
 ARG=${1:-}
 
-# Nix sources
-PKGS=$(nix flake archive --json | jq -r '.inputs."nixpkgs".path')
-LIB=$(nix eval .#lib.bootitems)
-
 binary_cache_host=nix-binary-cache.phip1611.dev
 binary_cache_user=phip1611
 binary_cache_ssh_port=7331
@@ -23,53 +19,8 @@ populate_cache() {
   fi
 }
 
-# Read kernels to array
-readarray -t KERNELS < <(nix-instantiate --json --eval --expr "
-  let
-    pkgs = import $PKGS {};
-    lib = import $LIB { inherit pkgs; };
-  in
-  builtins.attrNames lib.linux.kernels
-" | jq -r '. | values[]')
-
-# Read initrds to array
-readarray -t INITRDS < <(nix-instantiate --json --eval --expr "
-  let
-    pkgs = import $PKGS {};
-    lib = import $LIB { inherit pkgs; };
-  in
-  builtins.attrNames lib.linux.initrds
-" | jq -r '. | values[]')
-
-for KERNEL in "${KERNELS[@]}"; do
-  echo "Building Linux kernel '$KERNEL'"
-  nix build --impure --expr "
-    let
-      pkgs = import $PKGS {};
-      lib = import $LIB { inherit pkgs; };
-    in
-    lib.linux.kernels.$KERNEL"
-  populate_cache
-done
-wait
-
-for INITRD in "${INITRDS[@]}"; do
-  echo "Building Linux initrd '$INITRD'"
-  nix build --impure --expr "
-    let
-      pkgs = import $PKGS {};
-      lib = import $LIB { inherit pkgs; };
-    in
-    lib.linux.initrds.$INITRD"
-  populate_cache
-done
-wait
-
-echo "Building tinytoykernel"
-nix build --impure --expr "
-  let
-    pkgs = import $PKGS {};
-    lib = import $LIB { inherit pkgs; };
-  in
-  lib.tinytoykernel"
+# Uses the same flake package as the hosts, so that the bootitems are built
+# with the flake's overlays.
+echo "Building all bootitems"
+nix build .#bootitems-combined
 populate_cache

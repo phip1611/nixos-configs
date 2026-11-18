@@ -4,16 +4,11 @@
   lib,
   pkgs,
   ...
-}@inputs:
+}:
 
 let
   cfg = config.phip1611.common.user-env;
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    system = pkgs.stdenv.hostPlatform.system;
-    config = {
-      allowUnfree = true;
-    };
-  };
+  inherit (pkgs) pkgsUnstable;
 in
 {
   imports = [
@@ -49,7 +44,7 @@ in
         gimp3
         # gimp3-with-plugins
         gparted
-        libreoffice-fresh
+        libreoffice-stable
         screen-message
         signal-desktop
         spotify
@@ -71,7 +66,9 @@ in
         ]
       ))
       ++ (lib.optionals cfg.withMedia (
-        with pkgsUnstable;
+        # TODO use unstable again once Qt build error is gone
+        # with pkgsUnstable;
+        with pkgs;
         [
           audacity
         ]

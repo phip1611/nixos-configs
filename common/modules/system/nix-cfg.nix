@@ -29,8 +29,6 @@ in
       settings = {
         connect-timeout = 3;
         log-lines = 25;
-        min-free = 268435456; # 256 MiB
-        max-free = 1073741824; # 1 GiB
         experimental-features = "nix-command flakes";
         fallback = true;
         warn-dirty = false;
@@ -42,8 +40,9 @@ in
         # keep-outputs = true;
         # keep-derivations = true;
 
+        # Faster downloads (default is 25)
+        http-connections = 48;
         # Faster downloads (default is 16)
-        http-connections = 32;
         max-substitution-jobs = 32;
 
         trusted-users = [
@@ -53,35 +52,66 @@ in
 
         substituters = map ({ url, ... }: url) trustedBinaryCaches;
         trusted-public-keys = map ({ key, ... }: key) trustedBinaryCaches;
-      }
-      //
-        # https://nix.dev/manual/nix/2.33/release-notes/rl-2.33.html
-        # TODO remove once the default nix version is at lest 2.33
-        (
-          if (lib.versionOlder config.nix.package.version "2.33") then
-            {
-              # Faster downloads from Nix binary caches (higher parallelism)
-              download-buffer-size =
-                512 * 1024 * 1024 # 512 MiB
-              ;
-            }
-          else
-            { }
-        );
+      };
 
       # Garbage Collection
       gc = {
         automatic = true;
-        dates = "daily";
-        # Runs normal garbage-collection plus removes all NixOS generations
-        # that are older than the specified amount.
-        options = lib.mkDefault "--delete-older-than 30d";
+        # `dates` is set per profile. Runs normal garbage-collection plus
+        # removes all NixOS generations that are older than the specified
+        # amount.
+        options = lib.mkDefault "--delete-older-than 14d";
       };
 
       # Scheduled systemd service that optimizes all paths in the nix store
       # by replacing identical files in the store by hard links.
       optimise = {
         automatic = true;
+      };
+    };
+
+    # Auto Nix GC Root Retention (angrr): Delete old result links, .direnv
+    # entries, and profiles from `/nix/var/nix/gcroots/` so that the next Nix
+    # garbage collection also deletes these files.
+    services.angrr = {
+      enable = true;
+      # Run this always before the service from `nix.gc.automatic
+      enableNixGcIntegration = true;
+      settings = {
+        profile-policies = {
+          # Delete old system profiles
+          system = {
+            keep-booted-system = true;
+            keep-current-system = true;
+            keep-latest-n = 4;
+            keep-since = "14d";
+            profile-paths = [
+              "/nix/var/nix/profiles/system"
+            ];
+          };
+          # Delete old user profiles. Without this, nothing deletes them, as
+          # `nix.gc` only handles the profiles of root. Newer home-manager
+          # versions no longer create the `home-manager` profile when used as
+          # NixOS module, but it may still exist from older ones.
+          user = {
+            keep-latest-n = 1;
+            keep-since = "14d";
+            profile-paths = [
+              "~/.local/state/nix/profiles/profile"
+              "~/.local/state/nix/profiles/home-manager"
+            ];
+          };
+        };
+        temporary-root-policies = {
+          direnv = {
+            path-regex = "/\\.direnv/";
+            period = "14d";
+          };
+          result = {
+            path-regex = "/result[^/]*$";
+            period = "14d";
+          };
+        };
       };
     };
   };

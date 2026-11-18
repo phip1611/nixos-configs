@@ -32,7 +32,8 @@ log_info() {
 # On systems without a battery, always returns 0 (safe AC fallback)
 is_charging() {
   local dev
-  dev=$(upower -e 2>/dev/null | grep -m1 battery)
+  # System batteries only, not peripherals such as mouse_hidpp_battery_0.
+  dev=$(upower -e 2>/dev/null | grep -m1 /battery_)
 
   # No battery → treat as “charging / plugged-in”
   [[ -z "$dev" ]] && return 0
@@ -54,13 +55,14 @@ is_charging() {
 battery_above() {
   local threshold="$1"
   local dev
-  dev=$(upower -e 2>/dev/null | grep -m1 battery)
+  dev=$(upower -e 2>/dev/null | grep -m1 /battery_)
 
   # No battery → fallback OK
   [[ -z "$dev" ]] && return 0
 
   local perc
-  perc=$(upower -i "$dev" | awk -F': *' '/percentage/ {gsub("%","",$2); print $2}')
+  # upower may report fractions, such as "57.3%".
+  perc=$(upower -i "$dev" | awk -F': *' '/percentage/ && $2 ~ /^[0-9]/ {print int($2)}')
 
   # Cannot read percentage → fallback OK
   [[ -z "$perc" ]] && return 0
@@ -68,47 +70,9 @@ battery_above() {
   ((perc > threshold))
 }
 
-# Checks the network: Is there a default route and is it not metered?
-check_network() {
-  SUCCESS=0 # network ok
-  FAILURE=1 # network bad
-
-  # Find the name of the default network interface
-  dev=$(ip route list default 2>/dev/null |
-    head -n 1 |
-    awk '{ for (i = 1; i <= NF; i++) if ($i == "dev") { print $(i + 1); exit } }')
-
-  if [[ -z "$dev" ]]; then
-    log_err "No default network route found; skipping prefetch."
-    return $FAILURE
-  fi
-
-  if ! command -v nmcli >/dev/null; then
-    # This is the case on servers with static configuration and no network
-    # manager. There, I typically have an unmetered LAN connection. Further,
-    # without NetworkManager, there is no way to query that information.
-    log_info "NetworkManager CLI not available; assuming connection is not metered."
-    return $SUCCESS
-  fi
-
-  metered=$(
-    nmcli -t -g GENERAL.METERED device show "$dev" 2>/dev/null |
-      head -n1
-  )
-
-  case "$metered" in
-  "no" | "no (guessed)")
-    log_info "Default connection on '$dev' is not metered."
-    return $SUCCESS
-    ;;
-  *)
-    log_err "Default connection on '$dev' is metered: skipping prefetch"
-    return $FAILURE
-    ;;
-  esac
-}
-
-if ! check_network; then
+# The systemd service checks this as well, but not a manual run.
+if ! is-network-unmetered; then
+  log_err "No network or metered connection: skipping prefetch."
   exit 1
 fi
 
@@ -137,7 +101,9 @@ if is_charging || battery_above 30; then
   for ATTR in "${ATTRIBUTES_TO_BUILD[@]}"; do
     log_info "Prefetching Nix flake attribute '$ATTR'."
     set +e -x
-    nice -n 19 -- nix build -L "$ATTR" --max-jobs "$(nproc --ignore=1)" --no-link
+    # The builds run in the Nix daemon, so `nice` has no effect on them.
+    # One job with all but one core keeps the system responsive.
+    nix build -L "$ATTR" --max-jobs 1 --cores "$(nproc --ignore=1)" --no-link
     set -e +x
   done
 else

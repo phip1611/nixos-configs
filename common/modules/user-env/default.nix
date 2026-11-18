@@ -20,6 +20,7 @@ in
   imports = [
     ./env
     ./programs
+    ./agents.nix
     ./fonts.nix
     ./gnome.nix
   ];

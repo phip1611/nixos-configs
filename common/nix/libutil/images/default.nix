@@ -62,7 +62,7 @@ let
     }:
     let
       moduleLines = map (
-        elem: "    module_path: boot():/${builtins.baseNameOf elem.file}\nMODULE_STRING${elem.cmdline}"
+        elem: "module_path: boot():/${builtins.baseNameOf elem.file}\n    module_string: ${elem.cmdline}"
       ) bootModules;
     in
     (writeTextFile {
@@ -80,7 +80,7 @@ let
             protocol: multiboot${toString multibootVersion}
             kernel_path: boot():/${baseNameOf kernel}
             kernel_cmdline: ${kernelCmdline}
-            ${builtins.concatStringsSep "\n" moduleLines}
+            ${builtins.concatStringsSep "\n    " moduleLines}
       '';
     });
 
@@ -131,6 +131,9 @@ let
 
         cp ${bootCfg} filesystem/limine.conf
         ${builtins.concatStringsSep "\n" copyBootitemsLines}
+
+        # xorriso stores the mtimes in the ISO.
+        find filesystem -exec touch -h -d @$SOURCE_DATE_EPOCH {} +
 
         # The following paths are relative to the root of the baked in file system.
         xorriso -as mkisofs -b limine-bios-cd.bin \

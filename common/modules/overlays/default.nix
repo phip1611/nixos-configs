@@ -6,7 +6,7 @@
   lib,
   pkgs,
   ...
-}:
+}@inputs:
 
 {
   imports = [
@@ -21,5 +21,17 @@
       libutil-overlay.enable = true;
       packages-overlay.enable = true;
     };
+
+    # Adds `pkgs.pkgsUnstable`: nixpkgs-unstable for "leaf" packages that I
+    # want to be fresh. All modules share this instance, so nixpkgs-unstable
+    # is only evaluated once.
+    nixpkgs.overlays = [
+      (final: _prev: {
+        pkgsUnstable = import inputs.nixpkgs-unstable {
+          inherit (final.stdenv.hostPlatform) system;
+          config.allowUnfree = true;
+        };
+      })
+    ];
   };
 }

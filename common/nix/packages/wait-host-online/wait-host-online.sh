@@ -10,7 +10,7 @@
 # when starting a VM or live-migrating a VM to another host.
 #
 # @arg host!
-# @option --timeout=60 Timeout in seconds
+# @option --timeout=60 Timeout in whole seconds
 # @option --request-delay=0.05 Delay between requests in seconds. Increase for rate limiting. Must not be less than the minimal amount of time needed for a roundtrip.
 
 set -euo pipefail
@@ -18,20 +18,27 @@ set -euo pipefail
 # argc CLI magic
 eval "$(argc --argc-eval "$0" "$@")" # Must appear after all "@cmd" directives!
 
+if [[ ! "$argc_timeout" =~ ^[0-9]+$ ]]; then
+  echo "--timeout must be a non-negative integer, got '$argc_timeout'" >&2
+  exit 2
+fi
+
 ping_cancelled=false
 # seconds since UNIX epoch
 timestamp_begin=$(date +%s)
-DIFF=0
 
 echo "Waiting for host to become available ..."
-until ping -c 1 -W $argc_request_delay "$argc_host" >/dev/null 2>&1; do
+until ping -c 1 -W $argc_request_delay "$argc_host" >/dev/null; do
   DIFF=$(($(date +%s) - $timestamp_begin))
   if [ $DIFF -ge $argc_timeout ]; then
     echo "Timeout!"
     exit 1
   fi
+  # ping may fail immediately, e.g., for an unresolvable host name.
+  sleep "$argc_request_delay"
 done & # The "&" backgrounds it
 trap "kill $!; ping_cancelled=true" SIGINT
 wait $!       # Wait for the loop to exit, one way or another
 trap - SIGINT # Remove the trap, now we're done with it
+DIFF=$(($(date +%s) - timestamp_begin))
 echo "Host is available (took ${DIFF}s)"

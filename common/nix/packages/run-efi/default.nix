@@ -5,6 +5,7 @@
   # runtime deps
   ansi,
   argc,
+  file,
   qemu,
 }:
 
@@ -34,6 +35,7 @@ writeShellScriptBin "run-efi" ''
     lib.makeBinPath ([
       ansi
       argc
+      file
       qemu
     ])
   }:$PATH"
@@ -42,24 +44,25 @@ writeShellScriptBin "run-efi" ''
   eval "$(argc --argc-eval "$0" "$@")"
 
   # Sanity check: Is the file valid?
-  if [[ "$(file --dereference --brief $argc_efi_image)" != *"EFI"*"x86-64"* ]]; then
+  if [[ "$(file --dereference --brief "$argc_efi_image")" != *"EFI"*"x86-64"* ]]; then
     echo -e "$(ansi bold)$(ansi red)Not an EFI x86-64 image!$(ansi reset)"
     exit 1
   fi
 
   # QEMU/OVMF needs to write the dir (NV VARS). So, this does not live in the
   # Nix store.
-  TMPDIR=$(mktemp -d)
+  VOLUME_DIR=$(mktemp -d)
+  trap 'rm -rf "$VOLUME_DIR"' EXIT
 
   # Volume: Add additional files (such as startup.nsh)
   for file in "''${argc_files[@]}"
   do
-    cp -r $file $TMPDIR
+    cp -r "$file" "$VOLUME_DIR"
   done
 
   # Volume: Add main file to boot
-  mkdir -p "$TMPDIR/EFI/BOOT"
-  install -m 0644 "''${argc_efi_image}" "$TMPDIR/EFI/BOOT/BOOTX64.EFI"
+  mkdir -p "$VOLUME_DIR/EFI/BOOT"
+  install -m 0644 "''${argc_efi_image}" "$VOLUME_DIR/EFI/BOOT/BOOTX64.EFI"
 
   COMMON_ARGS=(
     -nodefaults
@@ -75,7 +78,7 @@ writeShellScriptBin "run-efi" ''
   set -x
   qemu-system-x86_64 \
     -bios ${OVMF.fd}/FV/OVMF.fd \
-    -drive format=raw,file=fat:rw:$TMPDIR \
+    -drive "format=raw,file=fat:rw:$VOLUME_DIR" \
     ''${COMMON_ARGS[*]} \
-    ''${argc_qemu_args[*]:-}; rm -rf $TMPDIR
+    ''${argc_qemu_args[*]:-}
 ''

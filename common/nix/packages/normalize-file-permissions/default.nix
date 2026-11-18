@@ -4,14 +4,18 @@
   lib,
 
   # runtime deps
+  ansi,
   argc,
   bash,
+  fd,
 }:
 
 let
   deps = [
+    ansi
     argc
     bash
+    fd
   ];
 in
 runCommand "normalize-file-permissions"

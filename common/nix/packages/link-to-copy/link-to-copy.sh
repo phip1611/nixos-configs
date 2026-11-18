@@ -21,13 +21,19 @@ if [ ! -h "$argc_path" ]; then
   exit 1
 fi
 
+if [ ! -f "$argc_path" ]; then
+  echo -e "$(ansi bold)$(ansi yellow)Not a symbolic link to a regular file: $argc_path$(ansi reset)"
+  exit 1
+fi
+
 REALPATH=$(realpath "$argc_path")
 
-cp "$argc_path" "$argc_path".tmp
-rm "$argc_path"
-mv "$argc_path".tmp "$argc_path"
+# A unique temporary file never clobbers an existing file.
+tmp=$(mktemp "$argc_path.XXXXXX")
+cp --preserve=mode -- "$argc_path" "$tmp"
+if [ "${argc_mode+x}" ]; then
+  chmod "$argc_mode" "$tmp"
+fi
+mv -f -- "$tmp" "$argc_path"
 
 echo -e "Replaced symlink at $(ansi bold)$argc_path$(ansi reset) pointing to $(ansi bold)$REALPATH$(ansi reset) with a copy."
-if [ "${argc_mode+x}" ]; then
-  chmod "$argc_mode" "$argc_path"
-fi

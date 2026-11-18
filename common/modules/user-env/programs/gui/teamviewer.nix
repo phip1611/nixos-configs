@@ -13,7 +13,7 @@ in
     # Teamviewer GUI doesn't work without the daemon.
     services.teamviewer.enable = true;
     # Wait for https://github.com/NixOS/nixpkgs/pull/346365
-    # services.teamviewer.package = pkgsUnstable.teamviewer;
+    # services.teamviewer.package = pkgs.pkgsUnstable.teamviewer;
 
     users.users."${cfg.username}".packages = [
       # Remove once the MR mentioned above is set.
