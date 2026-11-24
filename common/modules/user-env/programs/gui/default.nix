@@ -21,6 +21,11 @@ in
     programs._1password-gui.polkitPolicyOwners = [ cfg.username ];
     programs.firefox.enable = true;
 
+    # https://github.com/NixOS/nixpkgs/issues/590447
+    nixpkgs.config.permittedInsecurePackages = lib.optionals cfg.withDevCAndRust [
+      "clion-2026.2.4.1"
+    ];
+
     users.users."${cfg.username}".packages =
       (
         # Packages that reliably are backported to release channels. Also packages
