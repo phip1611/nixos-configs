@@ -72,6 +72,10 @@ in
         options = lib.mkDefault "--delete-older-than 14d";
       };
 
+      # Build logs in `/nix/var/log/nix/drvs` otherwise grow forever. Same
+      # retention as the GC above.
+      buildLogRetention = "14d";
+
       # Scheduled systemd service that optimizes all paths in the nix store
       # by replacing identical files in the store by hard links.
       optimise = {
