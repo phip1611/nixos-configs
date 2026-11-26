@@ -53,6 +53,9 @@ in
           "@wheel"
         ];
 
+        # https://github.com/NixOS/nix/pull/15961
+        http3 = true;
+
         substituters = map ({ url, ... }: url) trustedBinaryCaches;
         trusted-public-keys = map ({ key, ... }: key) trustedBinaryCaches;
       };
