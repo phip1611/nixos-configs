@@ -22,6 +22,9 @@ in
 {
   config = lib.mkIf cfg.enable {
     nix = {
+      # Latest performance and stability improvements.
+      package = pkgs.pkgsUnstable.nixVersions.latest;
+
       # Not needed
       channel.enable = false;
 
