@@ -41,5 +41,11 @@ in
       # The global `nix.gc` settings apply. No additional GC trigger needed.
       runGarbageCollection = false;
     };
+
+    # Nobody watches the unattended reboots. If a new generation doesn't
+    # reach `boot-complete.target` within the given tries, e.g., due to a
+    # broken kernel or initrd, systemd-boot falls back to the previous one.
+    # Each try needs a reboot, e.g., a reset by the hoster's panel.
+    boot.loader.systemd-boot.bootCounting.enable = true;
   };
 }
