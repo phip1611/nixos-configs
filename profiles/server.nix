@@ -79,6 +79,12 @@ in
     # BBR congestion control, see `boot.kernel.sysctl` above.
     boot.kernelModules = [ "tcp_bbr" ];
 
+    # Drop packets that the host wouldn't route back via the interface they
+    # arrived on, such as spoofed ones. NixOS 26.11 relaxed the default to
+    # "loose". Servers route symmetrically, unlike dev machines with VMs,
+    # containers, and VPNs, which keep "loose".
+    networking.firewall.checkReversePath = "strict";
+
     # Latest LTS kernel, not latest stable kernel.
     boot.kernelPackages = pkgs.linuxPackages;
 
