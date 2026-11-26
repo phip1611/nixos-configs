@@ -54,10 +54,18 @@ in
     # No kexec and no hibernation: both allow replacing the running kernel.
     security.protectKernelImage = true;
 
-    # debugfs exposes many kernel internals with little access control and
-    # is only meant for debugging. Netdata loses its memory fragmentation
-    # charts, which rely on it.
-    boot.kernelParams = [ "debugfs=off" ];
+    boot.kernelParams = [
+      # debugfs exposes many kernel internals with little access control and
+      # is only meant for debugging. Netdata loses its memory fragmentation
+      # charts, which rely on it.
+      "debugfs=off"
+      # Reboot 10 seconds after a kernel panic instead of hanging until
+      # someone resets the host. The delay is arbitrary and leaves some time
+      # to read the panic on the console. With boot counting (see
+      # `auto-upgrade.nix`), a generation that panics while booting falls
+      # back to the previous one without manual resets.
+      "panic=10"
+    ];
 
     boot.kernel.sysctl = {
       # BBR congestion control: higher throughput and lower latency than the
