@@ -47,5 +47,19 @@ in
     # broken kernel or initrd, systemd-boot falls back to the previous one.
     # Each try needs a reboot, e.g., a reset by the hoster's panel.
     boot.loader.systemd-boot.bootCounting.enable = true;
+
+    # I manage these hosts via SSH, so a generation without a running sshd
+    # is bad as well. Then, systemd-bless-boot doesn't mark the boot as good
+    # and the next reboot counts as another try. This only matters for
+    # entries that systemd-bless-boot hasn't marked as good yet.
+    systemd.targets.boot-complete = lib.mkIf config.services.openssh.enable (
+      let
+        unit = if config.services.openssh.startWhenNeeded then "sshd.socket" else "sshd.service";
+      in
+      {
+        requires = [ unit ];
+        after = [ unit ];
+      }
+    );
   };
 }
